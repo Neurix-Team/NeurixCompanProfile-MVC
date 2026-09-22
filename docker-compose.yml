@@ -1,0 +1,109 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Neurix Company Profile — self-contained local stack
+#
+#    web (ASP.NET Core 10 MVC, port 80 in-container)  ──▶  sqlserver (SQL Server)
+#
+#  The application talks to Microsoft SQL Server through EF Core
+#  (Microsoft.EntityFrameworkCore.SqlServer). Two DbContexts share the one
+#  database: CrmDbContext (Identity + CRM) and CmsDbContext (CMS content),
+#  each with its own migration-history table. Both are migrated and seeded
+#  automatically by the app at start-up, so the stack needs no manual
+#  `dotnet ef database update` step.
+#
+#  Quick start
+#    docker compose up -d --build
+#    public site : http://localhost:8080
+#    CRM / CMS   : http://localhost:8080/crm/account/login
+#
+#  Every value below can be overridden from a `.env` file next to this file
+#  (git-ignored) or from the shell; the defaults make the stack run as-is.
+# ─────────────────────────────────────────────────────────────────────────────
+name: neurix
+
+services:
+  # ── Database: SQL Server on Linux ─────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:${MSSQL_IMAGE_TAG:-2022-latest}
+    container_name: neurix-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: ${MSSQL_PID:-Developer}
+      # Must satisfy SQL Server's policy: 8+ chars, upper + lower + digit + symbol.
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Neurix!Str0ngPassw0rd}
+      TZ: ${TZ:-Africa/Cairo}
+    ports:
+      # Host 14330 by default so a locally installed SQL Server on 1433 keeps working.
+      - "${SQLSERVER_PORT:-14330}:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      # SQL Server reports "healthy" only when it actually accepts a query —
+      # the container process starts long before the engine is listening.
+      test:
+        - CMD-SHELL
+        - >-
+          if [ -x /opt/mssql-tools18/bin/sqlcmd ]; then sqlcmd=/opt/mssql-tools18/bin/sqlcmd;
+          else sqlcmd=/opt/mssql-tools/bin/sqlcmd; fi;
+          "$$sqlcmd" -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -C -b -Q "SELECT 1" -o /dev/null
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - neurix
+
+  # ── Application: ASP.NET Core MVC (public site + CMS + CRM) ───────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: neurix-mvc:local
+    container_name: neurix-web
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      # Development keeps the stack usable over plain HTTP (auth and antiforgery
+      # cookies stay SameAsRequest, and the seed administrator needs no opt-in).
+      # Switch to Production together with a TLS-terminating proxy in front.
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:80
+      # EF Core / Microsoft.Data.SqlClient. TrustServerCertificate accepts the
+      # self-signed certificate the SQL Server container generates.
+      ConnectionStrings__CrmDb: "Server=sqlserver,1433;Database=${DATABASE_NAME:-Neurix};User Id=sa;Password=${MSSQL_SA_PASSWORD:-Neurix!Str0ngPassw0rd};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=30"
+      # Optional: enables the AI chat widget (text + voice) — leave empty to keep it off.
+      Gemini__ApiKey: ${GEMINI_API_KEY:-}
+      Crm__SeedAdmin__Email: ${SEED_ADMIN_EMAIL:-admin@neurix.local}
+      # Must satisfy Identity's policy: min 8 characters.
+      Crm__SeedAdmin__Password: ${SEED_ADMIN_PASSWORD:-Neurix@2026}
+      Crm__SeedAdmin__FullName: ${SEED_ADMIN_FULLNAME:-CRM Administrator}
+      # Explicit opt-in so the same stack still seeds its admin if the
+      # environment is switched to Production.
+      Crm__SeedAdmin__AllowInProduction: "true"
+      TZ: ${TZ:-Africa/Cairo}
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    volumes:
+      # CMS media uploads live outside the image, otherwise they are lost on redeploy.
+      - app-uploads:/app/wwwroot/uploads
+      # Sign-in cookies survive container recreation only if the key ring is persisted.
+      - app-dataprotection:/root/.aspnet/DataProtection-Keys
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/80"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - neurix
+
+volumes:
+  sqlserver-data:
+  app-uploads:
+  app-dataprotection:
+
+networks:
+  neurix:
+    driver: bridge

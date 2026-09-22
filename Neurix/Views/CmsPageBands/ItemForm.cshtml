@@ -1,0 +1,157 @@
+@model Neurix.Models.CmsPageBandItemFormViewModel
+@{
+    var isEdit = Model.Id.HasValue;
+    ViewData["Title"] = isEdit ? L["Edit Item"] : L["Add Item"];
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-3xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan/10 text-cyan">@Model.PageLabel</span>
+                <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">
+                    @(isEdit ? L["Edit Item"] : L["Add Item"])
+                </h1>
+            </div>
+            <p class="text-sm text-muted-foreground mt-1">@L[Model.BandLabel] — @L[Model.ItemsLabel]</p>
+        </div>
+        <a asp-action="EditBand" asp-route-pageKey="@Model.PageKey" asp-route-bandKey="@Model.BandKey" asp-route-companyId="@Model.CompanyProfileId"
+           class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to Section"]
+        </a>
+    </div>
+
+    <!-- Alert -->
+    <partial name="_CmsAlert" />
+
+    <form asp-action="@(isEdit ? "EditItem" : "CreateItem")"
+          asp-route-pageKey="@Model.PageKey" asp-route-bandKey="@Model.BandKey" asp-route-id="@Model.Id"
+          method="post" enctype="multipart/form-data" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyProfileId" />
+        <input type="hidden" asp-for="PageKey" />
+        <input type="hidden" asp-for="BandKey" />
+
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+
+            <!-- Title -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="TitleEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="TitleEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    <span asp-validation-for="TitleEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="TitleAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="TitleAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    <span asp-validation-for="TitleAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+
+            @if (Model.SupportsDescription)
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border">
+                    <div>
+                        <label asp-for="DescriptionEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <textarea asp-for="DescriptionEn" rows="4" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                        <span asp-validation-for="DescriptionEn" class="text-xs text-rose-500"></span>
+                    </div>
+                    <div>
+                        <label asp-for="DescriptionAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <textarea asp-for="DescriptionAr" rows="4" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                        <span asp-validation-for="DescriptionAr" class="text-xs text-rose-500"></span>
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsIcon)
+            {
+                <div class="pt-4 border-t border-border">
+                    <label asp-for="IconName" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="IconName" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-mono focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="cpu" />
+                    <p class="text-[11px] text-muted-foreground mt-1">@L["Any icon name from lucide.dev, e.g. cpu, database, users."]</p>
+                    <span asp-validation-for="IconName" class="text-xs text-rose-500"></span>
+                </div>
+            }
+
+            @if (Model.SupportsImage)
+            {
+                <div class="space-y-4 pt-4 border-t border-border">
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="image" class="w-4 h-4 text-cyan"></i>
+                        @L["Image"]
+                    </h3>
+                    @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+                    {
+                        <img src="@Model.ImagePath" alt="" class="h-28 rounded-xl border border-border object-cover" />
+                    }
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="ImageFile" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ImageFile" type="file" accept=".png,.jpg,.jpeg,.webp,.svg" class="w-full rounded-xl border border-border bg-background px-3.5 py-2 text-xs text-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-cyan/10 file:px-3 file:py-1.5 file:text-xs file:text-cyan" />
+                            <span asp-validation-for="ImageFile" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="ImagePath" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ImagePath" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-mono focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="/images/example.png" />
+                            <span asp-validation-for="ImagePath" class="text-xs text-rose-500"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsLink)
+            {
+                <div class="space-y-4 pt-4 border-t border-border">
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="link" class="w-4 h-4 text-cyan"></i>
+                        @L["Link"]
+                    </h3>
+                    <div>
+                        <label asp-for="LinkUrl" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <input asp-for="LinkUrl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-mono focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="/Home/Labs" />
+                        <span asp-validation-for="LinkUrl" class="text-xs text-rose-500"></span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="LinkTextEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="LinkTextEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <p class="text-[11px] text-muted-foreground mt-1">@L["Leave blank to use the title as the label."]</p>
+                            <span asp-validation-for="LinkTextEn" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="LinkTextAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="LinkTextAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <span asp-validation-for="LinkTextAr" class="text-xs text-rose-500"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Order -->
+            <div class="pt-4 border-t border-border">
+                <label asp-for="DisplayOrder" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="DisplayOrder" type="number" min="0" class="w-32 rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <p class="text-[11px] text-muted-foreground mt-1">@L["Lower numbers appear first."]</p>
+                <span asp-validation-for="DisplayOrder" class="text-xs text-rose-500"></span>
+            </div>
+
+            <!-- Published Toggle -->
+            <div class="flex items-center justify-between pt-4 border-t border-border">
+                <div class="flex items-center gap-3">
+                    <input asp-for="IsPublished" type="checkbox" class="h-4 w-4 rounded border-border text-cyan focus:ring-cyan bg-background" />
+                    <label asp-for="IsPublished" class="text-xs font-semibold text-foreground"></label>
+                </div>
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] shadow-[0_0_15px_hsl(var(--cyan)/0.25)] transition-all">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                    @L["Save Changes"]
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

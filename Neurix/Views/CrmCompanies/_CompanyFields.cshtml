@@ -1,0 +1,74 @@
+@model Neurix.Models.CrmCompanyFormViewModel
+@using Neurix.DAL.Enums
+
+@{
+    const string InputCls = "w-full rounded-xl bg-background/60 border border-border px-4 h-11 text-sm outline-none transition-all duration-300 focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]";
+    const string LabelCls = "block text-sm font-medium mb-2";
+    const string ErrCls = "text-xs text-rose-500/80 mt-1.5 block font-medium";
+}
+
+<div asp-validation-summary="ModelOnly" class="mb-6 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-500 empty:hidden"></div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+    <div class="md:col-span-2">
+        <label asp-for="Name" class="@LabelCls"></label>
+        <input asp-for="Name" class="@InputCls" placeholder='@L["Acme Corporation"]' />
+        <span asp-validation-for="Name" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Industry" class="@LabelCls"></label>
+        <input asp-for="Industry" class="@InputCls" placeholder='@L["Manufacturing"]' />
+        <span asp-validation-for="Industry" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Website" class="@LabelCls"></label>
+        <input asp-for="Website" type="url" class="@InputCls" placeholder="https://acme.com" />
+        <span asp-validation-for="Website" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Email" class="@LabelCls"></label>
+        <input asp-for="Email" type="email" class="@InputCls" placeholder="hello@acme.com" />
+        <span asp-validation-for="Email" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Phone" class="@LabelCls"></label>
+        <input asp-for="Phone" class="@InputCls" placeholder="+20 100 000 0000" />
+        <span asp-validation-for="Phone" class="@ErrCls"></span>
+    </div>
+
+    <div class="md:col-span-2">
+        <label asp-for="Address" class="@LabelCls"></label>
+        <input asp-for="Address" class="@InputCls" placeholder='@L["Street address"]' />
+        <span asp-validation-for="Address" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="City" class="@LabelCls"></label>
+        <input asp-for="City" class="@InputCls" placeholder='@L["Cairo"]' />
+        <span asp-validation-for="City" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Country" class="@LabelCls"></label>
+        <input asp-for="Country" class="@InputCls" placeholder='@L["Egypt"]' />
+        <span asp-validation-for="Country" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Status" class="@LabelCls"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<RecordStatus>()" class="@InputCls"></select>
+        <span asp-validation-for="Status" class="@ErrCls"></span>
+    </div>
+
+    <div class="md:col-span-2">
+        <label asp-for="Description" class="@LabelCls"></label>
+        <textarea asp-for="Description" rows="4" placeholder='@L["What does this company do?"]'
+                  class="w-full rounded-xl bg-background/60 border border-border px-4 py-3 text-sm outline-none transition-all duration-300 resize-y focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]"></textarea>
+        <span asp-validation-for="Description" class="@ErrCls"></span>
+    </div>
+</div>

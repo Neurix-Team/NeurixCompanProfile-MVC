@@ -1,0 +1,364 @@
+@using Neurix.BLL.Dtos.Cms
+@using Neurix.BLL.Services.Cms
+@using Neurix.DAL.Models
+@using Neurix.Localization
+@inject ICmsCompanyProfileService CmsCompanyProfileService
+@inject ICmsMenuItemService CmsMenuItemService
+@{
+    CmsCompanyProfileDetailDto? companyProfile = null;
+    IReadOnlyList<CmsMenuItemSummaryDto> headerMenuItems = Array.Empty<CmsMenuItemSummaryDto>();
+    try
+    {
+        companyProfile = await CmsCompanyProfileService.GetBySlugAsync("neurix");
+        headerMenuItems = await CmsMenuItemService.GetMenuItemsByCompanySlugAsync("neurix", CmsMenuItemPlacement.Header, includeUnpublished: false);
+    }
+    catch
+    {
+        // Fail-soft
+    }
+
+    var currentLang = CmsLanguage.Current;
+    var isRtl = currentLang.IsRightToLeft;
+    var brandNameEn = companyProfile?.NameEn ?? "Neurix AI";
+    var brandNameAr = companyProfile?.NameAr ?? "نيوركس AI";
+    var initialBrandName = isRtl ? brandNameAr : brandNameEn;
+    var logoPath = !string.IsNullOrWhiteSpace(companyProfile?.LogoPath) ? companyProfile.LogoPath : "/images/neurix-logo.png";
+
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
+    string GetActiveColor(string actionName) => currentAction == actionName ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+    string GetMobileActiveColor(string actionName) => currentAction == actionName ? "text-cyan-600 dark:text-cyan-400 font-bold border-cyan/50" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-300 dark:border-white/10";
+}
+
+<header id="main-navbar"
+        class="fixed top-0 left-0 right-0 w-full inset-x-0 z-50 transition-all duration-300 bg-transparent border-b border-transparent">
+    <nav class="container mx-auto flex items-center justify-between h-20 md:h-24 px-4 md:px-6 lg:px-8">
+
+        @* Logo *@
+        <a href="/" class="flex items-center gap-2.5 group neurix-brand shrink-0" aria-label="@initialBrandName">
+            <img src="@logoPath"
+                 alt="@brandNameEn Icon"
+                 class="h-8 w-8 object-cover object-left transition-transform duration-300 group-hover:scale-105" />
+            <span class="text-slate-900 dark:text-white font-bold text-xl tracking-tight transition-colors duration-300 neurix-brand-text" data-en="@brandNameEn" data-ar="@brandNameAr">@initialBrandName</span>
+        </a>
+
+        @* Center Links — Dynamic from CMS Menu Items, with hardcoded fallback *@
+        <ul class="neurix-nav-links hidden lg:flex items-center">
+            @if (headerMenuItems.Count > 0)
+            {
+                @foreach (var item in headerMenuItems)
+                {
+                    var isCurrent = (item.Url == "/" && currentAction == "Index") ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.TrimStart('/').Equals(currentAction, StringComparison.OrdinalIgnoreCase)) ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.Contains("/Home/" + currentAction, StringComparison.OrdinalIgnoreCase));
+                    var activeColor = isCurrent ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+                    var targetAttr = item.OpenInNewTab ? "_blank" : "_self";
+                    var initialLabel = isRtl && !string.IsNullOrWhiteSpace(item.LabelAr) ? item.LabelAr : item.LabelEn;
+
+                    <li>
+                        <a href="@item.Url" target="@targetAttr" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @activeColor"
+                           data-en="@item.LabelEn" data-ar="@item.LabelAr">
+                            @initialLabel
+                            <span class="nav-link-underline @(isCurrent ? "is-active" : "")"></span>
+                        </a>
+                    </li>
+                }
+            }
+            else
+            {
+                @* Hardcoded fallback if no CMS items loaded *@
+                <li>
+                    <a asp-controller="Home" asp-action="Index" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("Index")"
+                       data-en="Home" data-ar="الرئيسية">
+                        @(isRtl ? "الرئيسية" : "Home")
+                        <span class="nav-link-underline @(currentAction == "Index" ? "is-active" : "")"></span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="Labs" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("Labs")"
+                       data-en="Labs" data-ar="المختبرات">
+                        @(isRtl ? "المختبرات" : "Labs")
+                        <span class="nav-link-underline @(currentAction == "Labs" ? "is-active" : "")"></span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="Technology" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("Technology")"
+                       data-en="Technology" data-ar="التقنية">
+                        @(isRtl ? "التقنية" : "Technology")
+                        <span class="nav-link-underline @(currentAction == "Technology" ? "is-active" : "")"></span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="About" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("About")"
+                       data-en="About" data-ar="من نحن">
+                        @(isRtl ? "من نحن" : "About")
+                        <span class="nav-link-underline @(currentAction == "About" ? "is-active" : "")"></span>
+                    </a>
+                </li>
+            }
+        </ul>
+
+        @* Right Side — Controls (in RTL automatically aligns to the left) *@
+        <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+            
+            @* Language Toggle *@
+            <button id="lang-toggle-btn" type="button"
+               aria-label="Switch language"
+               class="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md text-sm font-medium text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+                <span id="lang-toggle-text">@(isRtl ? "EN" : "AR")</span>
+            </button>
+
+            @* Theme Toggle Button *@
+            <button onclick="window.toggleTheme()"
+                    aria-label="Toggle dark/light mode"
+                    class="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+                @* Sun Icon *@
+                <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="transition-all duration-500" style="position:absolute;">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path d="M12 2v2"></path><path d="M12 20v2"></path>
+                    <path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path>
+                    <path d="M2 12h2"></path><path d="M20 12h2"></path>
+                    <path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>
+                </svg>
+                @* Moon Icon *@
+                <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="transition-all duration-500" style="position:absolute;">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                </svg>
+            </button>
+
+            @* Contact CTA *@
+            <a asp-controller="Home" asp-action="Contact"
+               class="hidden sm:inline-flex items-center justify-center rounded-[16px] px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300"
+               data-en="Contact Us" data-ar="تواصل معنا">
+                @(isRtl ? "تواصل معنا" : "Contact Us")
+            </a>
+
+            @* Hamburger Mobile Menu Button *@
+            <button id="mobile-menu-btn"
+                    aria-label="Toggle menu"
+                    class="lg:hidden relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+                <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="transition-all duration-300 absolute">
+                    <line x1="4" x2="20" y1="12" y2="12"></line>
+                    <line x1="4" x2="20" y1="6" y2="6"></line>
+                    <line x1="4" x2="20" y1="18" y2="18"></line>
+                </svg>
+                <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="transition-all duration-300 absolute scale-0 opacity-0">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+    </nav>
+
+    @* Mobile Dropdown Menu *@
+    <div id="mobile-menu"
+         class="lg:hidden absolute left-0 right-0 w-full inset-x-0 top-full bg-background/95 backdrop-blur-2xl border-b border-white/10 transition-all duration-300 origin-top transform scale-y-0 opacity-0 invisible shadow-2xl">
+        <div class="container py-6 flex flex-col gap-2">
+            @if (headerMenuItems.Count > 0)
+            {
+                @foreach (var item in headerMenuItems)
+                {
+                    var isCurrent = (item.Url == "/" && currentAction == "Index") ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.TrimStart('/').Equals(currentAction, StringComparison.OrdinalIgnoreCase)) ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.Contains("/Home/" + currentAction, StringComparison.OrdinalIgnoreCase));
+                    var mobileColor = isCurrent ? "text-cyan-600 dark:text-cyan-400 font-bold border-cyan/50" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-300 dark:border-white/10";
+                    var targetAttr = item.OpenInNewTab ? "_blank" : "_self";
+                    var initialLabel = isRtl && !string.IsNullOrWhiteSpace(item.LabelAr) ? item.LabelAr : item.LabelEn;
+
+                    <a href="@item.Url" target="@targetAttr" class="text-base py-3 border-b @mobileColor"
+                       data-en="@item.LabelEn" data-ar="@item.LabelAr">@initialLabel</a>
+                }
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="Index" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("Index")"
+                   data-en="Home" data-ar="الرئيسية">@(isRtl ? "الرئيسية" : "Home")</a>
+                <a asp-controller="Home" asp-action="Labs" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("Labs")"
+                   data-en="Labs" data-ar="المختبرات">@(isRtl ? "المختبرات" : "Labs")</a>
+                <a asp-controller="Home" asp-action="Technology" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("Technology")"
+                   data-en="Technology" data-ar="التقنية">@(isRtl ? "التقنية" : "Technology")</a>
+                <a asp-controller="Home" asp-action="About" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("About")"
+                   data-en="About Us" data-ar="من نحن">@(isRtl ? "من نحن" : "About Us")</a>
+            }
+
+            <a asp-controller="Home" asp-action="Contact" class="mt-6 w-full inline-flex items-center justify-center rounded-[16px] px-5 py-3.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)]"
+               data-en="Contact Us" data-ar="تواصل معنا">
+                @(isRtl ? "تواصل معنا" : "Contact Us")
+            </a>
+        </div>
+    </div>
+</header>
+
+<script>
+    // Language Toggle + Frontend Translation Engine
+    (function() {
+        const langBtn = document.getElementById('lang-toggle-btn');
+        const langText = document.getElementById('lang-toggle-text');
+        const root = document.documentElement;
+        const STORAGE_KEY = 'neurix-lang';
+
+        /**
+         * Translates all elements with [data-en] and [data-ar] attributes.
+         * Preserves child elements (like SVG icons) by only swapping text nodes.
+         */
+        function translatePage(lang) {
+            const attr = 'data-' + lang;
+            const elements = document.querySelectorAll('[data-en][data-ar]');
+
+            elements.forEach(function(el) {
+                var translatedText = el.getAttribute(attr);
+                if (!translatedText) return;
+
+                // Handle inputs and textareas (placeholders)
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    if (el.hasAttribute('placeholder')) {
+                        if (el.getAttribute('placeholder') !== translatedText) el.setAttribute('placeholder', translatedText);
+                    }
+                    return; // Skip text node replacement for form fields
+                }
+
+                // Check if element has child elements (like SVGs, spans with classes)
+                var hasChildElements = false;
+                for (var i = 0; i < el.childNodes.length; i++) {
+                    if (el.childNodes[i].nodeType === Node.ELEMENT_NODE) {
+                        hasChildElements = true;
+                        break;
+                    }
+                }
+
+                if (hasChildElements) {
+                    // Only replace the first text node, preserve child elements
+                    var replaced = false;
+                    for (var j = 0; j < el.childNodes.length; j++) {
+                        var node = el.childNodes[j];
+                        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+                            if (node.textContent.trim() !== translatedText.trim()) node.textContent = translatedText;
+                            replaced = true;
+                            break;
+                        }
+                    }
+                    // If no text node found, prepend one
+                    if (!replaced) {
+                        el.insertBefore(document.createTextNode(translatedText), el.firstChild);
+                    }
+                } else {
+                    // Simple element — direct replacement
+                    if (el.textContent.trim() !== translatedText.trim()) el.textContent = translatedText;
+                }
+            });
+        }
+
+        function readStoredLang() {
+            try {
+                return localStorage.getItem(STORAGE_KEY);
+            } catch (e) {
+                return null; // storage blocked (private mode, policy) — fall back silently
+            }
+        }
+
+        function writeStoredLang(lang) {
+            try {
+                localStorage.setItem(STORAGE_KEY, lang);
+            } catch (e) {
+                // storage blocked — the cookie below still carries the choice across requests
+            }
+        }
+
+        function setLang(lang) {
+            const isAr = lang === 'ar';
+            if (root.lang !== lang) root.lang = lang;
+            const direction = isAr ? 'rtl' : 'ltr';
+            if (root.dir !== direction) root.dir = direction;
+            root.classList.toggle('font-arabic', isAr);
+
+            if(langText) {
+                const label = isAr ? 'EN' : 'AR';
+                if (langText.textContent !== label) langText.textContent = label;
+            }
+
+            translatePage(lang);
+            writeStoredLang(lang);
+            // Persist culture cookie for ASP.NET Core RequestCultureProvider
+            document.cookie = `.AspNetCore.Culture=c=${lang}|uic=${lang};path=/;max-age=31536000;SameSite=Lax`;
+        }
+
+        // Apply language to DOM elements on every load. Pages render their body copy in
+        // one fixed language server-side (see data-en/data-ar), so the visible text must
+        // be reconciled to the effective language every time — even when the saved choice
+        // already equals the server-rendered lang, because "equal" does not mean the DOM
+        // text was actually re-rendered in that language by the server.
+        document.addEventListener('DOMContentLoaded', function() {
+            const serverLang = root.getAttribute('lang') || 'en';
+            const queryLang = new URLSearchParams(window.location.search).get('lang');
+            const storedLang = readStoredLang();
+
+            // Priority: an explicit ?lang= on this URL wins over a stale saved choice
+            // (the server already honoured it in serverLang); otherwise fall back to the
+            // saved choice, then whatever the server resolved (cookie or default).
+            const isValid = function(l) { return l === 'en' || l === 'ar'; };
+            const effectiveLang = isValid(queryLang) ? queryLang
+                : isValid(storedLang) ? storedLang
+                : serverLang;
+
+            setLang(effectiveLang);
+
+            if (langBtn) {
+                langBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const currentLang = root.getAttribute('lang') || 'en';
+                    setLang(currentLang === 'en' ? 'ar' : 'en');
+                });
+            }
+        });
+    })();
+
+    // Mobile Menu Toggle
+    (function () {
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const iconMenu = document.getElementById('icon-menu');
+        const iconClose = document.getElementById('icon-close');
+        let isOpen = false;
+
+        if (btn && menu) {
+            btn.addEventListener('click', function () {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    menu.classList.remove('scale-y-0', 'opacity-0', 'invisible');
+                    menu.classList.add('scale-y-100', 'opacity-100', 'visible');
+                    
+                    if(iconMenu) iconMenu.classList.add('scale-0', 'opacity-0');
+                    if(iconClose) {
+                        iconClose.classList.remove('scale-0', 'opacity-0');
+                        iconClose.classList.add('scale-100', 'opacity-100');
+                    }
+                } else {
+                    menu.classList.add('scale-y-0', 'opacity-0', 'invisible');
+                    menu.classList.remove('scale-y-100', 'opacity-100', 'visible');
+                    
+                    if(iconMenu) iconMenu.classList.remove('scale-0', 'opacity-0');
+                    if(iconClose) {
+                        iconClose.classList.add('scale-0', 'opacity-0');
+                        iconClose.classList.remove('scale-100', 'opacity-100');
+                    }
+                }
+            });
+
+            // Close on link click
+            const links = menu.querySelectorAll('a');
+            links.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (isOpen) btn.click();
+                });
+            });
+        }
+    })();
+</script>

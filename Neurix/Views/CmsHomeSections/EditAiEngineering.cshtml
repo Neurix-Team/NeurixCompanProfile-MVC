@@ -1,0 +1,166 @@
+@model Neurix.Models.CmsAiEngineeringSectionFormViewModel
+@{
+    ViewData["Title"] = L["Edit AI & Engineering Section"];
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-5xl mx-auto space-y-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400">#services</span>
+                <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">@L["AI & Engineering Section"]</h1>
+            </div>
+            <p class="text-sm text-muted-foreground mt-1">@L["Manage the core services band header and its four-across capability cards."]</p>
+        </div>
+        <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to Sections"]
+        </a>
+    </div>
+
+    <!-- Alert -->
+    <partial name="_CmsAlert" />
+
+    <!-- 1. Section Header Form -->
+    <form asp-action="EditAiEngineering" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyProfileId" />
+
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+            <div class="flex items-center justify-between border-b border-border pb-3">
+                <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="heading" class="w-4 h-4 text-purple-400"></i>
+                    @L["Section Header"]
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="BadgeEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="BadgeEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Core Services" />
+                    <span asp-validation-for="BadgeEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="BadgeAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="BadgeAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+                    <span asp-validation-for="BadgeAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="TitleEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="TitleEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="AI &amp; Engineering" />
+                    <span asp-validation-for="TitleEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="TitleAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="TitleAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+                    <span asp-validation-for="TitleAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+
+            <!-- Published Toggle -->
+            <div class="flex items-center justify-between pt-4 border-t border-border">
+                <div class="flex items-center gap-3">
+                    <input asp-for="IsPublished" type="checkbox" class="h-4 w-4 rounded border-border text-purple-500 focus:ring-purple-500 bg-background" />
+                    <div>
+                        <label asp-for="IsPublished" class="text-xs font-semibold text-foreground"></label>
+                        <p class="text-[11px] text-muted-foreground">@L["When disabled, this section is completely hidden from the public homepage."]</p>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] shadow-[0_0_15px_hsl(var(--cyan)/0.25)] transition-all">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                    @L["Save Header Changes"]
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- 2. Service Cards -->
+    <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
+            <div>
+                <h3 class="text-base font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="boxes" class="w-4 h-4 text-purple-400"></i>
+                    @L["Service Cards"]
+                    <span class="ml-2 text-xs font-normal text-muted-foreground">(@Model.ServiceItems.Count @L["cards configured"])</span>
+                </h3>
+                <p class="text-xs text-muted-foreground mt-0.5">@L["These are the compact cards under the AI & Engineering heading, separate from the Services catalogue."]</p>
+            </div>
+            <a asp-action="CreateAiEngineeringItem" asp-route-companyId="@Model.CompanyProfileId"
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] shadow-[0_0_15px_hsl(var(--cyan)/0.25)] transition-all self-start sm:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                @L["Add New Service Card"]
+            </a>
+        </div>
+
+        @if (Model.ServiceItems.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @foreach (var item in Model.ServiceItems.OrderBy(s => s.DisplayOrder))
+                {
+                    <div class="p-4 rounded-2xl bg-background/50 border border-border flex flex-col justify-between hover:border-purple-500/40 transition-all group">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
+                                        <i data-lucide="@item.IconName" class="w-4 h-4"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-foreground">@item.TitleEn</h4>
+                                        <h5 class="text-xs text-muted-foreground font-arabic" dir="rtl">@item.TitleAr</h5>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
+                                        #@item.DisplayOrder
+                                    </span>
+                                    @if (item.IsPublished)
+                                    {
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400" title="@L["Published"]"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="w-2 h-2 rounded-full bg-amber-400" title="@L["Draft"]"></span>
+                                    }
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                                @item.DescriptionEn
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-border flex items-center justify-end gap-2">
+                            <a asp-action="EditAiEngineeringItem" asp-route-id="@item.Id"
+                               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted border border-border transition-colors">
+                                <i data-lucide="edit-2" class="w-3.5 h-3.5 text-purple-400"></i>
+                                @L["Edit"]
+                            </a>
+                            <form asp-action="DeleteAiEngineeringItem" asp-route-id="@item.Id" method="post" onsubmit="return confirm('@L["Are you sure you want to delete this service card?"]');" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="companyId" value="@Model.CompanyProfileId" />
+                                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-rose-500 hover:bg-rose-500/10 border border-border hover:border-rose-500/30 transition-colors">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    @L["Delete"]
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="p-8 text-center rounded-2xl bg-background/30 border border-dashed border-border space-y-3">
+                <i data-lucide="inbox" class="w-8 h-8 text-muted-foreground mx-auto"></i>
+                <p class="text-xs text-muted-foreground">@L["No service cards configured yet. Click above to add your first card."]</p>
+            </div>
+        }
+    </div>
+</div>

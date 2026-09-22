@@ -1,0 +1,127 @@
+@model Neurix.Models.CmsBlogPostListViewModel
+@{
+    ViewData["Title"] = "Blog / Insights";
+    Layout = "_CmsLayout";
+}
+
+<div class="space-y-6">
+
+    @* Header *@
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">@L["Articles & Insights"]</h1>
+            <p class="text-sm text-muted-foreground">@L["Publish research breakthroughs, thought leadership, and company insights."]</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            @if (Model.Companies.Count > 1)
+            {
+                <form method="get" class="flex items-center gap-2">
+                    <select name="companyId" onchange="this.form.submit()"
+                            class="rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none">
+                        <option value="">@L["All Brands"]</option>
+                        @foreach (var c in Model.Companies)
+                        {
+                            <option value="@c.Id" selected="@(c.Id == Model.SelectedCompanyId)">@c.NameEn</option>
+                        }
+                    </select>
+                </form>
+            }
+
+            <a asp-action="Create" asp-route-companyId="@Model.SelectedCompanyId"
+               class="inline-flex items-center gap-2 rounded-xl bg-cyan px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-cyan/90 transition-colors shadow-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                @L["New Article"]
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Posts.Count == 0)
+    {
+        <div class="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground space-y-3">
+            <i data-lucide="book-open" class="w-10 h-10 mx-auto text-muted-foreground/50"></i>
+            <p class="text-sm">@L["No articles published yet."]</p>
+            <a asp-action="Create" asp-route-companyId="@Model.SelectedCompanyId" class="inline-flex items-center gap-1.5 text-xs text-cyan hover:underline">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> @L["Create your first insight"]
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-muted/50 border-b border-border text-muted-foreground font-medium uppercase tracking-wider text-[10px]">
+                        <tr>
+                            <th class="px-5 py-3.5">@L["Article"]</th>
+                            <th class="px-4 py-3.5">@L["Category"]</th>
+                            <th class="px-4 py-3.5">@L["Author"]</th>
+                            <th class="px-4 py-3.5">@L["Status"]</th>
+                            <th class="px-4 py-3.5">@L["Published"]</th>
+                            <th class="px-5 py-3.5 text-right">@L["Actions"]</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        @foreach (var post in Model.Posts)
+                        {
+                            <tr class="hover:bg-muted/30 transition-colors">
+                                <td class="px-5 py-4">
+                                    <div class="font-semibold text-foreground text-sm">@post.TitleEn</div>
+                                    <div class="text-xs text-muted-foreground font-mono">/insights/@post.Slug</div>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <span class="inline-flex items-center rounded-lg bg-cyan/10 px-2.5 py-1 text-[11px] font-medium text-cyan">
+                                        @(post.Category ?? "General")
+                                    </span>
+                                </td>
+                                <td class="px-4 py-4 text-muted-foreground">
+                                    @(post.AuthorNameEn ?? "Neurix")
+                                </td>
+                                <td class="px-4 py-4">
+                                    <div class="flex items-center gap-1.5">
+                                        <partial name="_CmsStatusBadge" model="post.IsPublished" />
+                                        @if (post.IsFeatured)
+                                        {
+                                            <span class="inline-flex items-center rounded-lg bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-500">
+                                                @L["Featured"]
+                                            </span>
+                                        }
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4 text-muted-foreground">
+                                    @(post.PublishedAtUtc?.ToString("MMM dd, yyyy") ?? "Draft")
+                                </td>
+                                <td class="px-5 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-3">
+                                        <a asp-action="Edit" asp-route-id="@post.Id" class="text-muted-foreground hover:text-foreground">
+                                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@post.Id" class="text-muted-foreground hover:text-foreground">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                        </a>
+                                        <form asp-action="TogglePublish" asp-route-id="@post.Id" method="post" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="isPublished" value="@(!post.IsPublished)" />
+                                            <input type="hidden" name="companyId" value="@Model.SelectedCompanyId" />
+                                            <button type="submit" class="text-muted-foreground hover:text-foreground" title='@L["Toggle Publish"]'>
+                                                <i data-lucide="@(post.IsPublished ? "eye-off" : "check-circle")" class="w-4 h-4"></i>
+                                            </button>
+                                        </form>
+                                        <form asp-action="Delete" asp-route-id="@post.Id" method="post" class="inline" onsubmit="return confirm('@L["Delete this article?"]');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="companyId" value="@Model.SelectedCompanyId" />
+                                            <button type="submit" class="text-rose-500 hover:text-rose-400" title='@L["Delete"]'>
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+</div>

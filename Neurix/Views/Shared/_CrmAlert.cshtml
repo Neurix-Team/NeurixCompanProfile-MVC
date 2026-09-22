@@ -1,0 +1,17 @@
+@* Success / error banner driven by TempData, rendered once by _CrmLayout. *@
+
+@if (TempData["SuccessMessage"] is string success && !string.IsNullOrWhiteSpace(success))
+{
+    <div class="mb-6 flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3.5 text-sm text-emerald-500">
+        <i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5 shrink-0"></i>
+        <span>@success</span>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] is string error && !string.IsNullOrWhiteSpace(error))
+{
+    <div class="mb-6 flex items-start gap-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3.5 text-sm text-rose-500">
+        <i data-lucide="alert-circle" class="w-4 h-4 mt-0.5 shrink-0"></i>
+        <span>@error</span>
+    </div>
+}

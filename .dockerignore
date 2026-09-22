@@ -1,0 +1,13 @@
+**/bin
+**/obj
+**/.git
+**/.gitignore
+**/README.md
+**/.vs
+**/node_modules
+.perf-tools
+# Local secrets must never reach the image build context.
+.env
+.env.*
+Dockerfile
+.dockerignore

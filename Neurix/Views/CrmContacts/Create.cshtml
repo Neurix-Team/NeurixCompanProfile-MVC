@@ -1,0 +1,25 @@
+@model Neurix.Models.CrmContactFormViewModel
+
+<div class="max-w-3xl">
+
+    <a asp-action="Index" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+        @L["Back to contacts"]
+    </a>
+
+    <form asp-action="Create" method="post" class="rounded-2xl border border-border bg-card/60 p-6 sm:p-8">
+        <partial name="_ContactFields" model="Model" />
+
+        <div class="flex items-center gap-3 mt-8 pt-6 border-t border-border">
+            <button type="submit"
+                    class="inline-flex items-center gap-2 rounded-[16px] px-6 py-2.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--cyan)/0.5)] transition-all duration-300">
+                @L["Create contact"]
+            </button>
+            <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground transition-colors">@L["Cancel"]</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

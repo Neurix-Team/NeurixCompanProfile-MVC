@@ -1,0 +1,43 @@
+@model Neurix.Models.CmsCompanyProfileFormViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Add Company Profile";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold font-display tracking-tight text-foreground">@L["Add Company / Brand Profile"]</h2>
+            <p class="text-sm text-muted-foreground mt-1">
+                @L["Create a new company profile with bilingual identity and configuration settings."]
+            </p>
+        </div>
+        <a asp-action="Index" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+            @L["Back to Profiles"]
+        </a>
+    </div>
+
+    <!-- Form -->
+    <form asp-action="Create" method="post" enctype="multipart/form-data" class="space-y-8">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-sm text-rose-400"></div>
+
+        <partial name="_CompanyProfileFields" model="Model" />
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-border">
+            <a asp-action="Index" class="px-5 py-2.5 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                @L["Cancel"]
+            </a>
+            <button type="submit" class="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                @L["Create Profile"]
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

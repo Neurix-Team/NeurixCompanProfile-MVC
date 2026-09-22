@@ -1,0 +1,87 @@
+@model Neurix.BLL.Dtos.Cms.CmsProjectDetailDto
+@{
+    ViewData["Title"] = Model.TitleEn;
+}
+
+<article class="relative pt-32 pb-24">
+    <div class="container px-5 sm:px-6 max-w-4xl">
+
+        @* Header *@
+        <header class="space-y-6 mb-12">
+            <div class="flex flex-wrap items-center gap-3 text-xs">
+                <span class="rounded-full bg-cyan/10 px-3.5 py-1 font-semibold text-cyan">
+                    @(Model.Category ?? "AI Architecture")
+                </span>
+                @if (!string.IsNullOrWhiteSpace(Model.ClientName))
+                {
+                    <span class="text-slate-500 dark:text-slate-400">Client: @Model.ClientName</span>
+                }
+            </div>
+
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.2]">
+                <span data-en="@Model.TitleEn" data-ar="@Model.TitleAr">@Model.TitleEn</span>
+            </h1>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SummaryEn) || !string.IsNullOrWhiteSpace(Model.SummaryAr))
+            {
+                <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-light"
+                   data-en="@Model.SummaryEn" data-ar="@Model.SummaryAr">
+                    @Model.SummaryEn
+                </p>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.TechnologiesUsed))
+            {
+                <div class="flex flex-wrap gap-2 pt-2">
+                    @foreach (var tech in Model.TechnologiesUsed.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        <span class="text-xs rounded-xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 px-3 py-1 font-mono text-slate-700 dark:text-slate-300">
+                            @tech.Trim()
+                        </span>
+                    }
+                </div>
+            }
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.CoverImagePath))
+        {
+            <div class="rounded-3xl overflow-hidden mb-12 border border-slate-300 dark:border-white/10 shadow-2xl">
+                <img src="@Model.CoverImagePath" alt="@Model.TitleEn" class="w-full h-auto object-cover max-h-[500px]" />
+            </div>
+        }
+
+        @* Case study content *@
+        <div class="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-200 leading-relaxed space-y-6">
+            <div data-en="@(string.IsNullOrWhiteSpace(Model.DescriptionEn) ? Model.SummaryEn : Model.DescriptionEn)"
+                 data-ar="@(string.IsNullOrWhiteSpace(Model.DescriptionAr) ? Model.SummaryAr : Model.DescriptionAr)">
+                @Html.Raw(string.IsNullOrWhiteSpace(Model.DescriptionEn) ? Model.SummaryEn : Model.DescriptionEn)
+            </div>
+        </div>
+
+        @* Links & CTAs *@
+        <div class="mt-16 pt-8 border-t border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                @if (!string.IsNullOrWhiteSpace(Model.ProjectUrl))
+                {
+                    <a href="@Model.ProjectUrl" target="_blank"
+                       class="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
+                        <i data-lucide="external-link" class="w-4 h-4"></i> Live Project
+                    </a>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.GithubUrl))
+                {
+                    <a href="@Model.GithubUrl" target="_blank"
+                       class="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
+                        <partial name="_SocialIcon" model="@("github")" /> Source Code
+                    </a>
+                }
+            </div>
+
+            <a asp-action="Contact" class="inline-flex items-center gap-2 rounded-xl bg-button-gradient px-5 py-2.5 text-xs font-semibold text-primary-foreground hover:shadow-[0_0_20px_hsl(var(--cyan)/0.4)] transition-all">
+                <span data-en="Discuss Similar Engagement" data-ar="ناقش مشروعاً مشابهاً">Discuss Similar Engagement</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 rtl-flip"></i>
+            </a>
+        </div>
+
+    </div>
+</article>

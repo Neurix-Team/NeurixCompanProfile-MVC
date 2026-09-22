@@ -1,0 +1,634 @@
+﻿@model Neurix.Models.CmsHomeSectionsIndexViewModel
+@{
+    ViewData["Title"] = L["Homepage Sections Management"];
+    Layout = "_CmsLayout";
+}
+
+<div class="space-y-8 max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold font-display tracking-tight text-foreground flex items-center gap-2.5">
+                <i data-lucide="layout" class="w-6 h-6 text-cyan"></i>
+                @L["Homepage Sections"]
+            </h1>
+            <p class="text-sm text-muted-foreground mt-1">
+                @L["Manage every editable block on the homepage: copy, CTA buttons, metrics, capability pillars, ecosystem and service cards, band headings, and illustrations."]
+            </p>
+        </div>
+
+        @if (Model.Companies.Count > 1)
+        {
+            <form method="get" class="flex items-center gap-2">
+                <label for="company-select" class="text-xs font-medium text-muted-foreground whitespace-nowrap">@L["Filter Profile:"]</label>
+                <select id="company-select" name="companyId" onchange="this.form.submit()" class="rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-cyan">
+                    @foreach (var opt in Model.CompanyOptions)
+                    {
+                        <option value="@opt.Value" selected="@opt.Selected">@opt.Text</option>
+                    }
+                </select>
+            </form>
+        }
+    </div>
+
+    <!-- Alert / Messages -->
+    <partial name="_CmsAlert" />
+
+    <!-- Homepage Section Management Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 1. HERO BANNER -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-cyan/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan/10 text-cyan border border-cyan/20">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        #hero
+                    </span>
+                    @if (Model.HeroSection?.IsPublished == true)
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            @L["Draft"]
+                        </span>
+                    }
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-cyan transition-colors">
+                        @L["Hero Banner"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["Main hero headline, dynamic glowing keyword, dual action buttons (CTAs), and 3 statistic counters."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Badge:"]</span>
+                        <span class="text-foreground font-semibold">@(Model.HeroSection?.BadgeEn ?? "Empowering the Future")</span>
+                    </div>
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Headline (EN):"]</span>
+                        <span class="text-foreground">@(Model.HeroSection?.TitlePrefixEn ?? "Building Human-Centered ") <span class="text-cyan font-bold">@(Model.HeroSection?.TitleHighlightEn ?? "AI")</span> @(Model.HeroSection?.TitleSuffixEn ?? " for Tomorrow")</span>
+                    </div>
+                    <div dir="rtl">
+                        <span class="text-muted-foreground font-medium">@L["Headline (AR):"]</span>
+                        <span class="text-foreground">@(Model.HeroSection?.TitlePrefixAr ?? " ") <span class="text-cyan font-bold">@(Model.HeroSection?.TitleHighlightAr ?? "ذكاء اصطناعي")</span> @(Model.HeroSection?.TitleSuffixAr ?? " محوره الإنسان، من أجل الغد")</span>
+                    </div>
+                    <div class="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span>@L["Stats:"] <strong class="text-foreground font-mono">@(Model.HeroSection?.Stat1Value ?? "6+")</strong> / <strong class="text-foreground font-mono">@(Model.HeroSection?.Stat2Value ?? "2+")</strong> / <strong class="text-foreground font-mono">@(Model.HeroSection?.Stat3Value ?? "5+")</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditHero" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] shadow-[0_0_15px_hsl(var(--cyan)/0.25)] transition-all">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    @L["Edit Hero Section"]
+                </a>
+            </div>
+        </div>
+
+        <!-- 2. HUMAN VISION -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-azure/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-azure/10 text-azure border border-azure/20">
+                        <i data-lucide="heart-handshake" class="w-3.5 h-3.5"></i>
+                        #human-vision
+                    </span>
+                    @if (Model.HumanVisionSection?.IsPublished == true)
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            @L["Draft"]
+                        </span>
+                    }
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-azure transition-colors">
+                        @L["Human Vision"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["Core philosophy narrative, dual-paragraph message on purposeful tech, and side illustration."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Badge:"]</span>
+                        <span class="text-foreground font-semibold">@(Model.HumanVisionSection?.BadgeEn ?? "Our Core Philosophy")</span>
+                    </div>
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Title (EN):"]</span>
+                        <span class="text-foreground">@(Model.HumanVisionSection?.TitlePrefixEn ?? "Neurix AI ") <span class="text-azure font-bold">@(Model.HumanVisionSection?.TitleHighlightEn ?? "Human Vision")</span></span>
+                    </div>
+                    <div dir="rtl">
+                        <span class="text-muted-foreground font-medium">@L["Title (AR):"]</span>
+                        <span class="text-foreground">@(Model.HumanVisionSection?.TitlePrefixAr ?? "رؤية نيوركس AI ") <span class="text-azure font-bold">@(Model.HumanVisionSection?.TitleHighlightAr ?? "الإنسانية")</span></span>
+                    </div>
+                    <div class="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span>@L["Image:"] <span class="text-foreground font-mono truncate max-w-[150px] inline-block align-bottom">@(Model.HumanVisionSection?.ImagePath ?? "Bringing Clarity...")</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditHumanVision" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-secondary/80 border border-border hover:border-azure/40 transition-all">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    @L["Edit Human Vision"]
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. MESSAGE TO PIONEERS -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-purple-500/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                        <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+                        #pioneers
+                    </span>
+                    @if (Model.PioneersSection?.IsPublished == true)
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            @L["Draft"]
+                        </span>
+                    }
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-purple-400 transition-colors">
+                        @L["Message to Pioneers"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["Inspirational manifesto for engineers, programmers, and creators with custom image."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Badge:"]</span>
+                        <span class="text-foreground font-semibold">@(Model.PioneersSection?.BadgeEn ?? "For the Innovators")</span>
+                    </div>
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Title (EN):"]</span>
+                        <span class="text-foreground">@(Model.PioneersSection?.TitlePrefixEn ?? "A Message to the ") <span class="text-purple-400 font-bold">@(Model.PioneersSection?.TitleHighlightEn ?? "Pioneers...")</span></span>
+                    </div>
+                    <div dir="rtl">
+                        <span class="text-muted-foreground font-medium">@L["Title (AR):"]</span>
+                        <span class="text-foreground">@(Model.PioneersSection?.TitlePrefixAr ?? "رسالة ") <span class="text-purple-400 font-bold">@(Model.PioneersSection?.TitleHighlightAr ?? "لرواد الابتكار")</span></span>
+                    </div>
+                    <div class="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span>@L["Image:"] <span class="text-foreground font-mono truncate max-w-[150px] inline-block align-bottom">@(Model.PioneersSection?.ImagePath ?? "Infrastructure.png")</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditPioneers" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-secondary/80 border border-border hover:border-purple-500/40 transition-all">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    @L["Edit Pioneers Section"]
+                </a>
+            </div>
+        </div>
+
+        <!-- 4. CORE CAPABILITIES / PILLARS -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-cyan/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan/10 text-cyan border border-cyan/20">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                        #pillars
+                    </span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-cyan/10 text-cyan">
+                            @Model.Pillars.Count @L["Pillars"]
+                        </span>
+                        @if (Model.PillarsSection?.IsPublished != false)
+                        {
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                @L["Draft"]
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-cyan transition-colors">
+                        @L["Core Capabilities"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["Modular capability cards with custom icons (Advanced AI, Digital Platforms, Security, etc.)"]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Title (EN/AR):"]</span>
+                        <span class="text-foreground font-semibold">@(Model.PillarsSection?.TitleEn ?? "Core Capabilities")</span> / <span class="text-foreground" dir="rtl">@(Model.PillarsSection?.TitleAr ?? "الركائز الاساسية")</span>
+                    </div>
+                    <div class="pt-2 border-t border-border">
+                        <span class="text-muted-foreground font-medium block mb-1.5">@L["Active Cards:"]</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            @if (Model.Pillars.Any())
+                            {
+                                @foreach (var p in Model.Pillars.Take(4))
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] bg-background border border-border text-foreground">
+                                        <i data-lucide="@p.IconName" class="w-3 h-3 text-cyan"></i>
+                                        @p.TitleEn
+                                    </span>
+                                }
+                                @if (Model.Pillars.Count > 4)
+                                {
+                                    <span class="text-[11px] text-muted-foreground self-center">+@(Model.Pillars.Count - 4) more</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-xs text-muted-foreground">@L["No cards added yet."]</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditPillars" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-secondary/80 border border-border hover:border-cyan/40 transition-all">
+                    <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                    @L["Manage Capabilities & Cards"]
+                </a>
+            </div>
+        </div>
+
+        <!-- 4b. OUR ECOSYSTEM / DIVISIONS -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-azure/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-azure/10 text-azure border border-azure/20">
+                        <i data-lucide="grid-2x2" class="w-3.5 h-3.5"></i>
+                        #divisions
+                    </span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-azure/10 text-azure">
+                            @Model.DivisionItems.Count @L["Cards"]
+                        </span>
+                        @if (Model.DivisionsSection?.IsPublished != false)
+                        {
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                @L["Draft"]
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-azure transition-colors">
+                        @L["Our Ecosystem"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["The subsidiary cards band — badge, headline, intro copy, and one card per division with its own icon and link."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Badge:"]</span>
+                        <span class="text-foreground font-semibold">@(Model.DivisionsSection?.BadgeEn ?? "Our Ecosystem")</span>
+                    </div>
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Headline:"]</span>
+                        <span class="text-foreground">@(Model.DivisionsSection?.TitlePrefixEn ?? "Five subsidiaries. ") <span class="text-azure font-bold">@(Model.DivisionsSection?.TitleHighlightEn ?? "One ecosystem.")</span></span>
+                    </div>
+                    <div class="pt-2 border-t border-border">
+                        <span class="text-muted-foreground font-medium block mb-1.5">@L["Active Cards:"]</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            @if (Model.DivisionItems.Any())
+                            {
+                                @foreach (var d in Model.DivisionItems.Take(4))
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] bg-background border border-border text-foreground">
+                                        <i data-lucide="@d.IconName" class="w-3 h-3 text-azure"></i>
+                                        @d.TitleEn
+                                    </span>
+                                }
+                                @if (Model.DivisionItems.Count > 4)
+                                {
+                                    <span class="text-[11px] text-muted-foreground self-center">+@(Model.DivisionItems.Count - 4) more</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-xs text-muted-foreground">@L["No cards added yet."]</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditDivisions" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-secondary/80 border border-border hover:border-azure/40 transition-all">
+                    <i data-lucide="grid-2x2" class="w-3.5 h-3.5"></i>
+                    @L["Manage Ecosystem & Cards"]
+                </a>
+            </div>
+        </div>
+
+        <!-- 4c. AI & ENGINEERING -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-purple-500/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                        <i data-lucide="boxes" class="w-3.5 h-3.5"></i>
+                        #services
+                    </span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-purple-500/10 text-purple-400">
+                            @Model.AiEngineeringItems.Count @L["Cards"]
+                        </span>
+                        @if (Model.AiEngineeringSection?.IsPublished != false)
+                        {
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                @L["Draft"]
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-purple-400 transition-colors">
+                        @L["AI & Engineering"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["The four-across core services band under the ecosystem grid — badge, heading, and its compact cards."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Badge:"]</span>
+                        <span class="text-foreground font-semibold">@(Model.AiEngineeringSection?.BadgeEn ?? "Core Services")</span>
+                    </div>
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Title (EN/AR):"]</span>
+                        <span class="text-foreground font-semibold">@(Model.AiEngineeringSection?.TitleEn ?? "AI & Engineering")</span>
+                    </div>
+                    <div class="pt-2 border-t border-border">
+                        <span class="text-muted-foreground font-medium block mb-1.5">@L["Active Cards:"]</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            @if (Model.AiEngineeringItems.Any())
+                            {
+                                @foreach (var s in Model.AiEngineeringItems.Take(4))
+                                {
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] bg-background border border-border text-foreground">
+                                        <i data-lucide="@s.IconName" class="w-3 h-3 text-purple-400"></i>
+                                        @s.TitleEn
+                                    </span>
+                                }
+                                @if (Model.AiEngineeringItems.Count > 4)
+                                {
+                                    <span class="text-[11px] text-muted-foreground self-center">+@(Model.AiEngineeringItems.Count - 4) more</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-xs text-muted-foreground">@L["No cards added yet."]</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditAiEngineering" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-secondary/80 border border-border hover:border-purple-500/40 transition-all">
+                    <i data-lucide="boxes" class="w-3.5 h-3.5"></i>
+                    @L["Manage AI & Engineering"]
+                </a>
+            </div>
+        </div>
+
+        <!-- 4d. LIST BAND HEADINGS (#portfolio, #insights, #testimonials) -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-cyan/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan/10 text-cyan border border-cyan/20">
+                        <i data-lucide="heading" class="w-3.5 h-3.5"></i>
+                        #portfolio · #insights · #testimonials
+                    </span>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-cyan transition-colors">
+                        @L["Band Headings"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["Badges, headlines, intro lines, and “view all” buttons for the three bands whose cards come from Projects, Blog Posts, and Testimonials."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 divide-y divide-border text-xs">
+                    @{
+                        var bands = new[]
+                        {
+                            new { Key = "portfolio", Label = L["Featured Deployments"], Action = "EditListHeader", Fallback = "Engineering Portfolio" },
+                            new { Key = "insights", Label = L["Latest Insights"], Action = "EditListHeader", Fallback = "Research & Thought Leadership" },
+                            new { Key = "testimonials", Label = L["What Partners Say"], Action = "EditListHeader", Fallback = "Trusted by Leaders" }
+                        };
+                    }
+                    @foreach (var band in bands)
+                    {
+                        var header = Model.ListHeader(band.Key);
+                        <div class="flex items-center justify-between gap-2 py-2 first:pt-0 last:pb-0">
+                            <div class="min-w-0">
+                                <span class="text-foreground font-semibold block truncate">@band.Label</span>
+                                <span class="text-muted-foreground truncate block">@(header?.BadgeEn ?? band.Fallback)</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-shrink-0">
+                                @if (header == null)
+                                {
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground" title="@L["Using the built-in wording."]">
+                                        @L["Default"]
+                                    </span>
+                                }
+                                else if (header.IsPublished)
+                                {
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400" title="@L["Live"]"></span>
+                                }
+                                else
+                                {
+                                    <span class="w-2 h-2 rounded-full bg-amber-400" title="@L["Draft"]"></span>
+                                }
+                                <a asp-action="@band.Action" asp-route-sectionKey="@band.Key" asp-route-companyId="@Model.SelectedCompanyId"
+                                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium text-foreground hover:bg-muted border border-border transition-colors">
+                                    <i data-lucide="edit-2" class="w-3 h-3 text-cyan"></i>
+                                    @L["Edit"]
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <p class="text-[11px] text-muted-foreground text-center">
+                    @L["Each band hides itself automatically when it has no published cards."]
+                </p>
+            </div>
+        </div>
+
+        <!-- 5. VISION & IMPLEMENTATION FRAMEWORK -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-emerald-500/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                        #ethics
+                    </span>
+                    @if (Model.EthicsSection?.IsPublished != false)
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            @L["Draft"]
+                        </span>
+                    }
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-emerald-400 transition-colors">
+                        @L["Vision Framework"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["Operational strategy narrative, live service matrix, and dual overlapping tech images."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Badge:"]</span>
+                        <span class="text-foreground font-semibold">@(Model.EthicsSection?.BadgeEn ?? "Operational Strategy")</span>
+                    </div>
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Headline:"]</span>
+                        <span class="text-foreground">@(Model.EthicsSection?.TitlePrefixEn ?? "Our Vision & ") <span class="text-emerald-400 font-bold">@(Model.EthicsSection?.TitleHighlightEn ?? "Implementation...")</span></span>
+                    </div>
+                    <div class="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span>@L["Images:"] <span class="text-foreground font-mono">Software + Research</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditEthics" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-secondary/80 border border-border hover:border-emerald-500/40 transition-all">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    @L["Edit Vision Framework"]
+                </a>
+            </div>
+        </div>
+
+        <!-- 6. CALL TO ACTION BANNER (#cta) -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-cyan/40 transition-all shadow-sm group">
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-cyan/10 text-cyan border border-cyan/20">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                        #cta
+                    </span>
+                    @if (Model.CtaSection?.IsPublished != false)
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> @L["Live"]
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            @L["Draft"]
+                        </span>
+                    }
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-foreground font-display group-hover:text-cyan transition-colors">
+                        @L["Call To Action Banner"]
+                    </h3>
+                    <p class="text-xs text-muted-foreground mt-1">
+                        @L["Manage the bottom call to action banner, headline, contact email, and CTA button."]
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-background/50 border border-border/70 space-y-2 text-xs">
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Badge:"]</span>
+                        <span class="text-foreground font-semibold">@(Model.CtaSection?.BadgeEn ?? "Let's Build Together")</span>
+                    </div>
+                    <div>
+                        <span class="text-muted-foreground font-medium">@L["Headline:"]</span>
+                        <span class="text-foreground">@(Model.CtaSection?.TitlePrefixEn ?? "Ready to engineer") <span class="text-cyan font-bold">@(Model.CtaSection?.TitleHighlightEn ?? " your future?")</span></span>
+                    </div>
+                    <div class="pt-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span>@L["Button:"] <span class="text-foreground font-mono">@(Model.CtaSection?.ButtonTextEn ?? "Contact Us")</span></span>
+                        <span>@L["Email:"] <span class="text-foreground font-mono">@(Model.CtaSection?.ContactEmail ?? "neurix@aidaleel.com")</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-border">
+                <a asp-action="EditCta" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-foreground bg-secondary hover:bg-secondary/80 border border-border hover:border-cyan/40 transition-all">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    @L["Edit Call To Action"]
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

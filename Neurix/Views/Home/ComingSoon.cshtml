@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Coming Soon";
+}
+
+<section class="relative min-h-[80vh] flex items-center justify-center overflow-hidden pt-24 pb-12">
+    @* Background glows *@
+    <div class="absolute inset-0 z-0 bg-hero-radial opacity-50" aria-hidden="true"></div>
+    <div class="absolute inset-0 z-0 bg-grid-pattern pointer-events-none opacity-30" aria-hidden="true"></div>
+
+    <div class="container relative z-30 max-w-3xl px-6 text-center">
+        <div class="magnetic-card card-glow-border rounded-[2.5rem] border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-10 md:p-16 mx-auto animate-fade-in-up">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-cyan/10 flex items-center justify-center text-cyan mb-8 shadow-[0_0_25px_hsl(var(--cyan)/0.25)] relative overflow-hidden">
+                <div class="absolute inset-0 bg-cyan/20 animate-pulse"></div>
+                <i data-lucide="clock" class="w-10 h-10 relative z-10"></i>
+            </div>
+            
+            <h1 class="font-display text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6" data-en="Coming Soon" data-ar="قريباً">
+                Coming Soon
+            </h1>
+            
+            <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-10 max-w-xl mx-auto" data-en="We are engineering something extraordinary. This feature will be available in a future update." data-ar="نحن نهندس شيئاً استثنائياً. ستكون هذه الميزة متاحة في تحديث مستقبلي.">
+                We are engineering something extraordinary. This feature will be available in a future update.
+            </p>
+            
+            <a asp-controller="Home" asp-action="Index" class="inline-flex items-center justify-center rounded-[16px] px-8 py-3.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300" data-en="Return to Home" data-ar="العودة للرئيسية">
+                Return to Home
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+}

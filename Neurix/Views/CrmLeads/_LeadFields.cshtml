@@ -1,0 +1,102 @@
+@model Neurix.Models.CrmLeadFormViewModel
+@using Neurix.DAL.Enums
+
+@{
+    const string InputCls = "w-full rounded-xl bg-background/60 border border-border px-4 h-11 text-sm outline-none transition-all duration-300 focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]";
+    const string AreaCls = "w-full rounded-xl bg-background/60 border border-border px-4 py-3 text-sm outline-none transition-all duration-300 resize-y focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]";
+    const string LabelCls = "block text-sm font-medium mb-2";
+    const string ErrCls = "text-xs text-rose-500/80 mt-1.5 block font-medium";
+
+    // Converted is reachable only through the Convert action, so it is not offered
+    // here. Matched on both forms the enum select list can take (value or name).
+    // Converted is reachable only through the Convert action, so it is not offered here.
+    // Item text is run through the localizer: GetEnumSelectList yields the raw enum name.
+    var selectableStatuses = Html.GetEnumSelectList<LeadStatus>()
+        .Where(o => o.Value != ((int)LeadStatus.Converted).ToString()
+                 && o.Value != nameof(LeadStatus.Converted))
+        .Select(o => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(L[o.Text], o.Value))
+        .ToList();
+}
+
+<div asp-validation-summary="ModelOnly" class="mb-6 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-500 empty:hidden"></div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+    <div>
+        <label asp-for="FullName" class="@LabelCls"></label>
+        <input asp-for="FullName" class="@InputCls" placeholder='@L["Jane Doe"]' />
+        <span asp-validation-for="FullName" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Email" class="@LabelCls"></label>
+        <input asp-for="Email" type="email" class="@InputCls" placeholder="jane@acme.com" />
+        <span asp-validation-for="Email" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="CompanyName" class="@LabelCls"></label>
+        <input asp-for="CompanyName" class="@InputCls" placeholder='@L["Acme Corporation"]' />
+        <span asp-validation-for="CompanyName" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Phone" class="@LabelCls"></label>
+        <input asp-for="Phone" class="@InputCls" placeholder="+20 100 000 0000" />
+        <span asp-validation-for="Phone" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="Status" class="@LabelCls"></label>
+        @if (Model.IsConverted)
+        {
+            @* Owned by the conversion action, not this form. Posted as a hidden
+               field so the value still round-trips on a validation redisplay. *@
+            <div class="flex items-center h-11">
+                <partial name="_CrmLeadStatusBadge" model="Model.Status" />
+            </div>
+            <input asp-for="Status" type="hidden" />
+            <span class="text-xs text-muted-foreground mt-1.5 block">@L["A converted lead keeps its status."]</span>
+        }
+        else
+        {
+            @* Converted is filtered out: reaching it by hand would claim a company
+               and contact exist without creating either. The service refuses it too,
+               so a hand-crafted post gets the same answer. *@
+            <select asp-for="Status" class="@InputCls" asp-items="selectableStatuses"></select>
+            <span asp-validation-for="Status" class="@ErrCls"></span>
+        }
+    </div>
+
+    <div>
+        <label asp-for="Source" class="@LabelCls"></label>
+        <select asp-for="Source" asp-items="Html.GetEnumSelectList<LeadSource>().Select(o => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(L[o.Text], o.Value))" class="@InputCls"></select>
+        <span asp-validation-for="Source" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="AssignedToUserId" class="@LabelCls"></label>
+        <select asp-for="AssignedToUserId" asp-items="Model.AssignedToOptions" class="@InputCls">
+            <option value="">@L["— Unassigned —"]</option>
+        </select>
+        <span asp-validation-for="AssignedToUserId" class="@ErrCls"></span>
+    </div>
+
+    <div>
+        <label asp-for="InquiryType" class="@LabelCls"></label>
+        <input asp-for="InquiryType" class="@InputCls" placeholder='@L["Demo, Quote, Partnership, Support"]' />
+        <span asp-validation-for="InquiryType" class="@ErrCls"></span>
+    </div>
+
+    <div class="md:col-span-2">
+        <label asp-for="Message" class="@LabelCls"></label>
+        <textarea asp-for="Message" rows="3" placeholder='@L["The enquiry as it came in"]' class="@AreaCls"></textarea>
+        <span asp-validation-for="Message" class="@ErrCls"></span>
+    </div>
+
+    <div class="md:col-span-2">
+        <label asp-for="Notes" class="@LabelCls"></label>
+        <textarea asp-for="Notes" rows="4" placeholder='@L["Internal notes on how this lead is progressing"]' class="@AreaCls"></textarea>
+        <span asp-validation-for="Notes" class="@ErrCls"></span>
+    </div>
+</div>

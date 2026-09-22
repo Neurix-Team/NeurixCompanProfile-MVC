@@ -1,0 +1,1064 @@
+/* ============================================================
+    Neurix Holding — Design System
+   Migrated from React/Tailwind source into vanilla CSS variables.
+   Dark palette : #000000 / #122442 / #004CC7 / #0076FF / #2A91FF
+   Light palette: #F8FAFC / #FFFFFF / #E2E8F0 borders / #122442 headings
+   ============================================================ */
+
+
+/* ── CSS Custom Properties ─────────────────────────────────── */
+
+@import url('./fonts.css');
+
+/* LIGHT MODE (default) */
+:root {
+    --background: 210 40% 98%;
+    /* #F8FAFC */
+    --foreground: 218 57% 17%;
+    /* #122442 */
+
+    --card: 0 0% 100%;
+    /* #FFFFFF */
+    --card-foreground: 218 57% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 218 57% 17%;
+
+    --primary: 211 100% 50%;
+    /* #0076FF */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 218 57% 17%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 40%;
+
+    --accent: 211 100% 58%;
+    --accent-foreground: 218 57% 17%;
+
+    --deep-blue: 217 100% 39%;
+    /* #004CC7 */
+    --azure: 211 100% 50%;
+    /* #0076FF */
+    --cyan: 211 100% 58%;
+    /* #2A91FF */
+    --navy: 218 57% 17%;
+    /* #122442 */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    /* #E2E8F0 */
+    --input: 214 32% 91%;
+    --ring: 211 100% 50%;
+
+    /* Gradients */
+    --gradient-text: linear-gradient(90deg, hsl(var(--azure)), hsl(var(--cyan)));
+    --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 40%, hsl(var(--azure) / 0.08), transparent 70%);
+    --gradient-button: linear-gradient(135deg, hsl(var(--azure)), hsl(var(--deep-blue)));
+
+    /* Glows */
+    --glow-cyan: 0 0 24px hsl(var(--cyan) / 0.45), 0 0 60px hsl(var(--cyan) / 0.2);
+    --glow-azure: 0 0 20px hsl(var(--azure) / 0.5), 0 8px 30px hsl(var(--azure) / 0.25);
+    --shadow-card-light: 0 10px 30px -12px hsl(var(--azure) / 0.25);
+
+    /* Motion */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-theme: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease;
+
+    --radius: 0.5rem;
+}
+
+/* DARK MODE */
+.dark {
+    --background: 0 0% 0%;
+    /* #000000 */
+    --foreground: 0 0% 100%;
+
+    --card: 218 57% 17%;
+    /* #122442 */
+    --card-foreground: 0 0% 100%;
+
+    --popover: 218 57% 17%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 218 57% 17%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 218 40% 12%;
+    --muted-foreground: 215 20% 75%;
+
+    --accent: 211 100% 58%;
+    --accent-foreground: 0 0% 0%;
+
+    --deep-blue: 217 100% 39%;
+    --azure: 211 100% 50%;
+    --cyan: 211 100% 58%;
+    --navy: 218 57% 17%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 218 40% 18%;
+    --input: 218 40% 18%;
+    --ring: 211 100% 58%;
+
+    --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 40%, hsl(var(--navy) / 0.7), hsl(0 0% 0%) 70%);
+}
+
+
+/* ── Global Reset / Base ───────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    border-color: hsl(var(--border));
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.scroll-indicator {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px solid;
+    border-radius: 9999px;
+    /* fully rounded */
+    border-image-slice: 1;
+    border-image-source: linear-gradient(90deg, hsl(var(--azure) / 0) 0%, hsl(var(--azure)) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.scroll-indicator svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    stroke: hsl(var(--azure));
+}
+
+body {
+    margin: 0;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: var(--transition-theme);
+}
+
+html.font-arabic,
+html.font-arabic body {
+    font-family: 'IBM Plex Sans Arabic', 'Inter', system-ui, sans-serif;
+}
+
+html.font-arabic h1,
+html.font-arabic h2,
+html.font-arabic h3,
+html.font-arabic h4 {
+    font-family: 'IBM Plex Sans Arabic', 'Space Grotesk', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+
+/* ── Container ─────────────────────────────────────────────── */
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+
+/* ── Colour Utilities ──────────────────────────────────────── */
+
+.text-foreground {
+    color: hsl(var(--foreground));
+}
+
+.text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+}
+
+.text-cyan {
+    color: hsl(var(--cyan));
+}
+
+.text-azure {
+    color: hsl(var(--azure));
+}
+
+.text-primary-foreground {
+    color: hsl(var(--primary-foreground));
+}
+
+.bg-background {
+    background-color: hsl(var(--background));
+}
+
+.bg-card {
+    background-color: hsl(var(--card));
+}
+
+.bg-cyan {
+    background-color: hsl(var(--cyan));
+}
+
+.border-border {
+    border-color: hsl(var(--border));
+}
+
+/* ── Custom Divider ───────────────────────────────────── */
+.divider-vertical {
+    width: 1px;
+    height: 1.5rem;
+    background-color: #E1E7EF;
+    margin: 0 0.5rem;
+    display: inline-block;
+    align-self: center;
+}
+
+@media (max-width: 640px) {
+    .divider-vertical {
+        display: none;
+    }
+}
+
+/* Dark mode vertical divider */
+.dark .divider-vertical {
+    background-color: #2D3748;
+    /* dark gray */
+}
+
+
+
+
+/* ── Text Gradient ─────────────────────────────────────────── */
+
+.text-gradient-brand {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.text-gradient-stat {
+    background: linear-gradient(to bottom right, hsl(var(--azure)), hsl(var(--cyan)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.dark .text-gradient-stat {
+    background: linear-gradient(to bottom right, hsl(var(--cyan)), hsl(var(--azure)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+
+/* ── Button Gradient ───────────────────────────────────────── */
+
+.bg-button-gradient {
+    background-image: var(--gradient-button);
+}
+
+
+/* ── Semantic Button Classes ──────────────────────────────── */
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    padding: 0.875rem 1.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: hsl(var(--primary-foreground));
+    background-image: var(--gradient-button);
+    box-shadow: 0 0 20px hsl(var(--azure) / 0.35);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 30px hsl(var(--azure) / 0.6);
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: hsl(var(--foreground));
+    background: transparent;
+    border: 1px solid hsl(var(--border));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.dark .btn-secondary {
+    color: hsl(0 0% 100%);
+    border-color: hsl(0 0% 100% / 0.2);
+}
+
+.btn-secondary:hover {
+    background-color: hsl(var(--foreground) / 0.05);
+}
+
+.dark .btn-secondary:hover {
+    background-color: hsl(0 0% 100% / 0.1);
+}
+
+
+/* ── Arabic / RTL Letter-Spacing Fix ─────────────────────── */
+
+[dir="rtl"] .font-display,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] p,
+[dir="rtl"] a,
+[dir="rtl"] button,
+[dir="rtl"] .neurix-brand-text {
+    letter-spacing: normal !important;
+}
+
+html.font-arabic .font-display,
+html.font-arabic h1,
+html.font-arabic h2,
+html.font-arabic h3,
+html.font-arabic h4,
+html.font-arabic p,
+html.font-arabic a,
+html.font-arabic button,
+html.font-arabic .neurix-brand-text {
+    letter-spacing: normal !important;
+}
+
+html.font-arabic h1,
+html.font-arabic h2,
+html.font-arabic h3,
+html.font-arabic h4 {
+    line-height: 1.4 !important;
+}
+
+
+/* ── Glow Utilities ────────────────────────────────────────── */
+
+.glow-cyan {
+    box-shadow: var(--glow-cyan);
+}
+
+.glow-azure {
+    box-shadow: var(--glow-azure);
+}
+
+.shadow-card-light {
+    box-shadow: var(--shadow-card-light);
+}
+
+.dark .shadow-card-light {
+    box-shadow: none;
+}
+
+
+/* ── Hero Backgrounds ──────────────────────────────────────── */
+
+.bg-hero-radial {
+    background-image: var(--gradient-hero);
+}
+
+
+/* ── Background Textures ───────────────────────────────────── */
+
+.bg-grid-pattern {
+    background-image:
+        linear-gradient(to right, hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 90%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 40%, transparent 90%);
+}
+
+.dark .bg-grid-pattern {
+    background-image:
+        linear-gradient(to right, hsl(var(--cyan) / 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, hsl(var(--cyan) / 0.06) 1px, transparent 1px);
+}
+
+.bg-dot-pattern {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.12) 1px, transparent 1px);
+    background-size: 22px 22px;
+}
+
+.dark .bg-dot-pattern {
+    background-image: radial-gradient(hsl(var(--cyan) / 0.18) 1px, transparent 1px);
+}
+
+
+/* ── Card Glow Border (dark mode) ──────────────────────────── */
+
+.card-glow-border {
+    position: relative;
+}
+
+.dark .card-glow-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--cyan) / 0.35), transparent 40%, hsl(var(--azure) / 0.25));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+
+/* ── Light-Mode Card Shadow ────────────────────────────────── */
+.shadow-card-light {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Floating Label Form Fields ────────────────────────────── */
+
+.floating-field {
+    position: relative;
+}
+
+.floating-field>label {
+    position: absolute;
+    inset-inline-start: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.95rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    padding: 0 0.35rem;
+}
+
+.floating-field:focus-within>label,
+.floating-field.is-filled>label {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+    color: hsl(var(--cyan));
+    background: hsl(var(--background));
+}
+
+.floating-field.textarea>label {
+    top: 1.1rem;
+    transform: none;
+}
+
+.floating-field.textarea:focus-within>label,
+.floating-field.textarea.is-filled>label {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+}
+
+
+/* ── Keyframe Animations ───────────────────────────────────── */
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px hsl(var(--cyan) / 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px hsl(var(--cyan) / 0.6);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out both;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+
+/* ── Stagger / Reveal helpers ──────────────────────────────── */
+
+.anime-reveal,
+.stagger-item {
+    will-change: transform, opacity;
+}
+
+.anime-hidden .anime-reveal,
+.anime-hidden .stagger-item {
+    opacity: 0;
+    transform: translateY(16px);
+}
+
+
+/* ── Navbar Underline Effect ───────────────────────────────── */
+
+.nav-underline {
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background-color: hsl(var(--cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+[dir="rtl"] .nav-underline {
+    left: auto;
+    right: 0;
+    transform-origin: right;
+}
+
+a:hover>.nav-underline {
+    transform: scaleX(1);
+}
+
+
+/* ── RTL Arrow Flip ───────────────────────────────────────── */
+
+[dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+}
+
+/* Consistent brand spacing for LTR/RTL */
+.neurix-brand {
+    gap: 0.625rem;
+}
+
+.neurix-brand-text {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+[dir="rtl"] .neurix-brand {
+    gap: 0.625rem;
+}
+
+[dir="rtl"] .neurix-brand-text {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* ── Header Nav Link Underline ────────────────────────────── */
+
+.nav-link-underline {
+    position: absolute;
+    left: 0;
+    right: auto;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background-color: hsl(var(--cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.group:hover .nav-link-underline,
+.nav-link-underline.is-active {
+    transform: scaleX(1);
+}
+
+[dir="rtl"] .nav-link-underline {
+    left: auto;
+    right: 0;
+    transform-origin: right;
+}
+
+/* ── Main Navbar & Mobile Menu Full-Width Fix ──────────────── */
+
+#main-navbar {
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    inset-inline: 0 !important;
+}
+
+[dir="rtl"] #main-navbar {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    inset-inline: 0 !important;
+}
+
+#main-navbar > nav {
+    width: 100%;
+    column-gap: 1.5rem;
+}
+
+.neurix-nav-links {
+    gap: clamp(1.5rem, 1.8vw, 2rem);
+    margin-inline: 0;
+}
+
+.neurix-nav-links > li {
+    flex-shrink: 0;
+}
+
+.neurix-nav-links > li > a {
+    display: inline-flex;
+    padding-block: 0.75rem;
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .neurix-nav-links { display: none; }
+    #mobile-menu-btn { display: inline-flex; }
+    #mobile-menu { display: block; }
+}
+
+#mobile-menu {
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    inset-inline: 0 !important;
+}
+
+[dir="rtl"] #mobile-menu {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    inset-inline: 0 !important;
+}
+
+
+/* ── Footer Link Underline ─────────────────────────────────── */
+
+.footer-link {
+    position: relative;
+    display: inline-block;
+}
+
+.footer-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background-color: hsl(var(--cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+[dir="rtl"] .footer-link::after {
+    left: auto;
+    right: 0;
+    transform-origin: right;
+}
+
+.footer-link:hover::after {
+    transform: scaleX(1);
+}
+
+
+/* ── Lucide Icon Placeholder via SVG (inline or external) ─── */
+/* We use inline SVGs in the HTML directly for icons          */
+
+
+/* ── Responsive Visibility ─────────────────────────────────── */
+
+.hidden-mobile {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .hidden-mobile {
+        display: flex;
+    }
+
+    .hidden-desktop {
+        display: none;
+    }
+}
+
+@media (min-width: 640px) {
+    .hidden-sm {
+        display: inline-flex;
+    }
+}
+
+.hidden-sm {
+    display: none;
+}
+
+
+
+/* ── WebGL Canvas Layer ────────────────────────────────────── */
+
+.neurix-editorial-image {
+    transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .neurix-editorial-image:hover {
+        transform: scale(1.035);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .neurix-editorial-image { transition: none; }
+}
+
+#neurix-gl {
+    z-index: 20;
+    opacity: 0.96;
+    contain: strict;
+    overflow: hidden;
+}
+
+.dark #neurix-gl {
+    opacity: 0.58;
+}
+
+#neurix-sphere-preview {
+    position: absolute;
+    width: 140vmin;
+    height: 140vmin;
+    max-width: none;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#neurix-sphere-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#neurix-network {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: url('/images/ai-network.svg') center / 310px 210px repeat;
+    mask-image: radial-gradient(ellipse at center, #000 20%, transparent 85%);
+}
+
+@keyframes neurix-page-enter {
+    from { opacity: 0.5; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    #public-main > section:first-of-type > .container {
+        animation: neurix-page-enter 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    main .magnetic-card.neurix-reveal-pending { opacity: 0; }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    main .magnetic-card {
+        transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 280ms, box-shadow 280ms;
+    }
+    main .magnetic-card:hover {
+        transform: perspective(1200px) translateY(-7px) rotateX(3deg) scale(1.012);
+        border-color: rgb(42 145 255 / 0.55);
+        box-shadow: 0 16px 36px -18px rgb(0 118 255 / 0.4);
+    }
+}
+
+main .magnetic-card:focus-within { opacity: 1; }
+
+@media (hover: hover) and (pointer: fine) {
+    body main :is(.magnetic-card, .card-glow-border, article.rounded-2xl, a.rounded-2xl.border, div.rounded-2xl.border):hover {
+        border-color: rgb(42 145 255 / 0.75);
+        box-shadow: 0 0 0 1px rgb(42 145 255 / 0.28),
+                    0 0 24px rgb(0 118 255 / 0.23),
+                    0 16px 40px -14px rgb(0 118 255 / 0.32);
+    }
+}
+
+body main :is(.magnetic-card, .card-glow-border, article.rounded-2xl, a.rounded-2xl.border, div.rounded-2xl.border):focus-within {
+    border-color: rgb(42 145 255 / 0.75);
+    box-shadow: 0 0 0 1px rgb(42 145 255 / 0.3), 0 0 24px rgb(0 118 255 / 0.2);
+}
+
+
+/* ── Accessibility: Reduced Motion ─────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .animate-fade-in-up,
+    .animate-fade-in,
+    .animate-pulse-glow,
+    .animate-pulse {
+        animation: none !important;
+    }
+}
+/* ── Form Required Indicator & Validation Messages ────────── */
+/* The asterisk is emitted by RequiredLabelTagHelper from model metadata,
+   so this is the single place its appearance is defined. */
+.required-indicator {
+    color: hsl(var(--destructive));
+    margin-inline-start: 0.25rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* jQuery Validation Unobtrusive toggles these classes. Without them the inline
+   messages rendered on blur/submit inherit body colour and read as plain text. */
+.field-validation-error {
+    display: block;
+    margin-top: 0.375rem;
+    color: hsl(var(--destructive));
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error,
+textarea.input-validation-error,
+select.input-validation-error {
+    border-color: hsl(var(--destructive)) !important;
+    box-shadow: 0 0 0 1px hsl(var(--destructive) / 0.35) !important;
+}
+
+.validation-summary-errors {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid hsl(var(--destructive) / 0.4);
+    border-radius: 0.75rem;
+    background-color: hsl(var(--destructive) / 0.08);
+    color: hsl(var(--destructive));
+    font-size: 0.8125rem;
+}
+
+.validation-summary-errors ul {
+    margin: 0;
+    padding-inline-start: 1.125rem;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+/* ── RTL corrections for the dashboard ────────────────────── */
+/*
+   The dashboard markup uses Tailwind's PHYSICAL utilities (pl-, mr-, left-,
+   text-left, border-r). Those do not mirror when dir="rtl", so in Arabic the
+   search icons, table alignment and sidebar border all sat on the wrong side.
+
+   Flipping them here rather than editing ~45 call sites across 82 views keeps it in
+   one place. These selectors are [dir="rtl"] + class = specificity (0,2,0), which
+   beats Tailwind's own (0,1,0) regardless of stylesheet order — important because the
+   Play CDN injects its styles after this file.
+
+   New markup should prefer the logical utilities (ps-/pe-/ms-/me-/start-/end-/
+   text-start) and will then need no entry here.
+*/
+[dir="rtl"] .text-left  { text-align: right; }
+[dir="rtl"] .text-right { text-align: left; }
+
+/* Compound padding rules for search inputs where pl-10 and pr-4 co-exist */
+[dir="rtl"] .pl-10.pr-4,
+[dir="rtl"] input[type="search"].pl-10,
+html[dir="rtl"] input[type="search"].pl-10 {
+    padding-left: 1rem !important;
+    padding-right: 2.5rem !important;
+}
+
+[dir="rtl"] .pl-4.pr-10 {
+    padding-left: 2.5rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Individual padding overrides when not compounded */
+[dir="rtl"] .pl-4:not(.pr-10):not(.pr-4)  { padding-left: 0; padding-right: 1rem; }
+[dir="rtl"] .pl-10:not(.pr-4):not(.pr-10) { padding-left: 0; padding-right: 2.5rem; }
+[dir="rtl"] .pr-1                         { padding-right: 0; padding-left: 0.25rem; }
+[dir="rtl"] .pr-4:not(.pl-10):not(.pl-4)  { padding-right: 0; padding-left: 1rem; }
+[dir="rtl"] .pr-10:not(.pl-4):not(.pl-10) { padding-right: 0; padding-left: 2.5rem; }
+
+/* margins: mr-* -> margin-left */
+[dir="rtl"] .mr-1\.5 { margin-right: 0; margin-left: 0.375rem; }
+[dir="rtl"] .mr-2    { margin-right: 0; margin-left: 0.5rem; }
+[dir="rtl"] .mr-3    { margin-right: 0; margin-left: 0.75rem; }
+
+/* absolute positioning for the search-input icons */
+[dir="rtl"] .left-0:not(.right-0) { left: auto; right: 0; }
+[dir="rtl"] .left-1\.5            { left: auto; right: 0.375rem; }
+[dir="rtl"] .left-3\.5,
+[dir="rtl"] div.relative > i[data-lucide="search"],
+[dir="rtl"] div.relative > svg.lucide-search {
+    left: auto !important;
+    right: 0.875rem !important;
+}
+[dir="rtl"] .right-3\.5 { right: auto; left: 0.875rem; }
+
+/* sidebar divider */
+[dir="rtl"] .border-r { border-right-width: 0; border-left-width: 1px; }
+[dir="rtl"] .border-l { border-left-width: 0; border-right-width: 1px; }
+
+/* Off-canvas sidebar slides in from the RIGHT in RTL.
+   Only the --tw-translate-x variable is overridden: Tailwind's own translate utility
+   already composes the transform from it. Setting `transform` here directly would win
+   over the md:translate-x-0 breakpoint and leave the sidebar permanently off-screen. */
+[dir="rtl"] .-translate-x-full { --tw-translate-x: 100%; }
+
+/* ...and it must come back on desktop, where the aside is md:static. This reset lives
+   inside the same breakpoint so it beats the rule above at >=768px without leaking to
+   mobile, where the drawer should still start hidden. */
+@media (min-width: 768px) {
+    [dir="rtl"] .md\:translate-x-0 { --tw-translate-x: 0px; }
+}
+
+/* Inline arrows/chevrons that indicate direction must mirror. Marked with .dir-flip
+   so purely decorative icons are left alone. */
+[dir="rtl"] .dir-flip { transform: scaleX(-1); }
+
+/* ── Universal Modern Select Dropdown Styling ───────────────── */
+select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.875rem center !important;
+    background-size: 1rem 1rem !important;
+    padding-right: 2.5rem !important;
+    padding-left: 1rem !important;
+    cursor: pointer;
+}
+
+.dark select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+}
+
+/* RTL: Dropdown chevron on the LEFT with proper generous padding */
+[dir="rtl"] select,
+html[dir="rtl"] select,
+[dir="rtl"] .font-arabic select {
+    background-position: left 0.875rem center !important;
+    padding-left: 2.5rem !important;
+    padding-right: 1rem !important;
+}
+
+/* Compact select variants (e.g. in tables, filters, text-xs) */
+select.text-xs,
+.text-xs select,
+select.py-1\.5,
+select.py-2 {
+    background-position: right 0.625rem center !important;
+    background-size: 0.875rem 0.875rem !important;
+    padding-right: 2rem !important;
+    padding-left: 0.75rem !important;
+}
+
+[dir="rtl"] select.text-xs,
+[dir="rtl"] .text-xs select,
+[dir="rtl"] select.py-1\.5,
+[dir="rtl"] select.py-2,
+html[dir="rtl"] select.text-xs,
+html[dir="rtl"] .text-xs select,
+html[dir="rtl"] select.py-1\.5,
+html[dir="rtl"] select.py-2 {
+    background-position: left 0.625rem center !important;
+    padding-left: 2rem !important;
+    padding-right: 0.75rem !important;
+}
+
+select option {
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    padding: 0.5rem 0.75rem;
+}

@@ -1,0 +1,90 @@
+@model Neurix.Models.CmsServiceDetailsViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = $"{Model.Service.NameEn} Details";
+    var s = Model.Service;
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-cyan/10 text-cyan flex items-center justify-center border border-cyan/20 shrink-0 shadow-sm">
+                <i data-lucide="@(!string.IsNullOrWhiteSpace(s.IconName) ? s.IconName : "cpu")" class="w-7 h-7"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold font-display tracking-tight text-foreground">@s.NameEn</h2>
+                    <partial name="_CmsStatusBadge" model="s.IsPublished" />
+                </div>
+                <p class="text-sm text-muted-foreground font-arabic" dir="rtl">@s.NameAr</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a asp-action="Edit" asp-route-id="@s.Id" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-cyan/30 bg-cyan/10 text-cyan hover:bg-cyan/20 font-medium text-sm transition-colors">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                @L["Edit Service"]
+            </a>
+            <a asp-action="Index" asp-route-companyId="@s.CompanyProfileId" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+                @L["Back"]
+            </a>
+        </div>
+    </div>
+
+    <!-- Metadata Bar -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div class="flex items-center gap-4">
+            <span class="text-muted-foreground">@L["Brand:"] <strong class="text-foreground font-semibold">@s.CompanyNameEn</strong></span>
+            <span class="text-muted-foreground">@L["Slug:"] <code class="px-2 py-0.5 rounded bg-muted text-cyan font-mono font-semibold">@s.Slug</code></span>
+            <span class="text-muted-foreground">@L["Order:"] <strong class="text-foreground font-semibold">@s.DisplayOrder</strong></span>
+        </div>
+        <div class="flex items-center gap-4 text-muted-foreground">
+            <span>Created: @s.CreatedAtUtc.ToString("MMM dd, yyyy HH:mm") UTC</span>
+            @if (s.UpdatedAtUtc.HasValue)
+            {
+                <span>Updated: @s.UpdatedAtUtc.Value.ToString("MMM dd, yyyy HH:mm") UTC</span>
+            }
+        </div>
+    </div>
+
+    <!-- Bilingual Content -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- English Section -->
+        <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-4">
+            <div class="flex items-center gap-2 text-cyan font-semibold text-xs uppercase tracking-wider border-b border-border pb-2">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                @L["English Service Content"]
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Short Description"]</label>
+                <p class="text-sm text-foreground/80 leading-relaxed">@(s.ShortDescriptionEn ?? "—")</p>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Full Description"]</label>
+                <p class="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">@(s.DescriptionEn ?? "—")</p>
+            </div>
+        </div>
+
+        <!-- Arabic Section -->
+        <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-4 text-right" dir="rtl">
+            <div class="flex items-center gap-2 text-cyan font-semibold text-xs uppercase tracking-wider border-b border-border pb-2">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                محتوى الخدمة بالعربية
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">الوصف المختصر</label>
+                <p class="text-sm text-foreground/80 leading-relaxed font-arabic">@(s.ShortDescriptionAr ?? "—")</p>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">الوصف الكامل</label>
+                <p class="text-sm text-foreground/80 leading-relaxed whitespace-pre-line font-arabic">@(s.DescriptionAr ?? "—")</p>
+            </div>
+        </div>
+    </div>
+</div>

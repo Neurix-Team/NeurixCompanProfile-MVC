@@ -1,0 +1,277 @@
+@* Footer — dynamic CMS-driven footer with fail-soft fallbacks *@
+@using Neurix.BLL.Dtos.Cms
+@using Neurix.BLL.Services.Cms
+@using Neurix.DAL.Models
+@inject ICmsSocialLinkService CmsSocialLinkService
+@inject ICmsCompanyProfileService CmsCompanyProfileService
+@inject ICmsMenuItemService CmsMenuItemService
+@{
+    CmsCompanyProfileDetailDto? companyProfile = null;
+    IReadOnlyList<CmsSocialLinkSummaryDto> socialLinks = Array.Empty<CmsSocialLinkSummaryDto>();
+    IReadOnlyList<CmsMenuItemSummaryDto> footerMenuItems = Array.Empty<CmsMenuItemSummaryDto>();
+    IReadOnlyList<CmsMenuItemSummaryDto> bottomBarItems = Array.Empty<CmsMenuItemSummaryDto>();
+    try
+    {
+        companyProfile = await CmsCompanyProfileService.GetBySlugAsync("neurix");
+        if (companyProfile != null)
+        {
+            socialLinks = await CmsSocialLinkService.GetPublishedLinksByCompanySlugAsync("neurix");
+        }
+        footerMenuItems = await CmsMenuItemService.GetMenuItemsByCompanySlugAsync("neurix", CmsMenuItemPlacement.Footer, includeUnpublished: false);
+        bottomBarItems = await CmsMenuItemService.GetMenuItemsByCompanySlugAsync("neurix", CmsMenuItemPlacement.FooterBottom, includeUnpublished: false);
+    }
+    catch
+    {
+        // Fail-soft: public website footer never crashes if CMS database is temporarily unreachable
+    }
+
+    var brandNameEn = companyProfile?.NameEn ?? "Neurix AI";
+    var brandNameAr = companyProfile?.NameAr ?? "نيوركس AI";
+    var taglineEn = !string.IsNullOrWhiteSpace(companyProfile?.TaglineEn) ? companyProfile.TaglineEn : "Technology in service of humanity — building a civilized, organized, and human-centric society.";
+    var taglineAr = !string.IsNullOrWhiteSpace(companyProfile?.TaglineAr) ? companyProfile.TaglineAr : "التكنولوجيا في خدمة الإنسانية — بناء مجتمع يعتمد على التكنولوجيا بشكل حضاري ومنظم وإنساني.";
+    var logoPath = !string.IsNullOrWhiteSpace(companyProfile?.LogoPath) ? companyProfile.LogoPath : "/images/neurix-logo.png";
+    var email = !string.IsNullOrWhiteSpace(companyProfile?.Email) ? companyProfile.Email : "neurix@aidaleel.com";
+    var phone = !string.IsNullOrWhiteSpace(companyProfile?.Phone) ? companyProfile.Phone : "+1 (302) 602 4695";
+    var addressEn = !string.IsNullOrWhiteSpace(companyProfile?.AddressEn) ? companyProfile.AddressEn : "8th Floor, 98 Hassan El Maamoun St, Nasr City, Cairo, Egypt";
+    var addressAr = !string.IsNullOrWhiteSpace(companyProfile?.AddressAr) ? companyProfile.AddressAr : "الدور الثامن، 98 شارع حسن المأمون، الحي الأول، مدينة نصر، القاهرة، مصر";
+}
+
+<footer class="relative mt-24 md:mt-32 border-t border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md">
+    @* Top glow line (dark mode only) *@
+    <div class="pointer-events-none absolute inset-x-0 top-0 hidden dark:block h-px bg-gradient-to-r from-transparent via-cyan to-transparent opacity-80"></div>
+
+    <div class="container py-16 md:py-24">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10">
+
+            @* ── Brand ────────────────────────────────── *@
+            <div class="space-y-5">
+                <a asp-controller="Home" asp-action="Index" class="flex items-center gap-2.5" aria-label="@brandNameEn">
+                    <img src="@logoPath" class="h-8 w-8 object-cover object-left" alt="@brandNameEn Icon" />
+                    <span class="text-slate-900 dark:text-white font-bold text-xl tracking-tight" data-en="@brandNameEn" data-ar="@brandNameAr">@brandNameEn</span>
+                </a>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-xs"
+                   data-en="@taglineEn" data-ar="@taglineAr">
+                    @taglineEn
+                </p>
+                <div class="flex items-center flex-wrap gap-3 pt-1">
+                    @if (socialLinks.Count > 0)
+                    {
+                        @foreach (var link in socialLinks)
+                        {
+                            var icon = string.IsNullOrWhiteSpace(link.IconName) ? (string.IsNullOrWhiteSpace(link.Platform) ? "share-2" : link.Platform) : link.IconName;
+                            var label = !string.IsNullOrWhiteSpace(link.DisplayName) ? link.DisplayName : link.Platform;
+                            <a href="@link.Url" target="_blank" aria-label="@label" title="@label"
+                               class="h-9 w-9 inline-flex items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-50/50 dark:bg-background/50 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+                                <partial name="_SocialIcon" model="@icon" />
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        @* Fallback LinkedIn *@
+                        <a href="https://www.linkedin.com/company/neurixuk/" target="_blank" aria-label="LinkedIn"
+                           class="h-9 w-9 inline-flex items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-50/50 dark:bg-background/50 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+                            <partial name="_SocialIcon" model="@("linkedin")" />
+                        </a>
+                    }
+                </div>
+            </div>
+
+            @* ── Divisions ────────────────────────────── *@
+            <div>
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-5"
+                    data-en="Divisions" data-ar="الأقسام">
+                    Divisions
+                </h4>
+                <ul class="space-y-3">
+                    <li><a asp-controller="Home" asp-action="Labs" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="Neurix AI Labs" data-ar="مختبرات نيوركس AI">Neurix AI Labs</a></li>
+                    <li><a asp-controller="Home" asp-action="Technology" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="Neurix AI Technology" data-ar="تقنية نيوركس AI">Neurix AI Technology</a></li>
+                    <li><a asp-controller="Home" asp-action="Club" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="Neurix AI Club" data-ar="نادي نيوركس AI">Neurix AI Club</a></li>
+                    <li><a asp-controller="Home" asp-action="Plus" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="Neurix AI Plus" data-ar="نيوركس AI بلس">Neurix AI Plus</a></li>
+                    <li><a asp-controller="Home" asp-action="HQ" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="Neurix AI HQ" data-ar="مقر نيوركس AI">Neurix AI HQ</a></li>
+                </ul>
+            </div>
+
+            @* ── Company ──────────────────────────────── *@
+            <div>
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-5"
+                    data-en="Company" data-ar="الشركة">
+                    Company
+                </h4>
+                <ul class="space-y-3">
+                    @if (footerMenuItems.Count > 0)
+                    {
+                        @foreach (var item in footerMenuItems)
+                        {
+                            var targetAttr = item.OpenInNewTab ? "_blank" : "_self";
+                            <li>
+                                <a href="@item.Url" target="@targetAttr"
+                                   class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link"
+                                   data-en="@item.LabelEn" data-ar="@item.LabelAr">
+                                    @item.LabelEn
+                                </a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Home" asp-action="About" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="About Us" data-ar="من نحن">About Us</a></li>
+                        <li><a asp-controller="Home" asp-action="ComingSoon" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="Careers" data-ar="الوظائف">Careers</a></li>
+                        <li><a asp-controller="Home" asp-action="ComingSoon" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="News" data-ar="الأخبار">News</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact" class="text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300 footer-link" data-en="Contact Us" data-ar="تواصل معنا">Contact Us</a></li>
+                    }
+                </ul>
+            </div>
+
+            @* ── Contact + Newsletter ─────────────────── *@
+            <div>
+                <h4 class="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-5"
+                    data-en="Contact" data-ar="تواصل معنا">
+                    Contact
+                </h4>
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-300">
+                        @* Mail Icon *@
+                        <i data-lucide="mail" class="w-4 h-4 mt-0.5 text-cyan shrink-0"></i>
+                        <a href="mailto:@email"
+                           class="hover:text-slate-900 dark:hover:text-white transition-colors duration-300">
+                            @email
+                        </a>
+                    </li>
+                    <li class="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-300">
+                        @* Phone Icon *@
+                        <i data-lucide="phone" class="w-4 h-4 mt-0.5 text-cyan shrink-0"></i>
+                        <a href="tel:@phone.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("-", "")"
+                           class="hover:text-slate-900 dark:hover:text-white transition-colors duration-300">
+                            <span data-en="@phone" data-ar="@phone">@phone</span>
+                        </a>
+                    </li>
+                    <li class="flex items-start gap-2.5 text-sm text-slate-600 dark:text-slate-300">
+                        @* MapPin Icon *@
+                        <i data-lucide="map-pin" class="w-4 h-4 mt-1 text-cyan shrink-0"></i>
+                        <div class="flex flex-col">
+                            <div class="font-semibold text-slate-800 dark:text-slate-200 text-[11px] tracking-wider mb-0.5"
+                                 data-en="Office (Primary)" data-ar="المكتب (الرئيسي)">Office (Primary)</div>
+                            <span class="leading-relaxed text-xs" data-en="@addressEn" 
+                                  data-ar="@addressAr">@addressEn</span>
+                        </div>
+                    </li>
+                </ul>
+
+                @* Premium slide-down offices details *@
+                <div class="mb-6 border border-slate-300 dark:border-white/10 rounded-xl bg-slate-50/40 dark:bg-card/20 overflow-hidden transition-all duration-300">
+                    <details class="group">
+                        <summary class="flex items-center justify-between px-3.5 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer list-none hover:bg-slate-200/50 dark:hover:bg-white/5 transition-all">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="globe" class="w-3.5 h-3.5 text-cyan"></i>
+                                <span data-en="Read More Addresses" data-ar="قراءة المزيد من العناوين">Read More Addresses</span>
+                            </span>
+                            <span class="transition-transform duration-300 group-open:rotate-180">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                            </span>
+                        </summary>
+                        <div class="p-3.5 border-t border-slate-300 dark:border-white/10 space-y-4 text-xs text-slate-600 dark:text-slate-400 bg-slate-100/30 dark:bg-black/10">
+                            
+                            @* United Arab Emirates *@
+                            <div>
+                                <div class="font-semibold text-slate-800 dark:text-slate-200 mb-1"
+                                     data-en="UAE Office" data-ar="مكتب الإمارات العربية المتحدة">
+                                    UAE Office
+                                </div>
+                                <p data-en="2003-040 Aspin Commercial-2003, trade center first, Dubai, UAE" 
+                                   data-ar="مكتب 2003-040، برج أسبين التجاري، المركز التجاري الأول، دبي، الإمارات العربية المتحدة">2003-040 Aspin Commercial-2003, trade center first, Dubai, UAE</p>
+                            </div>
+
+                            @* Saint Kitts and Nevis *@
+                            <div class="pt-3 border-t border-slate-300 dark:border-white/5">
+                                <div class="font-semibold text-slate-800 dark:text-slate-200 mb-1"
+                                     data-en="Saint Kitts & Nevis Office" data-ar="مكتب سانت كيتس ونيفيس ">
+                                    Saint Kitts & Nevis Office
+                                </div>
+                                <p data-en="The Provident House, Central Government Road, Charlestown, Nevis, Saint Kitts and Nevis" 
+                                   data-ar="بروفيدنت هاوس، طريق الحكومة المركزية، تشارلز تاون، نيفيس، سانت كيتس ونيفيس">The Provident House, Central Government Road, Charlestown, Nevis, Saint Kitts and Nevis</p>
+                            </div>
+
+                            @* United States of America *@
+                            <div class="pt-3 border-t border-slate-300 dark:border-white/5">
+                                <div class="font-semibold text-slate-800 dark:text-slate-200 mb-1"
+                                     data-en="USA Office" data-ar="مكتب الولايات المتحدة الأمريكية">
+                                    USA Office
+                                </div>
+                                <p data-en="262 Chapman Rd, Ste 240, Newark, New Castle County, Delaware, USA" 
+                                   data-ar="262 طريق تشابمان، جناح 240، نيوارك، مقاطعة نيو كاسل، ديلاوير، الولايات المتحدة الأمريكية">262 Chapman Rd, Ste 240, Newark, New Castle County, Delaware, USA</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                @* Newsletter — posts back to NewsletterController.Subscribe with an
+                   anti-forgery token; TempData["NewsletterResult"] carries the outcome
+                   back through the redirect (footer renders on every page). *@
+                @{
+                    var newsletterResult = TempData["NewsletterResult"] as string;
+                    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+                }
+                <form asp-controller="Newsletter" asp-action="Subscribe" method="post" id="newsletter-form" class="space-y-2">
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <label for="newsletter" class="text-xs font-semibold text-slate-900 dark:text-white uppercase tracking-wider"
+                           data-en="Newsletter" data-ar="النشرة الإخبارية">
+                        Newsletter
+                    </label>
+                    @if (newsletterResult != null)
+                    {
+                        var (messageEn, messageAr, messageClass) = newsletterResult switch
+                        {
+                            "subscribed" => ("You're on the list. Welcome!", "تم تسجيلك في النشرة. أهلاً بك!", "text-emerald-500 dark:text-emerald-400"),
+                            "already" => ("You're already subscribed.", "أنت مشترك بالفعل.", "text-cyan-600 dark:text-cyan-400"),
+                            "invalid" => ("Please enter a valid email address.", "برجاء إدخال بريد إلكتروني صحيح.", "text-rose-500 dark:text-rose-400"),
+                            _ => ("Something went wrong. Please try again.", "حدث خطأ. برجاء المحاولة مرة أخرى.", "text-rose-500 dark:text-rose-400")
+                        };
+                        <p class="text-xs font-medium @messageClass" data-en="@messageEn" data-ar="@messageAr">@messageEn</p>
+                    }
+                    <div class="relative">
+                        <input id="newsletter" type="email" name="Email" required
+                               placeholder="you@company.com" data-en="you@company.com" data-ar="البريد الإلكتروني"
+                               class="w-full h-11 rounded-[16px] bg-slate-50/60 dark:bg-background/60 border border-slate-300 dark:border-white/10 pl-4 pr-11 rtl:pr-4 rtl:pl-11 text-sm text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-300 backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+                        <button type="submit"
+                                aria-label="Subscribe"
+                                class="absolute top-1 right-1 rtl:right-auto rtl:left-1 h-9 w-9 inline-flex items-center justify-center rounded-[12px] bg-button-gradient text-primary-foreground hover:scale-105 hover:shadow-[0_0_18px_hsl(var(--azure)/0.5)] transition-all duration-300">
+                            @* ArrowRight Icon *@
+                            <i data-lucide="arrow-right" class="w-4 h-4 rtl-flip"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        @* ── Bottom Bar ───────────────────────────────── *@
+        <div class="mt-16 pt-8 border-t border-slate-300 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-xs text-slate-600 dark:text-slate-300"
+               data-en="© @DateTime.Now.Year @brandNameEn. All rights reserved."
+               data-ar="© @DateTime.Now.Year @brandNameAr. جميع الحقوق محفوظة.">
+                © @DateTime.Now.Year @brandNameEn. All rights reserved.
+            </p>
+            <div class="flex items-center gap-6">
+                @if (bottomBarItems.Count > 0)
+                {
+                    @foreach (var item in bottomBarItems)
+                    {
+                        var targetAttr = item.OpenInNewTab ? "_blank" : "_self";
+                        <a href="@item.Url" target="@targetAttr"
+                           class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300"
+                           data-en="@item.LabelEn" data-ar="@item.LabelAr">
+                            @item.LabelEn
+                        </a>
+                    }
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Privacy" class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300" data-en="Privacy" data-ar="الخصوصية">Privacy</a>
+                    <a asp-controller="Home" asp-action="Terms" class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300" data-en="Terms" data-ar="الشروط">Terms</a>
+                    <a asp-controller="Home" asp-action="Security" class="text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors duration-300" data-en="Security" data-ar="الأمان">Security</a>
+                }
+            </div>
+        </div>
+    </div>
+</footer>

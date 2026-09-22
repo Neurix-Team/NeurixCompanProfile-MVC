@@ -1,0 +1,157 @@
+@model Neurix.Models.CmsSiteSettingListViewModel
+@{
+    ViewData["Title"] = "Global Site Settings";
+    Layout = "_CmsLayout";
+
+    var groupedSettings = Model.Settings.GroupBy(s => s.GroupName).ToList();
+}
+
+<div class="space-y-6">
+
+    @* Header *@
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">@L["Global Site Settings"]</h1>
+            <p class="text-sm text-muted-foreground">@L["Manage SEO metadata, contact labels, and global website content in real time."]</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+            @if (Model.Companies.Count > 1)
+            {
+                <form method="get" class="flex items-center gap-2">
+                    <label for="companyId" class="text-xs font-medium text-muted-foreground whitespace-nowrap">@L["Filter by Brand:"]</label>
+                    <select name="companyId" id="companyId" onchange="this.form.submit()"
+                            class="rounded-xl border border-border bg-card px-3 py-1.5 text-xs focus:ring-1 focus:ring-cyan focus:outline-none">
+                        @foreach (var c in Model.Companies)
+                        {
+                            <option value="@c.Id" selected="@(c.Id == Model.SelectedCompanyId)">@c.NameEn (@c.Slug)</option>
+                        }
+                    </select>
+                </form>
+            }
+            <a asp-action="Create" asp-route-companyId="@Model.SelectedCompanyId"
+               class="inline-flex items-center gap-2 rounded-xl bg-button-gradient px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg shadow-azure/20 hover:scale-[1.02] hover:shadow-azure/30 transition-all duration-300">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                @L["Add Setting"]
+            </a>
+        </div>
+    </div>
+
+    @if (Model.SelectedCompanyId.HasValue && Model.SelectedCompanyId.Value != Guid.Empty)
+    {
+        @if (Model.Settings.Count == 0)
+        {
+            <div class="rounded-2xl border border-dashed border-border bg-card/40 p-12 text-center">
+                <div class="w-12 h-12 rounded-2xl bg-cyan/10 text-cyan flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="sliders" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-base font-semibold text-foreground">@L["No Site Settings Found"]</h3>
+                <p class="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+                    @L["No site settings have been configured for the selected brand yet."]
+                </p>
+                <a asp-action="Create" asp-route-companyId="@Model.SelectedCompanyId"
+                   class="inline-flex items-center gap-2 mt-4 rounded-xl bg-card border border-border hover:bg-muted px-4 py-2 text-xs font-semibold text-foreground transition-all">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    @L["Add First Setting"]
+                </a>
+            </div>
+        }
+        else
+        {
+            <form asp-action="SaveBatch" method="post" class="space-y-6">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="CompanyProfileId" value="@Model.SelectedCompanyId.Value" />
+
+                @{
+                    int idx = 0;
+                }
+
+                @foreach (var group in groupedSettings)
+                {
+                    <div class="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+                        <div class="flex items-center gap-2.5 pb-3 border-b border-border">
+                            <i data-lucide="sliders" class="w-5 h-5 text-cyan"></i>
+                            <h2 class="text-lg font-semibold tracking-tight">@L[group.Key] @L["Settings"]</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            @foreach (var item in group)
+                            {
+                                <div class="space-y-3 p-4 rounded-xl bg-background/50 border border-border/60">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-cyan">@L[item.Label]</span>
+                                            <code class="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">@item.Key</code>
+                                        </div>
+                                        <button type="button"
+                                                onclick="if(confirm('@L["Are you sure you want to delete this setting?"]')) { document.getElementById('delete-setting-@item.Id').submit(); }"
+                                                title='@L["Delete setting"]'
+                                                class="p-1 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </div>
+
+                                    <input type="hidden" name="Settings[@idx].Key" value="@item.Key" />
+                                    <input type="hidden" name="Settings[@idx].GroupName" value="@item.GroupName" />
+                                    <input type="hidden" name="Settings[@idx].Label" value="@item.Label" />
+                                    <input type="hidden" name="Settings[@idx].SettingType" value="@item.SettingType" />
+
+                                    @if (item.SettingType == "textarea")
+                                    {
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-medium text-muted-foreground">@L["English Value"]</label>
+                                            <textarea name="Settings[@idx].ValueEn" rows="3"
+                                                      class="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none">@item.ValueEn</textarea>
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-medium text-muted-foreground">@L["Arabic Value"]</label>
+                                            <textarea name="Settings[@idx].ValueAr" rows="3" dir="rtl"
+                                                      class="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none">@item.ValueAr</textarea>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-medium text-muted-foreground">@L["English Value"]</label>
+                                            <input type="text" name="Settings[@idx].ValueEn" value="@item.ValueEn"
+                                                   class="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none" />
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-medium text-muted-foreground">@L["Arabic Value"]</label>
+                                            <input type="text" name="Settings[@idx].ValueAr" value="@item.ValueAr" dir="rtl"
+                                                   class="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none" />
+                                        </div>
+                                    }
+                                </div>
+                                idx++;
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="flex items-center justify-end gap-3 pt-4">
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 rounded-xl bg-cyan px-5 py-2.5 text-xs font-semibold text-slate-950 hover:bg-cyan/90 transition-colors shadow-sm">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        @L["Save All Settings"]
+                    </button>
+                </div>
+            </form>
+
+            @foreach (var item in Model.Settings)
+            {
+                <form id="delete-setting-@item.Id" asp-action="Delete" asp-route-id="@item.Id" method="post" class="hidden">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="companyId" value="@Model.SelectedCompanyId" />
+                </form>
+            }
+        }
+    }
+    else
+    {
+        <div class="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground">
+            <p>@L["No brand profile found. Please create a company profile first."]</p>
+        </div>
+    }
+
+</div>

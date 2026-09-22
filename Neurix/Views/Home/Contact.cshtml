@@ -1,0 +1,159 @@
+@model Neurix.Models.ContactViewModel
+
+@{
+    // CMS-managed hero (Group 3). The form itself — fields, validation, submission — stays
+    // hardcoded on purpose: it is functionality, not content.
+    var cms = ViewData["ContentPage"] as Neurix.BLL.Dtos.Cms.CmsContentPageDetailDto;
+    string Pick(string? cmsValue, string fallback) => string.IsNullOrWhiteSpace(cmsValue) ? fallback : cmsValue!;
+
+    var heroBadgeEn = Pick(cms?.HeroBadgeEn, "Get in Touch");
+    var heroBadgeAr = Pick(cms?.HeroBadgeAr, "تواصل معنا");
+    var heroPrefixEn = Pick(cms?.HeroTitlePrefixEn, "Let's build the ");
+    var heroPrefixAr = Pick(cms?.HeroTitlePrefixAr, "لنبني ");
+    var heroHighlightEn = Pick(cms?.HeroTitleHighlightEn, "future together.");
+    var heroHighlightAr = Pick(cms?.HeroTitleHighlightAr, "المستقبل معاً.");
+    var heroSubtitleEn = Pick(cms?.HeroSubtitleEn, "Get in touch with our team of engineers and researchers.");
+    var heroSubtitleAr = Pick(cms?.HeroSubtitleAr, "تواصل مع فريقنا من المهندسين والباحثين.");
+
+    ViewData["Title"] = Pick(cms?.TitleEn, "Contact Us");
+}
+
+<div class="relative pt-28 pb-14 md:pt-36 md:pb-18 flex items-center justify-center overflow-hidden">
+    <!-- WebGL Fallback Glow & Textures -->
+    <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+    <div class="container relative z-30 px-6 max-w-7xl mx-auto">
+
+        <!-- Header -->
+        <div class="text-center mb-12 md:mb-16">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6 animate-fade-in">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+            </div>
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-[1.1] mb-6 animate-fade-in-up">
+                @* The space between the spans is a real text node (not CSS margin): a CMS
+                   prefix saved without its trailing space would otherwise weld the two
+                   words together for screen readers. Trimmed values keep the toggle
+                   engine from reintroducing a missing space in the other language. *@
+                <span data-en="@heroPrefixEn.TrimEnd()" data-ar="@heroPrefixAr.TrimEnd()">@heroPrefixEn.TrimEnd()</span> <span class="text-gradient-brand" data-en="@heroHighlightEn" data-ar="@heroHighlightAr">@heroHighlightEn</span>
+            </h1>
+            <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 animate-fade-in-up" style="animation-delay: 150ms;" data-en="@heroSubtitleEn" data-ar="@heroSubtitleAr">
+                @heroSubtitleEn
+            </p>
+        </div>
+
+        <!-- Success Alert -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="mb-8 p-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md text-emerald-400 text-center font-medium shadow-[0_0_20px_hsl(150,100%,40%,0.15)] animate-fade-in-up" style="animation-delay: 200ms;">
+                <span data-en="@TempData["SuccessMessage"]" data-ar="شكرًا لتواصلك معنا. سيتصل بك فريقنا قريبًا.">@TempData["SuccessMessage"]</span>
+            </div>
+        }
+
+        <!-- Error Alert -->
+        @if (ViewData["ErrorMessage"] != null)
+        {
+            <div class="mb-8 p-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 backdrop-blur-md text-rose-400 text-center font-medium shadow-[0_0_20px_hsl(0,84%,60%,0.15)] animate-fade-in-up" style="animation-delay: 200ms;">
+                <span data-en="@ViewData["ErrorMessage"]" data-ar="حدث خطأ ولم يتم إرسال رسالتك. برجاء المحاولة مرة أخرى.">@ViewData["ErrorMessage"]</span>
+            </div>
+        }
+
+        <!-- 2-Column Grid Area -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center animate-fade-in-up" style="animation-delay: 300ms;">
+            
+            <!-- Left Column: Envelope Graphic (lg:col-span-6) -->
+            <div class="lg:col-span-6 flex justify-center items-center">
+                <div class="group relative w-full max-w-lg lg:max-w-full overflow-hidden rounded-2xl aspect-video border border-slate-300 dark:border-white/10 shadow-lg bg-slate-100/50 dark:bg-card/30 backdrop-blur-md">
+                    @* Ambient backglow *@
+                    <div class="absolute inset-0 bg-gradient-to-tr from-cyan/15 to-azure/5 blur-2xl opacity-75"></div>
+                    <img src="~/images/Contact us.png" alt="Contact Us Illustration" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
+                </div>
+            </div>
+
+            <!-- Right Column: Form (lg:col-span-6) -->
+            <div class="lg:col-span-6">
+                <form asp-controller="Home" asp-action="Contact" method="POST" class="card-glow-border bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-3xl p-8 lg:p-12 relative overflow-hidden">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- Full Name -->
+                        <div>
+                            <div class="floating-field">
+                                <input asp-for="FullName" required placeholder="Full name *" data-en="Full name *" data-ar="الاسم الكامل *"
+                                       class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+                                <label asp-for="FullName" data-en="Full name *" data-ar="الاسم الكامل *">Full name *</label>
+                            </div>
+                            <span asp-validation-for="FullName" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div>
+                            <div class="floating-field">
+                                <input asp-for="Email" type="email" required placeholder="Work email *" data-en="Work email *" data-ar="البريد الإلكتروني للعمل *"
+                                       class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+                                <label asp-for="Email" data-en="Work email *" data-ar="البريد الإلكتروني للعمل *">Work email *</label>
+                            </div>
+                            <span asp-validation-for="Email" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
+                        </div>
+
+                        <!-- Inquiry Type -->
+                        <div>
+                            <div class="floating-field">
+                                <select asp-for="InquiryType" required
+                                        class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 pl-4 pr-10 rtl:pr-4 rtl:pl-10 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)] appearance-none">
+                                    <option value="" disabled selected hidden></option>
+                                    <option value="Demo" data-en="Demo" data-ar="عرض تجريبي">Demo</option>
+                                    <option value="Quote" data-en="Quote" data-ar="تسعيرة">Quote</option>
+                                    <option value="Partnership" data-en="Partnership" data-ar="شراكة">Partnership</option>
+                                    <option value="Support" data-en="Support" data-ar="دعم فني">Support</option>
+                                </select>
+                                <label asp-for="InquiryType" data-en="Type of inquiry *" data-ar="نوع الاستفسار *">Type of inquiry *</label>
+                                <!-- Custom dropdown arrow -->
+                                <div class="absolute inset-y-0 right-4 rtl:right-auto rtl:left-4 flex items-center pointer-events-none text-slate-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </div>
+                            </div>
+                            <span asp-validation-for="InquiryType" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
+                        </div>
+
+                        <!-- Company Name -->
+                        <div>
+                            <div class="floating-field">
+                                <input asp-for="CompanyName" placeholder="Company (Optional)" data-en="Company (Optional)" data-ar="الشركة (اختياري)"
+                                       class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+                                <label asp-for="CompanyName" data-en="Company (Optional)" data-ar="الشركة (اختياري)">Company (Optional)</label>
+                            </div>
+                            <span asp-validation-for="CompanyName" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
+                        </div>
+                    </div>
+
+                    <!-- Message -->
+                    <div>
+                        <div class="floating-field textarea">
+                            <textarea asp-for="Message" required rows="5" placeholder="How can we help? *" data-en="How can we help? *" data-ar="كيف يمكننا مساعدتك؟ *"
+                                      class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-6 pb-2 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 resize-none focus:border-cyan/70 focus:bg-slate-100 dark:focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]"></textarea>
+                            <label asp-for="Message" data-en="How can we help? *" data-ar="كيف يمكننا مساعدتك؟ *">How can we help? *</label>
+                        </div>
+                        <span asp-validation-for="Message" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <span class="text-sm text-slate-500 dark:text-slate-400 font-medium" data-en="We respond within 1 business day" data-ar="نرد خلال يوم عمل واحد">
+                            We respond within 1 business day
+                        </span>
+                        <button type="submit" class="group inline-flex items-center gap-2 rounded-[16px] px-8 py-4 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_36px_hsl(var(--cyan)/0.55)] hover:scale-105 transition-all duration-300" data-en="Submit Request" data-ar="إرسال الطلب">
+                            Submit Request
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300 group-hover:translate-x-1 rtl-flip">
+                                <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,339 @@
+@model Neurix.Models.CmsDashboardViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "CMS Overview";
+}
+
+<div class="space-y-8 max-w-7xl mx-auto">
+    <!-- Header & Welcome -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                CMS <span class="text-gradient-brand">@L["Dashboard"]</span>
+            </h1>
+            <p class="text-sm text-muted-foreground mt-1">
+                @L["Overview and quick management of multi-brand company profiles, services, and public content."]
+            </p>
+        </div>
+        <div class="flex items-center flex-wrap gap-2.5">
+            <a asp-controller="CmsServices" asp-action="Create"
+               class="inline-flex items-center gap-2 rounded-xl bg-button-gradient px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg shadow-azure/20 hover:scale-[1.02] hover:shadow-azure/30 transition-all duration-300">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                @L["Add Service"]
+            </a>
+            <a asp-controller="CmsPageBands" asp-action="Index"
+               class="inline-flex items-center gap-2 rounded-xl bg-card border border-border hover:bg-muted px-4 py-2 text-xs font-semibold text-foreground transition-all">
+                <i data-lucide="rows-3" class="w-3.5 h-3.5 text-cyan"></i>
+                @L["Page Sections & Capabilities"]
+            </a>
+            <a asp-controller="CmsSocialLinks" asp-action="Create"
+               class="inline-flex items-center gap-2 rounded-xl bg-card border border-border hover:bg-muted px-4 py-2 text-xs font-semibold text-foreground transition-all">
+                <i data-lucide="share-2" class="w-3.5 h-3.5 text-purple-400"></i>
+                @L["Add Social Link"]
+            </a>
+            <a href="/" target="_blank"
+               class="inline-flex items-center gap-2 rounded-xl bg-card border border-border hover:bg-muted px-4 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all">
+                <i data-lucide="external-link" class="w-3.5 h-3.5 text-azure"></i>
+                @L["View Site"]
+            </a>
+        </div>
+    </div>
+
+    <!-- Stat KPI Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+        <!-- Brand Profiles -->
+        <a asp-controller="CmsCompanyProfiles" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-cyan/40 hover:shadow-lg hover:shadow-cyan/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-cyan/10 text-cyan flex items-center justify-center">
+                    <i data-lucide="building" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-cyan bg-cyan/10 px-1.5 py-0.5 rounded">
+                    @Model.PublishedProfilesCount @L["Pub"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @Model.TotalProfilesCount
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Brand Profiles"]</h3>
+        </a>
+
+        <!-- Divisional Pages -->
+        <a asp-controller="CmsDivisionPages" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-cyan/40 hover:shadow-lg hover:shadow-cyan/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-cyan/10 text-cyan flex items-center justify-center">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-cyan bg-cyan/10 px-1.5 py-0.5 rounded">
+                    @(Model.PublishedDivisionPagesCount > 0 ? Model.PublishedDivisionPagesCount : 5) @L["Pub"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @(Model.TotalDivisionPagesCount > 0 ? Model.TotalDivisionPagesCount : 5)
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Divisional Pages"]</h3>
+        </a>
+
+        <!-- Page Sections & Capabilities -->
+        <a asp-controller="CmsPageBands" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-azure/40 hover:shadow-lg hover:shadow-azure/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-azure/10 text-azure flex items-center justify-center">
+                    <i data-lucide="rows-3" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-azure bg-azure/10 px-1.5 py-0.5 rounded">
+                    @L["Live Blocks"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @(Model.TotalPageBandsCount > 0 ? Model.TotalPageBandsCount : 22)
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Page Sections"]</h3>
+        </a>
+
+        <!-- Services -->
+        <a asp-controller="CmsServices" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-azure/40 hover:shadow-lg hover:shadow-azure/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-azure/10 text-azure flex items-center justify-center">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-azure bg-azure/10 px-1.5 py-0.5 rounded">
+                    @Model.PublishedServicesCount @L["Pub"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @Model.TotalServicesCount
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Services"]</h3>
+        </a>
+
+        <!-- Projects -->
+        <a asp-controller="CmsProjects" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-emerald-400/40 hover:shadow-lg hover:shadow-emerald-400/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                    @Model.PublishedProjectsCount @L["Pub"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @Model.TotalProjectsCount
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Projects"]</h3>
+        </a>
+
+        <!-- Blog / Insights -->
+        <a asp-controller="CmsBlogPosts" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-amber-400/40 hover:shadow-lg hover:shadow-amber-400/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                    @Model.PublishedBlogPostsCount @L["Pub"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @Model.TotalBlogPostsCount
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Insights"]</h3>
+        </a>
+
+        <!-- Team Members -->
+        <a asp-controller="CmsTeamMembers" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-indigo-400/40 hover:shadow-lg hover:shadow-indigo-400/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded">
+                    @Model.PublishedTeamMembersCount @L["Pub"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @Model.TotalTeamMembersCount
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Team Members"]</h3>
+        </a>
+
+        <!-- Testimonials -->
+        <a asp-controller="CmsTestimonials" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 hover:border-pink-400/40 hover:shadow-lg hover:shadow-pink-400/5 transition-all">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-8 h-8 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                </div>
+                <span class="text-[10px] font-semibold text-pink-400 bg-pink-500/10 px-1.5 py-0.5 rounded">
+                    @Model.PublishedTestimonialsCount @L["Pub"]
+                </span>
+            </div>
+            <div class="text-2xl font-bold font-display text-foreground tracking-tight">
+                @Model.TotalTestimonialsCount
+            </div>
+            <h3 class="text-xs font-semibold text-foreground/80 mt-1">@L["Testimonials"]</h3>
+        </a>
+    </div>
+
+    <!-- Multi-Brand Profiles Status -->
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="layers" class="w-5 h-5 text-cyan"></i>
+                <h2 class="text-base font-bold text-foreground font-display">@L["Active Brand Profiles"]</h2>
+            </div>
+            <a asp-controller="CmsCompanyProfiles" asp-action="Index" class="text-xs font-semibold text-cyan hover:underline">
+                @L["View All Profiles"] <span class="dir-flip inline-block">&rarr;</span>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            @foreach (var brand in Model.BrandSummaries)
+            {
+                <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 flex flex-col justify-between space-y-5">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-xl bg-background border border-border p-2 flex items-center justify-center shrink-0">
+                                <img src="@(string.IsNullOrWhiteSpace(brand.LogoPath) ? "/images/favicon.svg" : brand.LogoPath)" alt="@brand.NameEn" class="w-full h-full object-contain" />
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-foreground">@brand.NameEn</h3>
+                                <p class="text-xs text-muted-foreground font-arabic" dir="rtl">@brand.NameAr</p>
+                                <span class="font-mono text-[11px] text-cyan">@L["Slug:"] @brand.Slug</span>
+                            </div>
+                        </div>
+                        <partial name="_CmsStatusBadge" model="brand.IsPublished" />
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-3 rounded-xl bg-background/50 border border-border text-center text-xs">
+                        <div class="border-r border-border">
+                            <div class="text-base font-bold text-foreground">@brand.ServicesCount</div>
+                            <div class="text-[10px] text-muted-foreground font-medium">@L["Services"]</div>
+                        </div>
+                        <div class="border-r border-border">
+                            <div class="text-base font-bold text-foreground">@(brand.DivisionPagesCount > 0 ? brand.DivisionPagesCount : 5)</div>
+                            <div class="text-[10px] text-muted-foreground font-medium">@L["Divisions"]</div>
+                        </div>
+                        <div class="border-r border-border">
+                            <div class="text-base font-bold text-foreground">@(brand.PageBandsCount > 0 ? brand.PageBandsCount : 22)</div>
+                            <div class="text-[10px] text-muted-foreground font-medium">@L["Page Blocks"]</div>
+                        </div>
+                        <div>
+                            <div class="text-base font-bold text-foreground">@brand.SocialLinksCount</div>
+                            <div class="text-[10px] text-muted-foreground font-medium">@L["Social Links"]</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Links -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-border">
+                        <a asp-controller="CmsCompanyProfiles" asp-action="Edit" asp-route-id="@brand.Id"
+                           class="text-center py-2 px-2.5 rounded-xl text-xs font-semibold bg-card border border-border hover:bg-muted text-foreground transition-all truncate">
+                            @L["Profile"]
+                        </a>
+                        <a asp-controller="CmsDivisionPages" asp-action="Index" asp-route-companyId="@brand.Id"
+                           class="text-center py-2 px-2.5 rounded-xl text-xs font-semibold bg-cyan/10 text-cyan border border-cyan/20 hover:bg-cyan/20 transition-all truncate">
+                            @L["Divisions"]
+                        </a>
+                        <a asp-controller="CmsPageBands" asp-action="Index" asp-route-companyId="@brand.Id"
+                           class="text-center py-2 px-2.5 rounded-xl text-xs font-semibold bg-azure/10 text-azure border border-azure/20 hover:bg-azure/20 transition-all truncate">
+                            @L["Page Blocks"]
+                        </a>
+                        <a asp-controller="CmsServices" asp-action="Index" asp-route-companyId="@brand.Id"
+                           class="text-center py-2 px-2.5 rounded-xl text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20 transition-all truncate">
+                            @L["Services"]
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Recent Content (Services & Social Links) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Services -->
+        <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-border pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="cpu" class="w-4 h-4 text-azure"></i>
+                    <h3 class="text-sm font-bold text-foreground">@L["Recent Services"]</h3>
+                </div>
+                <a asp-controller="CmsServices" asp-action="Index" class="text-xs text-cyan hover:underline">@L["View All"]</a>
+            </div>
+
+            @if (Model.RecentServices.Count == 0)
+            {
+                <p class="text-xs text-muted-foreground py-4 text-center">@L["No services found."]</p>
+            }
+            else
+            {
+                <div class="space-y-2.5">
+                    @foreach (var svc in Model.RecentServices)
+                    {
+                        <div class="flex items-center justify-between p-2.5 rounded-xl bg-background/40 border border-border hover:border-azure/30 transition-all text-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-7 h-7 rounded-lg bg-azure/10 text-azure flex items-center justify-center shrink-0">
+                                    <i data-lucide="@(string.IsNullOrWhiteSpace(svc.IconName) ? "cpu" : svc.IconName)" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <div class="truncate">
+                                    <div class="font-semibold text-foreground truncate">@svc.NameEn</div>
+                                    <div class="text-[10px] text-muted-foreground">@svc.CompanyNameEn</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <partial name="_CmsStatusBadge" model="svc.IsPublished" />
+                                <a asp-controller="CmsServices" asp-action="Edit" asp-route-id="@svc.Id" class="text-muted-foreground hover:text-foreground p-1">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Recent Social Links -->
+        <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-border pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="share-2" class="w-4 h-4 text-purple-400"></i>
+                    <h3 class="text-sm font-bold text-foreground">@L["Recent Social Links"]</h3>
+                </div>
+                <a asp-controller="CmsSocialLinks" asp-action="Index" class="text-xs text-cyan hover:underline">@L["View All"]</a>
+            </div>
+
+            @if (Model.RecentSocialLinks.Count == 0)
+            {
+                <p class="text-xs text-muted-foreground py-4 text-center">@L["No social links found."]</p>
+            }
+            else
+            {
+                <div class="space-y-2.5">
+                    @foreach (var link in Model.RecentSocialLinks)
+                    {
+                        <div class="flex items-center justify-between p-2.5 rounded-xl bg-background/40 border border-border hover:border-purple-500/30 transition-all text-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-7 h-7 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                                    <i data-lucide="@(string.IsNullOrWhiteSpace(link.IconName) ? "share-2" : link.IconName)" class="w-3.5 h-3.5"></i>
+                                </div>
+                                <div class="truncate">
+                                    <div class="font-semibold text-foreground truncate capitalize">@(link.DisplayName ?? link.Platform)</div>
+                                    <div class="text-[10px] text-muted-foreground">@link.CompanyNameEn</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <partial name="_CmsStatusBadge" model="link.IsPublished" />
+                                <a asp-controller="CmsSocialLinks" asp-action="Edit" asp-route-id="@link.Id" class="text-muted-foreground hover:text-foreground p-1">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+@using Neurix.Localization
+@*
+    Dashboard AR/EN switch. Shared by _CmsLayout and _CrmLayout so there is one
+    implementation to maintain.
+
+    Mirrors the public site's toggle in spirit (single button, swaps language, flips
+    direction) but goes through the server: it hits CmsLocalizationController.SetLanguage,
+    which writes the culture cookie and redirects back to returnUrl. That returns the user
+    to the page they were on — not the dashboard home — and the choice survives refreshes
+    and later navigation because it lives in the cookie, not in localStorage.
+
+    The label shows the language being switched TO, in its own script, so it is never
+    ambiguous: in English it reads "العربية", in Arabic it reads "English".
+*@
+@{
+    var currentLanguage = CmsLanguage.Current;
+    var targetLanguage = CmsLanguage.Next(currentLanguage);
+    // Path + query minus any ?lang=, so the redirect cannot re-apply the old language.
+    var toggleReturnUrl = Context.Request.CurrentUrlForLanguageToggle();
+}
+
+<a asp-controller="CmsLocalization"
+   asp-action="SetLanguage"
+   asp-route-lang="@targetLanguage.Code"
+   asp-route-returnUrl="@toggleReturnUrl"
+   id="cms-lang-toggle"
+   data-current-lang="@currentLanguage.Code"
+   data-target-lang="@targetLanguage.Code"
+   title="Switch to @targetLanguage.NativeName"
+   aria-label="Switch language to @targetLanguage.NativeName. Current language: @currentLanguage.NativeName"
+   class="inline-flex items-center gap-1.5 px-3 py-1.5 h-9 text-xs font-semibold rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0">
+    <i data-lucide="languages" class="w-3.5 h-3.5"></i>
+    <span class="uppercase tracking-wide">@targetLanguage.Code</span>
+    <span class="hidden sm:inline font-normal opacity-80">@targetLanguage.NativeName</span>
+</a>

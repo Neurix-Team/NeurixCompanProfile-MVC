@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var fullName = ViewData["FullName"] as string;
+    var email = ViewData["Email"] as string;
+    var roles = ViewData["Roles"] as string[] ?? Array.Empty<string>();
+}
+
+<div class="max-w-7xl">
+
+    <div class="mb-10">
+        <h1 class="font-display text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+            @L["Welcome back,"] <span class="text-gradient-brand">@fullName</span>
+        </h1>
+        <p class="text-sm text-muted-foreground">
+            @email
+            @if (roles.Length > 0)
+            {
+                <span class="mx-2 text-border">•</span>
+                @foreach (var role in roles)
+                {
+                    <span class="inline-flex items-center rounded-full border border-cyan/30 bg-cyan/10 px-2.5 py-0.5 text-xs font-medium text-cyan mr-1.5">@role</span>
+                }
+            }
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <a asp-controller="CrmLeads" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 p-6 hover:border-cyan/40 transition-colors">
+            <div class="flex items-center justify-between mb-3">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-background/60">
+                    <i data-lucide="target" class="w-5 h-5 text-cyan"></i>
+                </div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-muted-foreground group-hover:text-cyan group-hover:translate-x-0.5 transition-all dir-flip"></i>
+            </div>
+            <h3 class="font-display text-base font-semibold mb-1">@L["Leads"]</h3>
+            <p class="text-sm text-muted-foreground">@L["Enquiries from the website and beyond."]</p>
+        </a>
+
+        <a asp-controller="CrmCompanies" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 p-6 hover:border-cyan/40 transition-colors">
+            <div class="flex items-center justify-between mb-3">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-background/60">
+                    <i data-lucide="building-2" class="w-5 h-5 text-cyan"></i>
+                </div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-muted-foreground group-hover:text-cyan group-hover:translate-x-0.5 transition-all dir-flip"></i>
+            </div>
+            <h3 class="font-display text-base font-semibold mb-1">@L["Companies"]</h3>
+            <p class="text-sm text-muted-foreground">@L["Manage the organisations you work with."]</p>
+        </a>
+
+        <a asp-controller="CrmContacts" asp-action="Index"
+           class="group rounded-2xl border border-border bg-card/60 p-6 hover:border-cyan/40 transition-colors">
+            <div class="flex items-center justify-between mb-3">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-background/60">
+                    <i data-lucide="users" class="w-5 h-5 text-cyan"></i>
+                </div>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-muted-foreground group-hover:text-cyan group-hover:translate-x-0.5 transition-all dir-flip"></i>
+            </div>
+            <h3 class="font-display text-base font-semibold mb-1">@L["Contacts"]</h3>
+            <p class="text-sm text-muted-foreground">@L["Track the people at those organisations."]</p>
+        </a>
+    </div>
+
+    <div class="rounded-2xl border border-border bg-card/60 p-6">
+        <h3 class="font-display text-sm font-semibold mb-4">@L["Coming in later phases"]</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            @foreach (var item in new[] { "Lead conversion", "Deals", "Activities", "Tasks" })
+            {
+                <div class="flex items-center gap-2.5 rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
+                    <i data-lucide="clock" class="w-4 h-4 shrink-0"></i>
+                    <span>@L[item]</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>

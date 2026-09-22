@@ -1,0 +1,1116 @@
+﻿@model Neurix.Models.HomePageViewModel
+@{
+    ViewData["Title"] = "Neurix AI Holding";
+}
+@{
+    // #divisions cards come from the CMS (/cms/home-sections/divisions). The literal set
+    // below is the fail-soft fallback that renders only while the table is still empty,
+    // matching how the pillars grid behaves.
+    var divisions = Model.DivisionItems != null && Model.DivisionItems.Any()
+        ? Model.DivisionItems.Select(d => new
+          {
+              Icon = string.IsNullOrWhiteSpace(d.IconName) ? "layers" : d.IconName,
+              TitleEn = d.TitleEn,
+              TitleAr = d.TitleAr,
+              DescEn = d.DescriptionEn,
+              DescAr = d.DescriptionAr,
+              Url = string.IsNullOrWhiteSpace(d.LinkUrl) ? "/" : d.LinkUrl,
+              LinkTextEn = string.IsNullOrWhiteSpace(d.LinkTextEn) ? "Explore" : d.LinkTextEn,
+              LinkTextAr = string.IsNullOrWhiteSpace(d.LinkTextAr) ? "المزيد" : d.LinkTextAr
+          }).ToList()
+        : new[] {
+            new { Icon = "beaker", TitleEn = "Neurix AI Labs", TitleAr = "مختبرات نيوركس AI", DescEn = "Primary R&D center building analytical tools and scientific foundations.", DescAr = "المركز الرئيسي للبحث والتطوير وبناء الأدوات التحليلية والأسس العلمية.", Url = "/Home/Labs", LinkTextEn = "Explore", LinkTextAr = "المزيد" },
+            new { Icon = "cpu", TitleEn = "Neurix AI Technology", TitleAr = "تكنولوجيا نيوركس AI", DescEn = "Transforms Lab research into integrated applications and market-ready projects.", DescAr = "تحول أبحاث المختبر إلى تطبيقات متكاملة ومشروعات جاهزة للسوق.", Url = "/Home/Technology", LinkTextEn = "Explore", LinkTextAr = "المزيد" },
+            new { Icon = "users", TitleEn = "Neurix AI Club", TitleAr = "نادي نيوركس AI", DescEn = "Professional networking and remote work infrastructure for global digital talent.", DescAr = "بنية مهنية للتواصل والعمل عن بُعد للمواهب التقنية حول العالم.", Url = "/Home/Club", LinkTextEn = "Explore", LinkTextAr = "المزيد" },
+            new { Icon = "zap", TitleEn = "Neurix AI Plus", TitleAr = "نيوركس بلس AI", DescEn = "Strategic and sovereign engagements with governments, academia, and industry.", DescAr = "شراكات استراتيجية وسيادية مع الجهات الحكومية والأكاديمية والصناعية.", Url = "/Home/Plus", LinkTextEn = "Explore", LinkTextAr = "المزيد" },
+            new { Icon = "layers", TitleEn = "Neurix AI HQ", TitleAr = "المقر الرئيسي AI", DescEn = "The foundational stack powering every division — secure, modular, scalable.", DescAr = "الحزمة الأساسية التي تشغل كل قسم — آمنة ومعيارية وقابلة للتطوير.", Url = "/Home/HQ", LinkTextEn = "Explore", LinkTextAr = "المزيد" }
+        }.ToList();
+    int idx = 0;
+}
+
+@{
+    var hero = Model.HeroSection;
+    var heroBadgeEn = !string.IsNullOrWhiteSpace(hero?.BadgeEn) ? hero.BadgeEn : "Empowering the Future";
+    var heroBadgeAr = !string.IsNullOrWhiteSpace(hero?.BadgeAr) ? hero.BadgeAr : "تمكين المستقبل";
+    var heroTitlePrefixEn = hero?.TitlePrefixEn ?? "Building Human-Centered ";
+    var heroTitleHighlightEn = !string.IsNullOrWhiteSpace(hero?.TitleHighlightEn) ? hero.TitleHighlightEn : "AI";
+    var heroTitleSuffixEn = hero?.TitleSuffixEn ?? " for Tomorrow";
+    var heroTitlePrefixAr = hero?.TitlePrefixAr ?? " ";
+    var heroTitleHighlightAr = !string.IsNullOrWhiteSpace(hero?.TitleHighlightAr) ? hero.TitleHighlightAr : "ذكاء اصطناعي";
+    var heroTitleSuffixAr = hero?.TitleSuffixAr ?? " محوره الإنسان، من أجل الغد";
+    var heroSubtitleEn = !string.IsNullOrWhiteSpace(hero?.SubtitleEn) ? hero.SubtitleEn : "Neurix AI is building smarter digital experiences for tomorrow.";
+    var heroSubtitleAr = !string.IsNullOrWhiteSpace(hero?.SubtitleAr) ? hero.SubtitleAr : "نصنع في نيوركس AI تجارب رقمية أذكى لمستقبلنا.";
+    var heroBtn1TextEn = !string.IsNullOrWhiteSpace(hero?.PrimaryButtonTextEn) ? hero.PrimaryButtonTextEn : "Explore Our Divisions";
+    var heroBtn1TextAr = !string.IsNullOrWhiteSpace(hero?.PrimaryButtonTextAr) ? hero.PrimaryButtonTextAr : "استكشف اقسامنا";
+    var heroBtn1Url = !string.IsNullOrWhiteSpace(hero?.PrimaryButtonUrl) ? hero.PrimaryButtonUrl : "#divisions";
+    var heroBtn2TextEn = !string.IsNullOrWhiteSpace(hero?.SecondaryButtonTextEn) ? hero.SecondaryButtonTextEn : "Get in Touch";
+    var heroBtn2TextAr = !string.IsNullOrWhiteSpace(hero?.SecondaryButtonTextAr) ? hero.SecondaryButtonTextAr : "تواصل معنا";
+    var heroBtn2Url = !string.IsNullOrWhiteSpace(hero?.SecondaryButtonUrl) ? hero.SecondaryButtonUrl : "/Home/Contact";
+    var stat1Val = !string.IsNullOrWhiteSpace(hero?.Stat1Value) ? hero.Stat1Value : "6+";
+    var stat1LabelEn = !string.IsNullOrWhiteSpace(hero?.Stat1LabelEn) ? hero.Stat1LabelEn : "AI Systems";
+    var stat1LabelAr = !string.IsNullOrWhiteSpace(hero?.Stat1LabelAr) ? hero.Stat1LabelAr : "أنظمة الذكاء الاصطناعي";
+    var stat2Val = !string.IsNullOrWhiteSpace(hero?.Stat2Value) ? hero.Stat2Value : "2+";
+    var stat2LabelEn = !string.IsNullOrWhiteSpace(hero?.Stat2LabelEn) ? hero.Stat2LabelEn : "Enterprise Scale";
+    var stat2LabelAr = !string.IsNullOrWhiteSpace(hero?.Stat2LabelAr) ? hero.Stat2LabelAr : "حلول المؤسسات";
+    var stat3Val = !string.IsNullOrWhiteSpace(hero?.Stat3Value) ? hero.Stat3Value : "5+";
+    var stat3LabelEn = !string.IsNullOrWhiteSpace(hero?.Stat3LabelEn) ? hero.Stat3LabelEn : "Digital Platforms";
+    var stat3LabelAr = !string.IsNullOrWhiteSpace(hero?.Stat3LabelAr) ? hero.Stat3LabelAr : "المنصات الرقمية";
+
+    var vision = Model.HumanVisionSection;
+    var visionBadgeEn = !string.IsNullOrWhiteSpace(vision?.BadgeEn) ? vision.BadgeEn : "Our Core Philosophy";
+    var visionBadgeAr = !string.IsNullOrWhiteSpace(vision?.BadgeAr) ? vision.BadgeAr : "فلسفتنا الأساسية";
+    var visionTitlePrefixEn = vision?.TitlePrefixEn ?? "Neurix AI ";
+    var visionTitleHighlightEn = !string.IsNullOrWhiteSpace(vision?.TitleHighlightEn) ? vision.TitleHighlightEn : "Human Vision";
+    var visionTitlePrefixAr = vision?.TitlePrefixAr ?? "رؤية نيوركس AI ";
+    var visionTitleHighlightAr = !string.IsNullOrWhiteSpace(vision?.TitleHighlightAr) ? vision.TitleHighlightAr : "الإنسانية";
+    var visionP1En = !string.IsNullOrWhiteSpace(vision?.Paragraph1En) ? vision.Paragraph1En : "Technological advancement is a great achievement, but its misuse—such as gaming addiction and harmful online behaviors—has become a silent threat to our youth.";
+    var visionP1Ar = !string.IsNullOrWhiteSpace(vision?.Paragraph1Ar) ? vision.Paragraph1Ar : "يُعد التقدم التكنولوجي إنجازاً عظيماً، لكن سوء استخدامه—كإدمان الألعاب والسلوكيات الضارة—يحوله إلى تهديد صامت يشتت شبابنا.";
+    var visionP2En = !string.IsNullOrWhiteSpace(vision?.Paragraph2En) ? vision.Paragraph2En : "Protecting their minds and guiding them toward the purposeful use of technology is a shared responsibility. Neurix AI's mission is to empower young people to use technology positively, transforming their energy into a force for innovation and societal growth to build a digital future that uplifts humanity.";
+    var visionP2Ar = !string.IsNullOrWhiteSpace(vision?.Paragraph2Ar) ? vision.Paragraph2Ar : "حماية عقول الشباب وتوجيههم نحو الاستخدام الهادف للتكنولوجيا هي مسؤولية مشتركة. لذلك، تسعى 'نيوركس AI' إلى تمكين الشباب من استثمار التكنولوجيا بصورة إيجابية، وتحويل طاقاتهم إلى قوة للابتكار وتطوير المجتمع، لنبني معاً مستقبلاً رقمياً يرتقي بالإنسان.";
+    var visionImg = !string.IsNullOrWhiteSpace(vision?.ImagePath) ? vision.ImagePath : "/images/Bringing Clarity to Complexity_1 2.png";
+    var visionImgAltEn = !string.IsNullOrWhiteSpace(vision?.ImageAltEn) ? vision.ImageAltEn : "Neurix AI Human Vision";
+    var visionImgAltAr = !string.IsNullOrWhiteSpace(vision?.ImageAltAr) ? vision.ImageAltAr : "رؤية نيوركس AI الإنسانية";
+
+    var pioneers = Model.PioneersSection;
+    var pioneersBadgeEn = !string.IsNullOrWhiteSpace(pioneers?.BadgeEn) ? pioneers.BadgeEn : "For the Innovators";
+    var pioneersBadgeAr = !string.IsNullOrWhiteSpace(pioneers?.BadgeAr) ? pioneers.BadgeAr : "للمبتكرين";
+    var pioneersTitlePrefixEn = pioneers?.TitlePrefixEn ?? "A Message to the ";
+    var pioneersTitleHighlightEn = !string.IsNullOrWhiteSpace(pioneers?.TitleHighlightEn) ? pioneers.TitleHighlightEn : "Pioneers of Innovation";
+    var pioneersTitlePrefixAr = pioneers?.TitlePrefixAr ?? "رسالة ";
+    var pioneersTitleHighlightAr = !string.IsNullOrWhiteSpace(pioneers?.TitleHighlightAr) ? pioneers.TitleHighlightAr : "لرواد الابتكار والأبداع";
+    var pioneersP1En = !string.IsNullOrWhiteSpace(pioneers?.Paragraph1En) ? pioneers.Paragraph1En : "To all programmers and visionaries: Your mission extends beyond writing code; you are shaping the future.";
+    var pioneersP1Ar = !string.IsNullOrWhiteSpace(pioneers?.Paragraph1Ar) ? pioneers.Paragraph1Ar : "مهمتكم تتجاوز كتابة الأكواد إلى صناعة المستقبل وتوجيه مساره.";
+    var pioneersP2En = !string.IsNullOrWhiteSpace(pioneers?.Paragraph2En) ? pioneers.Paragraph2En : "You hold the power to make technology a catalyst for progress rather than a tool for distraction. It is your responsibility to channel your skills to elevate humanity, not just advance systems. Let your creativity build a more conscious and human-centered world.";
+    var pioneersP2Ar = !string.IsNullOrWhiteSpace(pioneers?.Paragraph2Ar) ? pioneers.Paragraph2Ar : "التكنولوجيا بين أيديكم إما قوة للبناء والوعي أو أداة لتشتيت الأجيال. لذا، مسؤوليتكم هي توظيف مهاراتكم لخدمة الإنسان، وليس مجرد تطوير الأنظمة. اجعلوا من إبداعكم خطوة نحو عالم أكثر وعياً وإنسانية.";
+    var pioneersImg = !string.IsNullOrWhiteSpace(pioneers?.ImagePath) ? pioneers.ImagePath : "/images/Infrastructure.png";
+    var pioneersImgAltEn = !string.IsNullOrWhiteSpace(pioneers?.ImageAltEn) ? pioneers.ImageAltEn : "Pioneers of Innovation";
+    var pioneersImgAltAr = !string.IsNullOrWhiteSpace(pioneers?.ImageAltAr) ? pioneers.ImageAltAr : "رواد الابتكار";
+
+    var pillarsSection = Model.PillarsSection;
+    var pillarsTitleEn = !string.IsNullOrWhiteSpace(pillarsSection?.TitleEn) ? pillarsSection.TitleEn : "Core Capabilities";
+    var pillarsTitleAr = !string.IsNullOrWhiteSpace(pillarsSection?.TitleAr) ? pillarsSection.TitleAr : "الركائز الاساسية";
+    var pillarsSubtitleEn = !string.IsNullOrWhiteSpace(pillarsSection?.SubtitleEn) ? pillarsSection.SubtitleEn : "The foundational pillars driving our intelligent digital ecosystems and enterprise solutions.";
+    var pillarsSubtitleAr = !string.IsNullOrWhiteSpace(pillarsSection?.SubtitleAr) ? pillarsSection.SubtitleAr : "الركائز الأساسية التي تقود منظوماتنا الرقمية الذكيّة وحلول المؤسسات.";
+    var pillarItems = Model.Pillars != null && Model.Pillars.Any() ? Model.Pillars : null;
+
+    var ethics = Model.EthicsSection;
+    var ethicsBadgeEn = !string.IsNullOrWhiteSpace(ethics?.BadgeEn) ? ethics.BadgeEn : "Operational Strategy";
+    var ethicsBadgeAr = !string.IsNullOrWhiteSpace(ethics?.BadgeAr) ? ethics.BadgeAr : "الاستراتيجية التشغيلية";
+    var ethicsTitlePrefixEn = ethics?.TitlePrefixEn ?? "Our Vision & ";
+    var ethicsTitleHighlightEn = !string.IsNullOrWhiteSpace(ethics?.TitleHighlightEn) ? ethics.TitleHighlightEn : "Implementation Framework";
+    var ethicsTitlePrefixAr = ethics?.TitlePrefixAr ?? "رؤيتنا و ";
+    var ethicsTitleHighlightAr = !string.IsNullOrWhiteSpace(ethics?.TitleHighlightAr) ? ethics.TitleHighlightAr : "إطار عمل التنفيذ";
+    var ethicsDescEn = !string.IsNullOrWhiteSpace(ethics?.DescriptionEn) ? ethics.DescriptionEn : "Neurix AI serves as the technological engine of the ecosystem, transforming scientific research, AI-driven tools, and technical infrastructure into practical solutions for education, healthcare, government, academia, and professional communities.";
+    var ethicsDescAr = !string.IsNullOrWhiteSpace(ethics?.DescriptionAr) ? ethics.DescriptionAr : "تعمل نيوركس كمحرك تقني للمنظومة، حيث تقوم بتحويل البحث العلمي والذكاء الاصطناعي والبنية التحتية إلى حلول عملية في مجالات التعليم، الرعاية الصحية، الحكومات، الأكاديميات، والمجتمعات المهنية.";
+    var ethicsTopImg = !string.IsNullOrWhiteSpace(ethics?.TopImagePath) ? ethics.TopImagePath : "/images/Software.png";
+    var ethicsTopImgAltEn = !string.IsNullOrWhiteSpace(ethics?.TopImageAltEn) ? ethics.TopImageAltEn : "Software Office Desk Setup";
+    var ethicsTopImgAltAr = !string.IsNullOrWhiteSpace(ethics?.TopImageAltAr) ? ethics.TopImageAltAr : "بيئة تطوير البرمجيات";
+    var ethicsBottomImg = !string.IsNullOrWhiteSpace(ethics?.BottomImagePath) ? ethics.BottomImagePath : "/images/Research.png";
+    var ethicsBottomImgAltEn = !string.IsNullOrWhiteSpace(ethics?.BottomImageAltEn) ? ethics.BottomImageAltEn : "Pristine Laboratory Setup";
+    var ethicsBottomImgAltAr = !string.IsNullOrWhiteSpace(ethics?.BottomImageAltAr) ? ethics.BottomImageAltAr : "مختبر الأبحاث العلمية";
+        var ethicsBgImg = !string.IsNullOrWhiteSpace(ethics?.BackgroundImagePath) ? ethics.BackgroundImagePath : "/images/Infrastructure.png";
+
+    var cta = Model.CtaSection;
+    var ctaBadgeEn = !string.IsNullOrWhiteSpace(cta?.BadgeEn) ? cta.BadgeEn : "Let's Build Together";
+    var ctaBadgeAr = !string.IsNullOrWhiteSpace(cta?.BadgeAr) ? cta.BadgeAr : "لنبني معاً";
+    var ctaTitlePrefixEn = cta?.TitlePrefixEn ?? "Ready to engineer";
+    var ctaTitleHighlightEn = cta?.TitleHighlightEn ?? " your future?";
+    var ctaTitlePrefixAr = cta?.TitlePrefixAr ?? "مستعد لهندسة";
+    var ctaTitleHighlightAr = cta?.TitleHighlightAr ?? " مستقبلك؟";
+    var ctaButtonTextEn = !string.IsNullOrWhiteSpace(cta?.ButtonTextEn) ? cta.ButtonTextEn : "Contact Us";
+    var ctaButtonTextAr = !string.IsNullOrWhiteSpace(cta?.ButtonTextAr) ? cta.ButtonTextAr : "تواصل معنا";
+    var ctaButtonUrl = !string.IsNullOrWhiteSpace(cta?.ButtonUrl) ? cta.ButtonUrl : "/Home/Contact";
+    var ctaContactEmail = !string.IsNullOrWhiteSpace(cta?.ContactEmail) ? cta.ContactEmail : "neurix@aidaleel.com";
+    var ctaBgImg = !string.IsNullOrWhiteSpace(cta?.BackgroundImagePath) ? cta.BackgroundImagePath : "/images/Contact Us (Home) 2.png";
+
+    var divisionsSection = Model.DivisionsSection;
+    var divisionsBadgeEn = !string.IsNullOrWhiteSpace(divisionsSection?.BadgeEn) ? divisionsSection.BadgeEn : "Our Ecosystem";
+    var divisionsBadgeAr = !string.IsNullOrWhiteSpace(divisionsSection?.BadgeAr) ? divisionsSection.BadgeAr : "منظومتنا";
+    var divisionsTitlePrefixEn = divisionsSection?.TitlePrefixEn ?? "Five subsidiaries. ";
+    var divisionsTitleHighlightEn = !string.IsNullOrWhiteSpace(divisionsSection?.TitleHighlightEn) ? divisionsSection.TitleHighlightEn : "One ecosystem.";
+    var divisionsTitlePrefixAr = divisionsSection?.TitlePrefixAr ?? "خمسة فروع. ";
+    var divisionsTitleHighlightAr = !string.IsNullOrWhiteSpace(divisionsSection?.TitleHighlightAr) ? divisionsSection.TitleHighlightAr : "منظومة واحدة.";
+    var divisionsDescEn = !string.IsNullOrWhiteSpace(divisionsSection?.DescriptionEn) ? divisionsSection.DescriptionEn : "Each division is purpose-built to drive a specific domain of Neurix AI's broader mission.";
+    var divisionsDescAr = !string.IsNullOrWhiteSpace(divisionsSection?.DescriptionAr) ? divisionsSection.DescriptionAr : "كل فرع مصمم لقيادة مجال محدد ضمن رسالة نيوركس AI الأشمل.";
+
+    var aiSection = Model.AiEngineeringSection;
+    var aiBadgeEn = !string.IsNullOrWhiteSpace(aiSection?.BadgeEn) ? aiSection.BadgeEn : "Core Services";
+    var aiBadgeAr = !string.IsNullOrWhiteSpace(aiSection?.BadgeAr) ? aiSection.BadgeAr : "خدماتنا الأساسية";
+    var aiTitleEn = !string.IsNullOrWhiteSpace(aiSection?.TitleEn) ? aiSection.TitleEn : "AI & Engineering";
+    var aiTitleAr = !string.IsNullOrWhiteSpace(aiSection?.TitleAr) ? aiSection.TitleAr : "الذكاء الاصطناعي والهندسة";
+
+    // #services cards, CMS-first with the original four as the fail-soft fallback.
+    var aiItems = Model.AiEngineeringItems != null && Model.AiEngineeringItems.Any()
+        ? Model.AiEngineeringItems.Select(a => new
+          {
+              Icon = string.IsNullOrWhiteSpace(a.IconName) ? "code" : a.IconName,
+              TitleEn = a.TitleEn,
+              TitleAr = a.TitleAr,
+              DescEn = a.DescriptionEn,
+              DescAr = a.DescriptionAr
+          }).ToList()
+        : new[] {
+            new { Icon = "code", TitleEn = "Software Development", TitleAr = "تطوير البرمجيات", DescEn = "Intelligent Systems & Applied AI Product Development", DescAr = "الأنظمة الذكية وتطوير منتجات الذكاء الاصطناعي التطبيقية" },
+            new { Icon = "database", TitleEn = "Data Science Solutions", TitleAr = "حلول علم البيانات", DescEn = "Machine Learning & Data Science Solutions", DescAr = "حلول التعلم الآلي وعلم البيانات" },
+            new { Icon = "sparkles", TitleEn = "AI Software Design", TitleAr = "تصميم وتطوير برمجيات الذكاء الاصطناعي", DescEn = "Artificial Intelligence (AI) Software Design & Development", DescAr = "تصميم وتطوير برمجيات الذكاء الاصطناعي (AI)" },
+            new { Icon = "terminal", TitleEn = "Custom Engineering", TitleAr = "تطوير البرمجيات المخصصة", DescEn = "Software Engineering & Scale Architectures", DescAr = "تطوير البرمجيات وهندسة الأنظمة القابلة للتوسع" }
+        }.ToList();
+
+    // Accent themes for the #services cards, cycled so the palette stays fixed while the
+    // card list is admin-editable.
+    var aiThemes = new[] {
+        new { IconBg = "bg-cyan/10", IconText = "text-cyan" },
+        new { IconBg = "bg-azure/10", IconText = "text-azure" },
+        new { IconBg = "bg-purple-500/10", IconText = "text-purple-500" },
+        new { IconBg = "bg-indigo-500/10", IconText = "text-indigo-500" }
+    };
+
+    // #portfolio / #insights / #testimonials: only the surrounding copy is CMS-backed;
+    // the cards themselves come from Projects, Blog Posts and Testimonials.
+    var portfolioHeader = Model.PortfolioHeader;
+    var portfolioBadgeEn = !string.IsNullOrWhiteSpace(portfolioHeader?.BadgeEn) ? portfolioHeader.BadgeEn : "Engineering Portfolio";
+    var portfolioBadgeAr = !string.IsNullOrWhiteSpace(portfolioHeader?.BadgeAr) ? portfolioHeader.BadgeAr : "معرض الأعمال";
+    var portfolioTitlePrefixEn = portfolioHeader?.TitlePrefixEn ?? "Featured ";
+    var portfolioTitleHighlightEn = portfolioHeader?.TitleHighlightEn ?? "Deployments";
+    var portfolioTitlePrefixAr = portfolioHeader?.TitlePrefixAr ?? "مشاريع ";
+    var portfolioTitleHighlightAr = portfolioHeader?.TitleHighlightAr ?? "مميزة";
+    var portfolioBtnTextEn = portfolioHeader != null ? portfolioHeader.ButtonTextEn : "View All Projects";
+    var portfolioBtnTextAr = portfolioHeader != null ? portfolioHeader.ButtonTextAr : "عرض جميع المشاريع";
+    var portfolioBtnUrl = !string.IsNullOrWhiteSpace(portfolioHeader?.ButtonUrl) ? portfolioHeader.ButtonUrl : "/Home/Portfolio";
+    var portfolioItemLinkEn = portfolioHeader != null ? portfolioHeader.ItemLinkTextEn : "View Case Study";
+    var portfolioItemLinkAr = portfolioHeader != null ? portfolioHeader.ItemLinkTextAr : "عرض دراسة الحالة";
+    var portfolioCategoryEn = portfolioHeader != null ? portfolioHeader.DefaultCategoryLabelEn : "AI System";
+    var portfolioCategoryAr = portfolioHeader != null ? portfolioHeader.DefaultCategoryLabelAr : "نظام ذكاء اصطناعي";
+
+    var insightsHeader = Model.InsightsHeader;
+    var insightsBadgeEn = !string.IsNullOrWhiteSpace(insightsHeader?.BadgeEn) ? insightsHeader.BadgeEn : "Research & Thought Leadership";
+    var insightsBadgeAr = !string.IsNullOrWhiteSpace(insightsHeader?.BadgeAr) ? insightsHeader.BadgeAr : "الأبحاث والرؤى";
+    var insightsTitlePrefixEn = insightsHeader?.TitlePrefixEn ?? "Latest ";
+    var insightsTitleHighlightEn = insightsHeader?.TitleHighlightEn ?? "Insights";
+    var insightsTitlePrefixAr = insightsHeader?.TitlePrefixAr ?? "أحدث ";
+    var insightsTitleHighlightAr = insightsHeader?.TitleHighlightAr ?? "المقالات والأبحاث";
+    var insightsBtnTextEn = insightsHeader != null ? insightsHeader.ButtonTextEn : "View All Publications";
+    var insightsBtnTextAr = insightsHeader != null ? insightsHeader.ButtonTextAr : "عرض جميع المنشورات";
+    var insightsBtnUrl = !string.IsNullOrWhiteSpace(insightsHeader?.ButtonUrl) ? insightsHeader.ButtonUrl : "/Home/Insights";
+    var insightsItemLinkEn = insightsHeader != null ? insightsHeader.ItemLinkTextEn : "Read Article";
+    var insightsItemLinkAr = insightsHeader != null ? insightsHeader.ItemLinkTextAr : "اقرأ المقال";
+    var insightsCategoryEn = insightsHeader != null ? insightsHeader.DefaultCategoryLabelEn : "Research";
+    var insightsCategoryAr = insightsHeader != null ? insightsHeader.DefaultCategoryLabelAr : "أبحاث";
+    var readTimeSuffixEn = insightsHeader != null ? insightsHeader.ReadTimeSuffixEn : "min read";
+    var readTimeSuffixAr = insightsHeader != null ? insightsHeader.ReadTimeSuffixAr : "دقيقة قراءة";
+    var undatedLabelEn = insightsHeader != null ? insightsHeader.UndatedLabelEn : "Recent";
+    var undatedLabelAr = insightsHeader != null ? insightsHeader.UndatedLabelAr : "حديثاً";
+
+    // A card's own category is a single non-bilingual column, so it stands for both
+    // languages; only the CMS fallback differs per language. Either side blank falls back
+    // to the other so a half-filled field never renders an empty pill.
+    string PickLabel(string? preferred, string? other) =>
+        !string.IsNullOrWhiteSpace(preferred) ? preferred : (other ?? string.Empty);
+
+    var testimonialsHeader = Model.TestimonialsHeader;
+    var testimonialsBadgeEn = !string.IsNullOrWhiteSpace(testimonialsHeader?.BadgeEn) ? testimonialsHeader.BadgeEn : "Trusted by Leaders";
+    var testimonialsBadgeAr = !string.IsNullOrWhiteSpace(testimonialsHeader?.BadgeAr) ? testimonialsHeader.BadgeAr : "موثوق من قادة الصناعة";
+    var testimonialsTitlePrefixEn = testimonialsHeader?.TitlePrefixEn ?? "What Partners Say";
+    var testimonialsTitleHighlightEn = testimonialsHeader?.TitleHighlightEn ?? string.Empty;
+    var testimonialsTitlePrefixAr = testimonialsHeader?.TitlePrefixAr ?? "ماذا يقول شركاؤنا";
+    var testimonialsTitleHighlightAr = testimonialsHeader?.TitleHighlightAr ?? string.Empty;
+    var testimonialsSubtitleEn = !string.IsNullOrWhiteSpace(testimonialsHeader?.SubtitleEn) ? testimonialsHeader.SubtitleEn : "Endorsements from universities, institutional partners, and technical leadership.";
+    var testimonialsSubtitleAr = !string.IsNullOrWhiteSpace(testimonialsHeader?.SubtitleAr) ? testimonialsHeader.SubtitleAr : "شهادات وتوصيات من الجامعات والشركاء المؤسسيين والقيادات التقنية.";
+}
+
+@* ═══════════════════════════════════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════════════════════════════════ *@
+<section id="hero" class="relative min-h-screen flex items-center justify-center pt-24 md:pt-32 pb-28 md:pb-36">
+
+    @* Layer 0: base radial gradient *@
+    <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+    @* Layer 0: grid texture *@
+    <div class="absolute inset-0 z-0 bg-grid-pattern pointer-events-none" aria-hidden="true"></div>
+
+    @* Layer 0: focal radial glow *@
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] max-w-[110vw] max-h-[110vw] rounded-full pointer-events-none z-0"
+         style="background: radial-gradient(circle, hsl(var(--cyan) / 0.18) 0%, hsl(var(--azure) / 0.08) 35%, transparent 70%); filter: blur(20px);"
+         aria-hidden="true"></div>
+
+    @* Layer 3: content *@
+    <div class="container relative z-30 text-center max-w-5xl px-5 sm:px-6">
+
+        @* Eyebrow *@
+        <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10 animate-fade-in">
+            <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+            <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+        </div>
+
+        @* Headline *@
+        <style>
+            .br-en { display: none; }
+            .br-ar { display: none; }
+            html[lang="en"] .br-en { display: inline; }
+            html[lang="ar"] .br-ar { display: inline; }
+            
+            /* Dynamic line-height adjustment to prevent Arabic typography collision */
+            html[lang="ar"] #hero-headline {
+                line-height: 1.65 !important;
+            }
+        </style>
+
+        @* Headline *@
+        <h1 id="hero-headline" class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-7xl font-bold leading-[1.35] text-slate-900 dark:text-white animate-fade-in-up"
+            style="animation-delay: 120ms;">
+            <span data-en="@heroTitlePrefixEn" data-ar="@heroTitlePrefixAr">@heroTitlePrefixEn</span>
+            <br class="br-en" />
+            <span class="relative inline-block z-10 px-3">
+                <span class="text-azure dark:text-cyan" data-en="@heroTitleHighlightEn" data-ar="@heroTitleHighlightAr">@heroTitleHighlightEn</span>
+                <!-- Soft square diffuse baby-blue/cyan gradient bleeding exclusively behind the AI text -->
+                <span class="absolute -inset-2 -z-10 bg-gradient-to-br from-cyan/25 to-azure/25 dark:from-cyan/30 dark:to-azure/30 blur-xl rounded-lg pointer-events-none" aria-hidden="true"></span>
+            </span>
+            <span data-en="@heroTitleSuffixEn" data-ar="@heroTitleSuffixAr">@heroTitleSuffixEn</span>
+            <br class="br-ar" />
+        </h1>
+
+        @* Sub-headline *@
+        <p class="mt-8 md:mt-10 max-w-3xl mx-auto text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed animate-fade-in-up"
+           style="animation-delay: 260ms;"
+           data-en="@heroSubtitleEn"
+           data-ar="@heroSubtitleAr">
+            @heroSubtitleEn
+        </p>
+
+        @* CTAs *@
+        <div class="mt-12 md:mt-14 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 animate-fade-in-up"
+             style="animation-delay: 400ms;">
+            <a href="@heroBtn1Url"
+               class="inline-flex items-center gap-2 px-8 py-3.5 rounded-[16px] text-sm font-semibold text-white bg-gradient-to-r from-azure to-deep-blue hover:brightness-90 shadow-[0_0_12px_hsl(var(--azure)/0.4)] transition-all"
+               data-en="@heroBtn1TextEn" data-ar="@heroBtn1TextAr">
+                @heroBtn1TextEn
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 rtl-flip">
+                    <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
+                </svg>
+            </a>
+            <a href="@heroBtn2Url"
+               class="inline-flex items-center px-8 py-3.5 rounded-[16px] text-sm font-semibold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all" style="border:1px solid #334155"
+               data-en="@heroBtn2TextEn" data-ar="@heroBtn2TextAr">
+                @heroBtn2TextEn
+            </a>
+        </div>
+
+        @* Bottom meta *@
+        <div class="mt-24 md:mt-28 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-600/70 dark:text-slate-300/70 animate-fade-in"
+             style="animation-delay: 600ms;">
+            <div class="flex flex-col items-center relative z-10 backdrop-blur-md bg-slate-200/30 dark:bg-black/20 rounded-xl px-5 py-3 border border-white/20 dark:border-white/5 shadow-sm">
+                <span class="text-2xl font-bold text-slate-900 dark:text-white drop-shadow-sm">@stat1Val</span>
+                <span class="text-slate-800 dark:text-white font-medium drop-shadow-md mt-1" data-en="@stat1LabelEn" data-ar="@stat1LabelAr">@stat1LabelEn</span>
+            </div>
+            <div class="divider-vertical"></div>
+            <div class="flex flex-col items-center relative z-10 backdrop-blur-md bg-slate-200/30 dark:bg-black/20 rounded-xl px-5 py-3 border border-white/20 dark:border-white/5 shadow-sm">
+                <span class="text-2xl font-bold text-slate-900 dark:text-white drop-shadow-sm">@stat2Val</span>
+                <span class="text-slate-800 dark:text-white font-medium drop-shadow-md mt-1" data-en="@stat2LabelEn" data-ar="@stat2LabelAr">@stat2LabelEn</span>
+            </div>
+            <div class="divider-vertical"></div>
+            <div class="flex flex-col items-center relative z-10 backdrop-blur-md bg-slate-200/30 dark:bg-black/20 rounded-xl px-5 py-3 border border-white/20 dark:border-white/5 shadow-sm">
+                <span class="text-2xl font-bold text-slate-900 dark:text-white drop-shadow-sm">@stat3Val</span>
+                <span class="text-slate-800 dark:text-white font-medium drop-shadow-md mt-1" data-en="@stat3LabelEn" data-ar="@stat3LabelAr">@stat3LabelEn</span>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Scroll Affordance: bottom-centre of hero -->
+<a href="#human-vision"
+   aria-label="Scroll down"
+   class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center animate-bounce text-azure"
+   style="animation-delay: 800ms;">
+
+    @* currentColor + text-azure: SVG presentation attributes cannot hold var(),
+       so the brand colour is inherited from the anchor's text colour instead.
+       The stop-opacity ramp reproduces the original fade-in. *@
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="44" viewBox="0 0 32 44" fill="none">
+        <defs>
+            <linearGradient id="scrollArrowGrad" x1="16" y1="0" x2="16" y2="34" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="currentColor" stop-opacity="0.1" />
+                <stop offset="50%" stop-color="currentColor" stop-opacity="0.5" />
+                <stop offset="100%" stop-color="currentColor" />
+            </linearGradient>
+        </defs>
+
+        <path d="M16 2L16 32"
+              stroke="url(#scrollArrowGrad)" stroke-width="3.5" stroke-linecap="round" />
+
+        <path d="M7 24L16 33L25 24"
+              stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    </svg>
+</a>
+</section>
+
+@* ═══════════════════════════════════════════════════════════
+   NEURIX AI HUMAN VISION SECTION
+   ═══════════════════════════════════════════════════════════ *@
+<section id="human-vision" class="relative py-28 md:py-36 z-30 overflow-hidden px-4 md:px-6 mission-section">
+    <div class="container px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <!-- Content -->
+            <div class="animate-fade-in-up" data-animate="stagger">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                    <span data-en="@visionBadgeEn" data-ar="@visionBadgeAr">@visionBadgeEn</span>
+                </div>
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                    <span data-en="@visionTitlePrefixEn" data-ar="@visionTitlePrefixAr">@visionTitlePrefixEn</span>
+                    <span class="text-gradient-brand" data-en="@visionTitleHighlightEn" data-ar="@visionTitleHighlightAr">@visionTitleHighlightEn</span>
+                </h2>
+                <div class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-8 space-y-4">
+                    <p data-en="@visionP1En"
+                       data-ar="@visionP1Ar">
+                        @visionP1En
+                    </p>
+                    <p data-en="@visionP2En"
+                       data-ar="@visionP2Ar">
+                        @visionP2En
+                    </p>
+                </div>
+            </div>
+            <!-- Illustration -->
+            <div class="relative card-glow-border rounded-[2.5rem] bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 overflow-hidden h-[500px] animate-fade-in-up" data-animate="stagger">
+                <div class="absolute inset-0 bg-hero-radial opacity-30 rounded-[2.5rem] pointer-events-none"></div>
+                <div class="relative z-10 w-full h-full">
+                    <img src="@Url.Content(visionImg)" alt="@visionImgAltEn" class="w-full h-full object-cover rounded-[2.5rem]" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ═══════════════════════════════════════════════════════════
+   A MESSAGE TO THE PIONEERS OF INNOVATION
+   ═══════════════════════════════════════════════════════════ *@
+<section id="pioneers" class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/50 dark:bg-background/20 pioneers-section">
+    <div class="container px-6 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            
+            <!-- Image Side -->
+            <div class="relative card-glow-border rounded-[2.5rem] bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 overflow-hidden h-[450px] animate-fade-in-up" data-animate="stagger">
+                <div class="absolute inset-0 bg-hero-radial opacity-30 rounded-[2.5rem] pointer-events-none"></div>
+                <div class="relative z-10 w-full h-full p-2">
+                    <img src="@Url.Content(pioneersImg)" alt="@pioneersImgAltEn" class="w-full h-full object-cover rounded-[2.2rem]" />
+                </div>
+            </div>
+
+            <!-- Content Side -->
+            <div class="animate-fade-in-up" data-animate="stagger">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                    <span data-en="@pioneersBadgeEn" data-ar="@pioneersBadgeAr">@pioneersBadgeEn</span>
+                </div>
+                
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                    <span data-en="@pioneersTitlePrefixEn" data-ar="@pioneersTitlePrefixAr">@pioneersTitlePrefixEn</span>
+                    <span class="text-gradient-brand" data-en="@pioneersTitleHighlightEn" data-ar="@pioneersTitleHighlightAr">@pioneersTitleHighlightEn</span>
+                </h2>
+                
+                <div class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-8 space-y-4">
+                    <p data-en="@pioneersP1En"
+                       data-ar="@pioneersP1Ar">
+                        @pioneersP1En
+                    </p>
+                    <p data-en="@pioneersP2En"
+                       data-ar="@pioneersP2Ar">
+                        @pioneersP2En
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+    @* ═══════════════════════════════════════════════════════════
+   CORE CAPABILITIES (Module 1.3)
+   ═══════════════════════════════════════════════════════════ *@
+@if (pillarsSection?.IsPublished != false)
+{
+    <section id="pillars" class="relative py-24 md:py-32 z-30">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="max-w-3xl mx-auto text-center mb-16 md:mb-24">
+                <h2 class="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white animate-fade-in-up"
+                    data-en="@pillarsTitleEn" data-ar="@pillarsTitleAr">@pillarsTitleEn</h2>
+                <p class="text-2xl md:text-xl text-center text-slate-600 dark:text-slate-300 animate-fade-in-up"
+                    data-en="@pillarsSubtitleEn"
+                    data-ar="@pillarsSubtitleAr">@pillarsSubtitleEn</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                @if (pillarItems != null && pillarItems.Any())
+                {
+                    var pillarColors = new[] {
+                        new { Bg = "bg-cyan/10", Text = "text-cyan", Shadow = "shadow-[0_0_15px_hsl(var(--cyan)/0.2)]" },
+                        new { Bg = "bg-azure/10", Text = "text-azure", Shadow = "shadow-[0_0_15px_hsl(var(--azure)/0.2)]" },
+                        new { Bg = "bg-cyan/10", Text = "text-cyan", Shadow = "shadow-[0_0_15px_hsl(var(--cyan)/0.2)]" },
+                        new { Bg = "bg-indigo-500/10", Text = "text-indigo-500", Shadow = "shadow-[0_0_15px_rgba(99,102,241,0.2)]" },
+                        new { Bg = "bg-purple-500/10", Text = "text-purple-500", Shadow = "shadow-[0_0_15px_rgba(168,85,247,0.2)]" },
+                        new { Bg = "bg-emerald-500/10", Text = "text-emerald-500", Shadow = "shadow-[0_0_15px_rgba(16,185,129,0.2)]" }
+                    };
+                    int pIdx = 0;
+
+                    @foreach (var p in pillarItems)
+                    {
+                        var theme = pillarColors[pIdx % pillarColors.Length];
+                        var icon = !string.IsNullOrWhiteSpace(p.IconName) ? p.IconName : "brain";
+
+                        <div class="magnetic-card card-glow-border rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-8 animate-fade-in-up" data-animate="stagger">
+                            <div class="h-12 w-12 rounded-xl @theme.Bg flex items-center justify-center @theme.Text mb-6 @theme.Shadow">
+                                <i data-lucide="@icon" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="@p.TitleEn" data-ar="@p.TitleAr">@p.TitleEn</h3>
+                            <p class="text-slate-700 dark:text-slate-300 leading-relaxed" 
+                               data-en="@p.DescriptionEn" 
+                               data-ar="@p.DescriptionAr">
+                                @p.DescriptionEn
+                            </p>
+                        </div>
+                        pIdx++;
+                    }
+                }
+                else
+                {
+                    <!-- Default fallback cards -->
+                    <div class="magnetic-card card-glow-border rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-8 animate-fade-in-up" data-animate="stagger">
+                        <div class="h-12 w-12 rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-6 shadow-[0_0_15px_hsl(var(--cyan)/0.2)]">
+                            <i data-lucide="brain" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="Advanced AI" data-ar="الذكاء الاصطناعي المتقدم">Advanced AI</h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed" 
+                           data-en="Neural architectures and intelligent systems designed to expand the boundaries of machine intelligence and real-world applications." 
+                           data-ar="أنظمة عصبية وتقنيات ذكية تهدف إلى توسيع حدود الذكاء الاصطناعي وتطبيقاته في الواقع">
+                            Neural architectures and intelligent systems designed to expand the boundaries of machine intelligence and real-world applications.
+                        </p>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="magnetic-card card-glow-border rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-8 animate-fade-in-up" data-animate="stagger">
+                        <div class="h-12 w-12 rounded-xl bg-azure/10 flex items-center justify-center text-azure mb-6 shadow-[0_0_15px_hsl(var(--azure)/0.2)]">
+                            <i data-lucide="layers" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="Digital Platforms" data-ar="المنصات الرقمية">Digital Platforms</h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed" 
+                           data-en="Scalable, secure, and high-performance infrastructure built to support modern digital ecosystems and enterprise solutions." 
+                           data-ar="بنية تحتية قابلة للتوسع، عالية الأداء، وآمنة لدعم الأنظمة الرقمية الحديثة وحلول المؤسسات.">
+                            Scalable, secure, and high-performance infrastructure built to support modern digital ecosystems and enterprise solutions.
+                        </p>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="magnetic-card card-glow-border rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-8 animate-fade-in-up" data-animate="stagger">
+                        <div class="h-12 w-12 rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-6 shadow-[0_0_15px_hsl(var(--cyan)/0.2)]">
+                            <i data-lucide="briefcase" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="Operational Excellence" data-ar="التميز التشغيلي">Operational Excellence</h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed" 
+                           data-en="Precision-driven execution and continuous improvement systems that ensure reliability, efficiency, and measurable impact." 
+                           data-ar="منهجية تنفيذ دقيقة تعتمد على التحسين المستمر لضمان الكفاءة والموثوقية وتحقيق نتائج قابلة للقياس">
+                            Precision-driven execution and continuous improvement systems that ensure reliability, efficiency, and measurable impact.
+                        </p>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="magnetic-card card-glow-border rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-8 animate-fade-in-up" data-animate="stagger">
+                        <div class="h-12 w-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 mb-6 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="Absolute Trust" data-ar="الثقة المطلقة">Absolute Trust</h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed"
+                           data-en="A foundation of uncompromising security, data protection, and ethical governance embedded in every system we build."
+                           data-ar="أساس قائم على أعلى معايير الأمان وحماية البيانات والحوكمة الأخلاقية في جميع أنظمتنا">
+                            A foundation of uncompromising security, data protection, and ethical governance embedded in every system we build.
+                        </p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+@* ═══════════════════════════════════════════════════════════
+   DIVISIONS SECTION (Module 1.4)
+   ═══════════════════════════════════════════════════════════ *@
+@if (divisionsSection?.IsPublished != false)
+{
+<section id="divisions" class="relative py-24 md:py-32 z-30 bg-slate-50/50 dark:bg-background/20">
+    <div class="container px-6 max-w-7xl mx-auto">
+        <div class="max-w-3xl mx-auto text-center mb-16">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                <span data-en="@divisionsBadgeEn" data-ar="@divisionsBadgeAr">@divisionsBadgeEn</span>
+            </div>
+            <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                <span data-en="@divisionsTitlePrefixEn" data-ar="@divisionsTitlePrefixAr">@divisionsTitlePrefixEn</span>
+                <span class="text-gradient-brand" data-en="@divisionsTitleHighlightEn" data-ar="@divisionsTitleHighlightAr">@divisionsTitleHighlightEn</span>
+            </h2>
+            <p class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed"
+               data-en="@divisionsDescEn"
+               data-ar="@divisionsDescAr">
+                @divisionsDescEn
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-7 md:gap-8">
+            @foreach (var div in divisions.Take(3))
+            {
+                <a href="@div.Url"
+                   class="magnetic-card division-card card-glow-border group relative flex flex-col rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-7 md:p-8 transition-all duration-500 ease-out hover:border-cyan/70 hover:-translate-y-1 hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.4),0_0_40px_-5px_hsl(var(--cyan)/0.45)] dark:hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.6),0_0_50px_-5px_hsl(var(--cyan)/0.55)] opacity-0 translate-y-6"
+                   style="transition-delay: @(idx * 110)ms;"
+                   data-animate="stagger">
+                    <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-slate-300 dark:border-white/10 bg-slate-50/70 dark:bg-background/60 text-cyan transition-all duration-500 group-hover:border-cyan/60 group-hover:shadow-[0_0_20px_hsl(var(--cyan)/0.4)] group-hover:scale-110">
+                        <i data-lucide="@div.Icon" class="h-5 w-5"></i>
+                    </div>
+                    <h3 class="font-display text-xl md:text-2xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400"
+                        data-en="@div.TitleEn" data-ar="@div.TitleAr">
+                        @div.TitleEn
+                    </h3>
+                    <p class="text-sm md:text-[15px] text-slate-700 dark:text-slate-300 leading-relaxed"
+                       data-en="@div.DescEn" data-ar="@div.DescAr">
+                        @div.DescEn
+                    </p>
+                    <div class="mt-8 flex items-center justify-end gap-1.5 text-sm font-semibold text-azure transition-all duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 group-hover:gap-2.5"
+                         data-en="@div.LinkTextEn" data-ar="@div.LinkTextAr">
+                        @div.LinkTextEn
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl-flip">
+                            <path d="m9 18 6-6-6-6"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                         style="background: radial-gradient(circle at top right, hsl(var(--cyan) / 0.08), transparent 60%);"
+                         aria-hidden="true"></div>
+                </a>
+                idx++;
+            }
+        </div>
+        @if (divisions.Count > 3)
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-8 mt-8">
+                @foreach (var div in divisions.Skip(3))
+                {
+                <a href="@div.Url"
+                   class="magnetic-card division-card card-glow-border group relative flex flex-col rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-7 md:p-8 transition-all duration-500 ease-out hover:border-cyan/70 hover:-translate-y-1 hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.4),0_0_40px_-5px_hsl(var(--cyan)/0.45)] dark:hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.6),0_0_50px_-5px_hsl(var(--cyan)/0.55)] opacity-0 translate-y-6"
+                   style="transition-delay: @(idx * 110)ms;"
+                   data-animate="stagger">
+                    <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-slate-300 dark:border-white/10 bg-slate-50/70 dark:bg-background/60 text-cyan transition-all duration-500 group-hover:border-cyan/60 group-hover:shadow-[0_0_20px_hsl(var(--cyan)/0.4)] group-hover:scale-110">
+                        <i data-lucide="@div.Icon" class="h-5 w-5"></i>
+                    </div>
+                    <h3 class="font-display text-xl md:text-2xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400"
+                        data-en="@div.TitleEn" data-ar="@div.TitleAr">
+                        @div.TitleEn
+                    </h3>
+                    <p class="text-sm md:text-[15px] text-slate-700 dark:text-slate-300 leading-relaxed"
+                       data-en="@div.DescEn" data-ar="@div.DescAr">
+                        @div.DescEn
+                    </p>
+                    <div class="mt-8 flex items-center justify-end gap-1.5 text-sm font-semibold text-azure transition-all duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 group-hover:gap-2.5"
+                         data-en="@div.LinkTextEn" data-ar="@div.LinkTextAr">
+                        @div.LinkTextEn
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl-flip">
+                            <path d="m9 18 6-6-6-6"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                         style="background: radial-gradient(circle at top right, hsl(var(--cyan) / 0.08), transparent 60%);"
+                         aria-hidden="true"></div>
+                </a>
+                idx++;
+                }
+            </div>
+        }
+    </div>
+</section>
+}
+
+@* ═══════════════════════════════════════════════════════════
+   VISION & IMPLEMENTATION FRAMEWORK
+   ═══════════════════════════════════════════════════════════ *@
+@if (ethics?.IsPublished != false)
+{
+<section id="ethics" class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/50 dark:bg-background/20">
+    @* Half Background ("infrastructure") - faded bright modern server room *@
+    <div class="absolute inset-y-0 right-0 w-full lg:w-1/2 opacity-25 dark:opacity-[0.06] mix-blend-overlay pointer-events-none z-0">
+        <img src="@ethicsBgImg" alt="Infrastructure Background" class="w-full h-full object-cover object-right" />
+        @* Smooth gradient transition to transparent *@
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-50 dark:from-background via-slate-50/40 dark:via-background/40 to-transparent"></div>
+    </div>
+
+    <div class="container px-6 max-w-7xl mx-auto relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            @* Left Side (55% space - lg:col-span-7) *@
+            <div class="lg:col-span-7 flex flex-col text-left rtl:text-right">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6 self-start">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                    <span data-en="@ethicsBadgeEn" data-ar="@ethicsBadgeAr">@ethicsBadgeEn</span>
+                </div>
+                
+                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                    <span data-en="@ethicsTitlePrefixEn" data-ar="@ethicsTitlePrefixAr">@ethicsTitlePrefixEn</span>
+                    <span class="text-gradient-brand" data-en="@ethicsTitleHighlightEn" data-ar="@ethicsTitleHighlightAr">@ethicsTitleHighlightEn</span>
+                </h2>
+                
+                <p class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-10"
+                   data-en="@ethicsDescEn"
+                   data-ar="@ethicsDescAr">
+                    @ethicsDescEn
+                </p>
+
+                @* 2x2 Grid of Dynamic CMS Services *@
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    @if (Model?.Services != null && Model.Services.Any())
+                    {
+                        var serviceGradients = new[] {
+                            new { Border = "hover:border-cyan/50", Shadow = "hover:shadow-[0_0_20px_-5px_hsl(var(--cyan)/0.15)] dark:hover:shadow-[0_0_30px_-5px_hsl(var(--cyan)/0.2)]", IconBg = "bg-cyan/10", IconText = "text-cyan" },
+                            new { Border = "hover:border-azure/50", Shadow = "hover:shadow-[0_0_20px_-5px_hsl(var(--azure)/0.15)] dark:hover:shadow-[0_0_30px_-5px_hsl(var(--azure)/0.2)]", IconBg = "bg-azure/10", IconText = "text-azure" },
+                            new { Border = "hover:border-purple-500/50", Shadow = "hover:shadow-[0_0_20px_-5px_rgba(168,85,247,0.15)] dark:hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.2)]", IconBg = "bg-purple-500/10", IconText = "text-purple-500" },
+                            new { Border = "hover:border-emerald-500/50", Shadow = "hover:shadow-[0_0_20px_-5px_rgba(16,185,129,0.15)] dark:hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.2)]", IconBg = "bg-emerald-500/10", IconText = "text-emerald-500" }
+                        };
+                        int sIdx = 0;
+
+                        @foreach (var s in Model.Services.Take(4))
+                        {
+                            var theme = serviceGradients[sIdx % serviceGradients.Length];
+                            var icon = !string.IsNullOrWhiteSpace(s.IconName) ? s.IconName : "cpu";
+
+                            <div class="group relative flex flex-col rounded-2xl border border-slate-300/80 dark:border-white/10 bg-slate-100/40 dark:bg-card/20 backdrop-blur-md p-6 transition-all duration-300 @theme.Border @theme.Shadow">
+                                <div class="w-10 h-10 rounded-xl @theme.IconBg flex items-center justify-center @theme.IconText mb-4 transition-transform duration-300 group-hover:scale-110">
+                                    <i data-lucide="@icon" class="w-5 h-5"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base" data-en="@s.NameEn" data-ar="@s.NameAr">@s.NameEn</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed"
+                                   data-en="@s.ShortDescriptionEn"
+                                   data-ar="@s.ShortDescriptionAr">
+                                    @s.ShortDescriptionEn
+                                </p>
+                            </div>
+                            sIdx++;
+                        }
+                    }
+                    else
+                    {
+                        <!-- Fallback cards if CMS database is momentarily empty -->
+                        <div class="group relative flex flex-col rounded-2xl border border-slate-300/80 dark:border-white/10 bg-slate-100/40 dark:bg-card/20 backdrop-blur-md p-6 transition-all duration-300 hover:border-cyan/50 hover:shadow-[0_0_20px_-5px_hsl(var(--cyan)/0.15)] dark:hover:shadow-[0_0_30px_-5px_hsl(var(--cyan)/0.2)]">
+                            <div class="w-10 h-10 rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-4 transition-transform duration-300 group-hover:scale-110">
+                                <i data-lucide="microscope" class="w-5 h-5"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base" data-en="Research & Development" data-ar="البحث والتطوير">Research & Development</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed" data-en="Driving analytical development, scientific research, and applied technology solutions through Neurix AI Lab." data-ar="قيادة التطوير التحليلي، والبحث العلمي، وحلول التكنولوجيا التطبيقية من خلال مختبر نيوركس AI.">
+                                Driving analytical development, scientific research, and applied technology solutions through Neurix AI Lab.
+                            </p>
+                        </div>
+                        <div class="group relative flex flex-col rounded-2xl border border-slate-300/80 dark:border-white/10 bg-slate-100/40 dark:bg-card/20 backdrop-blur-md p-6 transition-all duration-300 hover:border-azure/50 hover:shadow-[0_0_20px_-5px_hsl(var(--azure)/0.15)] dark:hover:shadow-[0_0_30px_-5px_hsl(var(--azure)/0.2)]">
+                            <div class="w-10 h-10 rounded-xl bg-azure/10 flex items-center justify-center text-azure mb-4 transition-transform duration-300 group-hover:scale-110">
+                                <i data-lucide="code" class="w-5 h-5"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base" data-en="Software Implementation" data-ar="تنفيذ البرمجيات">Software Implementation</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed" data-en="Building integrated in-house applications and deploying research-based software systems through Neurix AI Tech." data-ar="بناء التطبيقات البرمجية المتكاملة وتطوير الأنظمة القائمة على الأبحاث من خلال تقنية نيوركس AI.">
+                                Building integrated in-house applications and deploying research-based software systems through Neurix AI Tech.
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* Right Side (45% space - lg:col-span-5) - Overlapping premium cards *@
+            <div class="lg:col-span-5 relative w-full h-[450px] sm:h-[550px] lg:h-[620px] flex items-center justify-center">
+                
+                @* Top Image ("software") *@
+                <div class="absolute top-0 left-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
+                    <img src="@ethicsTopImg" alt="@ethicsTopImgAltEn" class="w-full h-full object-cover" />
+                </div>
+                @* Bottom Image ("research") *@
+                <div class="absolute bottom-0 right-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
+                    <img src="@ethicsBottomImg" alt="@ethicsBottomImgAltEn" class="w-full h-full object-cover" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+}
+@* ═══════════════════════════════════════════════════════════
+   AI & ENGINEERING SECTION
+   ═══════════════════════════════════════════════════════════ *@
+@if (aiSection?.IsPublished != false)
+{
+<section id="services" class="relative py-24 md:py-32 z-30 bg-slate-50/50 dark:bg-background/20">
+    <div class="container px-6 max-w-7xl mx-auto">
+        <div class="max-w-3xl mx-auto text-center mb-16">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                <span data-en="@aiBadgeEn" data-ar="@aiBadgeAr">@aiBadgeEn</span>
+            </div>
+            <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight"
+                data-en="@aiTitleEn" data-ar="@aiTitleAr">@aiTitleEn</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @{ int aiIdx = 0; }
+            @foreach (var item in aiItems)
+            {
+                var aiTheme = aiThemes[aiIdx % aiThemes.Length];
+                <div class="magnetic-card card-glow-border rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md p-6">
+                    <div class="w-10 h-10 rounded-lg @aiTheme.IconBg flex items-center justify-center @aiTheme.IconText mb-4">
+                        <i data-lucide="@item.Icon" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-2" data-en="@item.TitleEn" data-ar="@item.TitleAr">@item.TitleEn</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400" data-en="@item.DescEn" data-ar="@item.DescAr">@item.DescEn</p>
+                </div>
+                aiIdx++;
+            }
+        </div>
+    </div>
+</section>
+}
+@* ═══════════════════════════════════════════════════════════
+   FEATURED PORTFOLIO PROJECTS (Dynamic CMS)
+   ═══════════════════════════════════════════════════════════ *@
+@if (Model?.FeaturedProjects != null && Model.FeaturedProjects.Any())
+{
+    <section id="portfolio" class="relative py-24 md:py-32 z-30 overflow-hidden">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="mb-16">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-4">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                    <span data-en="@portfolioBadgeEn" data-ar="@portfolioBadgeAr">@portfolioBadgeEn</span>
+                </div>
+                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
+                    <span data-en="@portfolioTitlePrefixEn" data-ar="@portfolioTitlePrefixAr">@portfolioTitlePrefixEn</span>
+                    <span class="text-gradient-brand" data-en="@portfolioTitleHighlightEn" data-ar="@portfolioTitleHighlightAr">@portfolioTitleHighlightEn</span>
+                </h2>
+            </div>
+
+            <div class="@CardGridCss.ForItemCount(Model.FeaturedProjects.Count)">
+                @foreach (var p in Model.FeaturedProjects)
+                {
+                    <article class="group relative flex flex-col justify-between rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-cyan/50 hover:-translate-y-1 hover:shadow-[0_0_35px_hsl(var(--cyan)/0.2)]">
+                        @if (!string.IsNullOrWhiteSpace(p.CoverImagePath))
+                        {
+                            <div class="relative aspect-video w-full overflow-hidden bg-muted/40">
+                                <img src="@p.CoverImagePath" alt="@p.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            </div>
+                        }
+
+                        <div class="p-7 space-y-4 flex-1 flex flex-col justify-between">
+                            <div class="space-y-3">
+                                @{
+                                    var projectCategoryEn = PickLabel(p.Category, portfolioCategoryEn);
+                                    var projectCategoryAr = PickLabel(p.Category, portfolioCategoryAr);
+                                }
+                                <div class="flex items-center justify-between gap-2 text-xs">
+                                    @if (!string.IsNullOrWhiteSpace(projectCategoryEn) || !string.IsNullOrWhiteSpace(projectCategoryAr))
+                                    {
+                                        <span class="rounded-full bg-cyan/10 px-3 py-1 font-semibold text-cyan"
+                                              data-en="@projectCategoryEn" data-ar="@projectCategoryAr">
+                                            @projectCategoryEn
+                                        </span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(p.ClientName))
+                                    {
+                                        <span class="text-slate-500 dark:text-slate-400">@p.ClientName</span>
+                                    }
+                                </div>
+
+                                <h3 class="font-display text-2xl font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-cyan transition-colors">
+                                    <span data-en="@p.TitleEn" data-ar="@p.TitleAr">@p.TitleEn</span>
+                                </h3>
+
+                                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+                                   data-en="@p.SummaryEn" data-ar="@p.SummaryAr">
+                                    @p.SummaryEn
+                                </p>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(portfolioItemLinkEn) || !string.IsNullOrWhiteSpace(portfolioItemLinkAr))
+                            {
+                                <div class="pt-4 flex items-center justify-between">
+                                    <a asp-controller="Home" asp-action="ProjectDetail" asp-route-slug="@p.Slug"
+                                       class="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan hover:underline">
+                                        <span data-en="@portfolioItemLinkEn" data-ar="@portfolioItemLinkAr">@portfolioItemLinkEn</span>
+                                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 rtl-flip"></i>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(portfolioBtnTextEn) || !string.IsNullOrWhiteSpace(portfolioBtnTextAr))
+            {
+                <div class="mt-14 flex justify-center">
+                    <a href="@portfolioBtnUrl"
+                       class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-azure to-deep-blue hover:brightness-90 shadow-[0_0_20px_hsl(var(--azure)/0.4)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] transition-all duration-300 hover:scale-105">
+                        <span data-en="@portfolioBtnTextEn" data-ar="@portfolioBtnTextAr">@portfolioBtnTextEn</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 rtl-flip"></i>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@* ═══════════════════════════════════════════════════════════
+   LATEST INSIGHTS & PUBLICATIONS (Dynamic CMS)
+   ═══════════════════════════════════════════════════════════ *@
+@if (Model?.FeaturedPosts != null && Model.FeaturedPosts.Any())
+{
+    <section id="insights" class="relative py-24 md:py-32 z-30 bg-slate-50/50 dark:bg-background/20">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="mb-16">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-4">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                    <span data-en="@insightsBadgeEn" data-ar="@insightsBadgeAr">@insightsBadgeEn</span>
+                </div>
+                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight">
+                    <span data-en="@insightsTitlePrefixEn" data-ar="@insightsTitlePrefixAr">@insightsTitlePrefixEn</span>
+                    <span class="text-gradient-brand" data-en="@insightsTitleHighlightEn" data-ar="@insightsTitleHighlightAr">@insightsTitleHighlightEn</span>
+                </h2>
+            </div>
+
+            <div class="@CardGridCss.ForItemCount(Model.FeaturedPosts.Count)">
+                @foreach (var post in Model.FeaturedPosts)
+                {
+                    <article class="group relative flex flex-col justify-between rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md p-6 sm:p-7 transition-all duration-300 hover:border-cyan/50 hover:-translate-y-1 hover:shadow-[0_0_30px_hsl(var(--cyan)/0.2)]">
+                        <div class="space-y-4">
+                            @if (!string.IsNullOrWhiteSpace(post.CoverImagePath))
+                            {
+                                <div class="relative aspect-video rounded-2xl overflow-hidden bg-muted/40 mb-4">
+                                    <img src="@post.CoverImagePath" alt="@post.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                </div>
+                            }
+
+                            @{
+                                var postCategoryEn = PickLabel(post.Category, insightsCategoryEn);
+                                var postCategoryAr = PickLabel(post.Category, insightsCategoryAr);
+                                var readTimeEn = PickLabel(readTimeSuffixEn, readTimeSuffixAr);
+                                var readTimeAr = PickLabel(readTimeSuffixAr, readTimeSuffixEn);
+                            }
+                            <div class="flex items-center justify-between gap-2 text-xs">
+                                @if (!string.IsNullOrWhiteSpace(postCategoryEn) || !string.IsNullOrWhiteSpace(postCategoryAr))
+                                {
+                                    <span class="rounded-full bg-cyan/10 px-3 py-1 font-semibold text-cyan"
+                                          data-en="@postCategoryEn" data-ar="@postCategoryAr">
+                                        @postCategoryEn
+                                    </span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(readTimeEn))
+                                {
+                                    <span class="text-slate-500 dark:text-slate-400"
+                                          data-en="@post.ReadTimeMinutes @readTimeEn" data-ar="@post.ReadTimeMinutes @readTimeAr">
+                                        @post.ReadTimeMinutes @readTimeEn
+                                    </span>
+                                }
+                            </div>
+
+                            <h3 class="font-display text-xl font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-cyan transition-colors line-clamp-2">
+                                <span data-en="@post.TitleEn" data-ar="@post.TitleAr">@post.TitleEn</span>
+                            </h3>
+
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3"
+                               data-en="@post.SummaryEn" data-ar="@post.SummaryAr">
+                                @post.SummaryEn
+                            </p>
+                        </div>
+
+                        <div class="pt-6 mt-6 border-t border-slate-200 dark:border-white/10 flex items-center justify-between">
+                            @{
+                                var publishedOn = post.PublishedAtUtc?.ToString("MMM dd, yyyy");
+                                var publishedEn = publishedOn ?? PickLabel(undatedLabelEn, undatedLabelAr);
+                                var publishedAr = publishedOn ?? PickLabel(undatedLabelAr, undatedLabelEn);
+                            }
+                            <span class="text-xs text-slate-500 dark:text-slate-400"
+                                  data-en="@publishedEn" data-ar="@publishedAr">
+                                @publishedEn
+                            </span>
+
+                            @if (!string.IsNullOrWhiteSpace(insightsItemLinkEn) || !string.IsNullOrWhiteSpace(insightsItemLinkAr))
+                            {
+                                <a asp-controller="Home" asp-action="InsightDetail" asp-route-slug="@post.Slug"
+                                   class="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan hover:underline">
+                                    <span data-en="@insightsItemLinkEn" data-ar="@insightsItemLinkAr">@insightsItemLinkEn</span>
+                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 rtl-flip"></i>
+                                </a>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(insightsBtnTextEn) || !string.IsNullOrWhiteSpace(insightsBtnTextAr))
+            {
+                <div class="mt-14 flex justify-center">
+                    <a href="@insightsBtnUrl"
+                       class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-azure to-deep-blue hover:brightness-90 shadow-[0_0_20px_hsl(var(--azure)/0.4)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] transition-all duration-300 hover:scale-105">
+                        <span data-en="@insightsBtnTextEn" data-ar="@insightsBtnTextAr">@insightsBtnTextEn</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 rtl-flip"></i>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@* ═══════════════════════════════════════════════════════════
+   CLIENT TESTIMONIALS & ENDORSEMENTS (Dynamic CMS)
+   ═══════════════════════════════════════════════════════════ *@
+@if (Model?.Testimonials != null && Model.Testimonials.Any())
+{
+    <section id="testimonials" class="relative py-24 md:py-32 z-30">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                    <span data-en="@testimonialsBadgeEn" data-ar="@testimonialsBadgeAr">@testimonialsBadgeEn</span>
+                </div>
+                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-4">
+                    <span data-en="@testimonialsTitlePrefixEn" data-ar="@testimonialsTitlePrefixAr">@testimonialsTitlePrefixEn</span>
+                    @if (!string.IsNullOrWhiteSpace(testimonialsTitleHighlightEn) || !string.IsNullOrWhiteSpace(testimonialsTitleHighlightAr))
+                    {
+                        <span class="text-gradient-brand" data-en="@testimonialsTitleHighlightEn" data-ar="@testimonialsTitleHighlightAr">@testimonialsTitleHighlightEn</span>
+                    }
+                </h2>
+                <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300"
+                   data-en="@testimonialsSubtitleEn"
+                   data-ar="@testimonialsSubtitleAr">
+                    @testimonialsSubtitleEn
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach (var t in Model.Testimonials)
+                {
+                    <div class="relative flex flex-col justify-between rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md p-7 md:p-8 transition-all duration-300 hover:border-cyan/50 hover:shadow-[0_0_30px_hsl(var(--cyan)/0.15)]">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-1 text-amber-400">
+                                @for (int i = 0; i < t.Rating; i++)
+                                {
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                }
+                            </div>
+
+                            <blockquote class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed italic"
+                                        data-en="\"@t.QuoteEn\""
+                                        data-ar="\"@t.QuoteAr\"">
+                                "@t.QuoteEn"
+                            </blockquote>
+                        </div>
+
+                        <div class="flex items-center gap-3.5 pt-6 mt-6 border-t border-slate-200 dark:border-white/10">
+                            @if (!string.IsNullOrWhiteSpace(t.AuthorPhotoPath))
+                            {
+                                <img src="@t.AuthorPhotoPath" alt="@t.AuthorNameEn" class="w-11 h-11 rounded-full object-cover border border-slate-300 dark:border-white/10" />
+                            }
+                            else
+                            {
+                                <div class="w-11 h-11 rounded-full bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan font-bold text-xs">
+                                    @t.AuthorNameEn.Substring(0, Math.Min(2, t.AuthorNameEn.Length)).ToUpper()
+                                </div>
+                            }
+
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-900 dark:text-white"
+                                    data-en="@t.AuthorNameEn" data-ar="@t.AuthorNameAr">
+                                    @t.AuthorNameEn
+                                </h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400"
+                                   data-en="@(t.AuthorTitleEn ?? t.CompanyName)"
+                                   data-ar="@(t.AuthorTitleAr ?? t.CompanyName)">
+                                    @(t.AuthorTitleEn ?? t.CompanyName)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@* ═══════════════════════════════════════════════════════════
+   CALL TO ACTION BANNER (#cta)
+   ═══════════════════════════════════════════════════════════ *@
+@if (cta?.IsPublished != false)
+{
+<section id="cta" class="relative py-28 md:py-36 z-30 overflow-hidden">
+
+    <!-- Background image, full-width -->
+    <img src="@ctaBgImg" alt="" aria-hidden="true"
+         class="absolute inset-0 w-full h-full object-cover opacity-[0.07] dark:opacity-[0.12] z-0 pointer-events-none" />
+
+    <!-- Ambient glows -->
+    <div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+        <!-- Top-right corner bleeding gradient -->
+        <div class="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 w-[800px] h-[800px] bg-gradient-to-br from-cyan/25 to-azure/5 dark:from-cyan/20 dark:to-azure/5 rounded-full blur-[140px]"></div>
+        <!-- Bottom-left corner bleeding gradient -->
+        <div class="absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 w-[800px] h-[800px] bg-gradient-to-tr from-azure/25 to-cyan/5 dark:from-azure/20 dark:to-cyan/5 rounded-full blur-[140px]"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="container relative z-10 px-6 max-w-4xl mx-auto text-center">
+
+        <!-- Eyebrow badge -->
+        <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-8 animate-fade-in-up">
+            <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+            <span data-en="@ctaBadgeEn" data-ar="@ctaBadgeAr">@ctaBadgeEn</span>
+        </div>
+
+        <!-- Headline -->
+        <h2 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white leading-[1.1] mb-10 animate-fade-in-up"
+            style="animation-delay: 100ms;">
+            <span data-en="@ctaTitlePrefixEn" data-ar="@ctaTitlePrefixAr">@ctaTitlePrefixEn</span>
+            <span class="text-gradient-brand" data-en="@ctaTitleHighlightEn" data-ar="@ctaTitleHighlightAr">@ctaTitleHighlightEn</span>
+        </h2>
+
+        <!-- Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 animate-fade-in-up"
+             style="animation-delay: 200ms;">
+            <a href="@ctaButtonUrl"
+               class="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm font-semibold text-white bg-gradient-to-r from-azure to-deep-blue hover:brightness-90 shadow-[0_0_20px_hsl(var(--azure)/0.4)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] transition-all duration-300 hover:scale-105"
+               style="border-radius: 16px;"
+               data-en="@ctaButtonTextEn" data-ar="@ctaButtonTextAr">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+                @ctaButtonTextEn
+            </a>
+        </div>
+
+        <!-- Contact info -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-slate-500 dark:text-slate-400 animate-fade-in-up"
+             style="animation-delay: 300ms;">
+            <a href="mailto:@ctaContactEmail" class="flex items-center gap-2 hover:text-cyan transition-colors">
+                <i data-lucide="mail" class="w-4 h-4 text-cyan flex-shrink-0"></i>
+                @ctaContactEmail
+            </a>
+        </div>
+
+    </div>
+</section>
+}
+@section Scripts {
+<script>
+    // ── IntersectionObserver: Division cards stagger reveal ──
+    (function () {
+        const cards = document.querySelectorAll('[data-animate="stagger"]');
+        if (!cards.length) return;
+        const obs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('opacity-0', 'translate-y-6');
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        cards.forEach(function (c) { obs.observe(c); });
+    })();
+
+    // ── Re-init Lucide icons ──
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+}

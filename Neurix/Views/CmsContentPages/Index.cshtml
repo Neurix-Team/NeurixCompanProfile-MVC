@@ -1,0 +1,114 @@
+@model Neurix.Models.CmsContentPageListViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Content Pages";
+}
+
+<div class="space-y-6">
+
+    @* Header *@
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">@L["Content Pages"]</h1>
+            <p class="text-sm text-muted-foreground">@L["Edit the standalone pages of the public site — About, Privacy, Contact and any page added later."]</p>
+        </div>
+    </div>
+
+    @* Brand filter *@
+    @if (Model.Companies.Count > 1)
+    {
+        <form method="get" class="flex flex-wrap items-center gap-3">
+            <label for="companyId" class="text-xs font-medium text-muted-foreground whitespace-nowrap">@L["Filter by Brand:"]</label>
+            <select id="companyId" name="companyId" onchange="this.form.submit()"
+                    class="rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none">
+                @foreach (var c in Model.Companies)
+                {
+                    <option value="@c.Id" selected="@(c.Id == Model.SelectedCompanyId)">@c.NameEn</option>
+                }
+            </select>
+        </form>
+    }
+
+    @if (Model.Pages.Count == 0)
+    {
+        <div class="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground space-y-3">
+            <i data-lucide="file-text" class="w-10 h-10 mx-auto text-muted-foreground/50"></i>
+            <p class="text-sm">@L["No content pages found for this brand. Run database initialization to seed the default pages."]</p>
+        </div>
+    }
+    else
+    {
+        <div class="overflow-x-auto rounded-2xl border border-border bg-card">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                        <th class="px-5 py-3 font-semibold">@L["Page"]</th>
+                        <th class="px-5 py-3 font-semibold">@L["Slug"]</th>
+                        <th class="px-5 py-3 font-semibold">@L["Body Content"]</th>
+                        <th class="px-5 py-3 font-semibold">@L["Status"]</th>
+                        <th class="px-5 py-3 font-semibold">@L["Last Updated (UTC)"]</th>
+                        <th class="px-5 py-3 font-semibold text-right rtl:text-left">@L["Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cp in Model.Pages)
+                    {
+                        <tr class="border-b border-border/60 last:border-0 hover:bg-muted/40 transition-colors">
+                            <td class="px-5 py-3.5">
+                                <div class="font-semibold text-foreground">@cp.TitleEn</div>
+                                <div class="text-xs text-muted-foreground" dir="rtl">@cp.TitleAr</div>
+                                @if (cp.Slug == "about" && cp.LiveBandsCount > 0)
+                                {
+                                    <div class="mt-1 flex items-center gap-1.5">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan/15 text-cyan border border-cyan/30">
+                                            <i data-lucide="layers" class="w-3 h-3"></i>
+                                            @cp.LiveBandsCount @L["Live Sections"] · @cp.TotalItemsCount @L["Cards"]
+                                        </span>
+                                    </div>
+                                }
+                            </td>
+                            <td class="px-5 py-3.5">
+                                <code class="text-[11px] font-mono text-cyan bg-cyan/10 px-1.5 py-0.5 rounded">@cp.Slug</code>
+                            </td>
+                            <td class="px-5 py-3.5">
+                                @if (cp.HasBody)
+                                {
+                                    <span class="inline-flex items-center gap-1.5 text-xs text-emerald-500">
+                                        <i data-lucide="check" class="w-3.5 h-3.5"></i>@L["Present"]
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-xs text-muted-foreground">@L["Empty"]</span>
+                                }
+                            </td>
+                            <td class="px-5 py-3.5">
+                                <partial name="_CmsStatusBadge" model="cp.IsPublished" />
+                            </td>
+                            <td class="px-5 py-3.5 text-xs text-muted-foreground">
+                                @(cp.UpdatedAtUtc?.ToString("MMM dd, yyyy HH:mm") ?? cp.CreatedAtUtc.ToString("MMM dd, yyyy HH:mm"))
+                            </td>
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center justify-end rtl:justify-start gap-2">
+                                    @if (cp.Slug == "about")
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@cp.Id"
+                                           class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+                                           title='@L["Edit Five Pillars, One Vision & What We Believe In"]'>
+                                            <i data-lucide="layers" class="w-3.5 h-3.5 text-azure"></i>
+                                            <span class="hidden xl:inline">@L["Five Pillars & Beliefs"]</span>
+                                        </a>
+                                    }
+                                    <a asp-action="Edit" asp-route-id="@cp.Id"
+                                       class="inline-flex items-center gap-1.5 rounded-lg border border-cyan/40 bg-cyan/10 px-3 py-1.5 text-xs font-medium text-cyan hover:bg-cyan/20 transition-colors">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>@L["Edit"]
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

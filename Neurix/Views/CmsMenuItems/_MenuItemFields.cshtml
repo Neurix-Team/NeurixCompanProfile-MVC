@@ -1,0 +1,145 @@
+@model Neurix.Models.CmsMenuItemFormViewModel
+@using Neurix.DAL.Models
+
+<div class="space-y-8">
+    <!-- Brand & Location Settings -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="menu" class="w-5 h-5 text-cyan"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Brand & Placement Settings"]</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Company Profile Dropdown -->
+            <div>
+                <label asp-for="CompanyProfileId" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <select asp-for="CompanyProfileId" asp-items="Model.CompanyOptions" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30">
+                </select>
+                <span asp-validation-for="CompanyProfileId" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Placement Location -->
+            <div>
+                <label asp-for="Placement" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <select asp-for="Placement" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30">
+                    <option value="@CmsMenuItemPlacement.Header">@L["Header Only"]</option>
+                    <option value="@CmsMenuItemPlacement.Footer">@L["Footer Links"]</option>
+                    <option value="@CmsMenuItemPlacement.Both">@L["Both Header & Footer"]</option>
+                    <option value="@CmsMenuItemPlacement.FooterBottom">@L["Footer Bottom Bar (Legal/Security)"]</option>
+                </select>
+                <span asp-validation-for="Placement" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Display Order -->
+            <div>
+                <label asp-for="DisplayOrder" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="DisplayOrder" type="number" min="0" max="1000" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" />
+                <span asp-validation-for="DisplayOrder" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bilingual Labels -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="languages" class="w-5 h-5 text-cyan"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Bilingual Menu Labels"]</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Label EN -->
+            <div>
+                <label asp-for="LabelEn" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="LabelEn" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder="e.g. Technology, About Us, Labs" />
+                <span asp-validation-for="LabelEn" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Label AR -->
+            <div>
+                <label asp-for="LabelAr" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="LabelAr" dir="rtl" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground font-arabic placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder="مثال: التقنية، من نحن، المختبرات" />
+                <span asp-validation-for="LabelAr" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Target URL & Routing -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="link" class="w-5 h-5 text-azure"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Target URL & Route"]</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- URL -->
+            <div>
+                <label asp-for="Url" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="Url" list="route-suggestions" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground font-mono placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder="/Home/Technology or #divisions or https://..." />
+                <datalist id="route-suggestions">
+                    <option value="/">@L["Home (/)"]</option>
+                    <option value="/Home/Labs">@L["Labs (/Home/Labs)"]</option>
+                    <option value="/Home/Technology">@L["Technology (/Home/Technology)"]</option>
+                    <option value="/Home/Club">@L["Club (/Home/Club)"]</option>
+                    <option value="/Home/Plus">@L["Plus (/Home/Plus)"]</option>
+                    <option value="/Home/HQ">@L["HQ (/Home/HQ)"]</option>
+                    <option value="/Home/About">@L["About Us (/Home/About)"]</option>
+                    <option value="/Home/Contact">@L["Contact Us (/Home/Contact)"]</option>
+                    <option value="/Home/Privacy">@L["Privacy Policy (/Home/Privacy)"]</option>
+                    <option value="/Home/ComingSoon">@L["Careers / News (/Home/ComingSoon)"]</option>
+                    <option value="#divisions">@L["#divisions (Anchor)"]</option>
+                    <option value="#services">@L["#services (Anchor)"]</option>
+                    <option value="#pillars">@L["#pillars (Anchor)"]</option>
+                </datalist>
+                <span asp-validation-for="Url" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Icon Name (Optional) -->
+            <div>
+                <label asp-for="IconName" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="IconName" list="icon-suggestions" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground font-mono placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder="e.g. home, cpu, flask-conical, layers, info, mail" />
+                <datalist id="icon-suggestions">
+                    <option value="home">home</option>
+                    <option value="cpu">cpu</option>
+                    <option value="flask-conical">flask-conical</option>
+                    <option value="layers">layers</option>
+                    <option value="sparkles">sparkles</option>
+                    <option value="info">info</option>
+                    <option value="mail">mail</option>
+                    <option value="shield">shield</option>
+                    <option value="briefcase">briefcase</option>
+                    <option value="newspaper">newspaper</option>
+                    <option value="lock">lock</option>
+                </datalist>
+                <span asp-validation-for="IconName" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Behavior & Publishing Options -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="toggle-right" class="w-5 h-5 text-emerald-400"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Visibility & Navigation Behavior"]</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Open in New Tab -->
+            <div class="flex items-start gap-3">
+                <input asp-for="OpenInNewTab" type="checkbox" class="mt-1 h-4 w-4 rounded border-border text-cyan focus:ring-cyan bg-background" />
+                <div>
+                    <label asp-for="OpenInNewTab" class="text-xs font-semibold text-foreground"></label>
+                    <p class="text-[11px] text-muted-foreground">@L["Opens link in a new browser tab (target='_blank')."]</p>
+                </div>
+            </div>
+
+            <!-- Published on Live Site -->
+            <div class="flex items-start gap-3">
+                <input asp-for="IsPublished" type="checkbox" class="mt-1 h-4 w-4 rounded border-border text-cyan focus:ring-cyan bg-background" />
+                <div>
+                    <label asp-for="IsPublished" class="text-xs font-semibold text-foreground"></label>
+                    <p class="text-[11px] text-muted-foreground">@L["Controls live visibility on the website header/footer."]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

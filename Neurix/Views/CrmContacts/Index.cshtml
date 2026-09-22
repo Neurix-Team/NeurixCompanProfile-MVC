@@ -1,0 +1,127 @@
+@model Neurix.Models.CrmContactListViewModel
+@using Neurix.DAL.Enums
+
+@{
+    var hasFilters = !string.IsNullOrWhiteSpace(Model.Search) || Model.Status.HasValue || Model.CompanyId.HasValue;
+}
+
+<div class="max-w-7xl">
+
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <p class="text-sm text-muted-foreground">
+            @(Model.Pagination.TotalCount == 1
+                ? L.Format("{0} contact", Model.Pagination.TotalCount)
+                : L.Format("{0} contacts", Model.Pagination.TotalCount))
+        </p>
+
+        <a asp-action="Create"
+           class="inline-flex items-center gap-2 rounded-[16px] px-5 py-2.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--cyan)/0.5)] transition-all duration-300">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            @L["New contact"]
+        </a>
+    </div>
+
+    @* ── Filters ── *@
+    <form asp-action="Index" method="get" class="flex flex-wrap items-center gap-3 mb-6">
+        <div class="relative flex-1 min-w-[14rem]">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"></i>
+            <input type="search" name="search" value="@Model.Search" placeholder='@L["Search name, email, phone, company"]'
+                   class="w-full rounded-xl bg-card border border-border pl-10 pr-4 h-11 text-sm outline-none transition-all duration-300 focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+        </div>
+
+        <select name="companyId" onchange="this.form.submit()"
+                class="rounded-xl bg-card border border-border px-4 h-11 text-sm outline-none focus:border-cyan/70 max-w-[14rem]">
+            <option value="">@L["All companies"]</option>
+            @foreach (var option in Model.CompanyOptions)
+            {
+                <option value="@option.Value" selected="@(Model.CompanyId?.ToString() == option.Value)">@option.Text</option>
+            }
+        </select>
+
+        <select name="status" onchange="this.form.submit()"
+                class="rounded-xl bg-card border border-border px-4 h-11 text-sm outline-none focus:border-cyan/70">
+            <option value="">@L["All statuses"]</option>
+            <option value="@RecordStatus.Active" selected="@(Model.Status == RecordStatus.Active)">@L["Active"]</option>
+            <option value="@RecordStatus.Inactive" selected="@(Model.Status == RecordStatus.Inactive)">@L["Inactive"]</option>
+        </select>
+
+        <button type="submit"
+                class="inline-flex items-center gap-2 rounded-xl border border-border px-4 h-11 text-sm font-medium hover:bg-muted transition-colors">
+            @L["Apply"]
+        </button>
+
+        @if (hasFilters)
+        {
+            <a asp-action="Index" class="text-sm text-muted-foreground hover:text-foreground transition-colors">@L["Clear"]</a>
+        }
+    </form>
+
+    @* ── Table ── *@
+    <div class="rounded-2xl border border-border bg-card/60 overflow-hidden">
+        @if (Model.Items.Count == 0)
+        {
+            <partial name="_CrmEmptyState" model="@(new Neurix.Models.CrmEmptyStateViewModel {
+                Icon = "users",
+                Title = hasFilters ? "No matching contacts" : "No contacts yet",
+                Description = hasFilters
+                    ? "Try a different search term or clear the filters."
+                    : "Add your first contact to start tracking people at your customer organisations.",
+                ActionText = hasFilters ? null : "New contact",
+                ActionUrl = hasFilters ? null : Url.Action("Create")
+            })" />
+        }
+        else
+        {
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="border-b border-border bg-muted/40">
+                        <tr class="text-left text-xs uppercase tracking-wide text-muted-foreground">
+                            <th class="px-5 py-3 font-medium">@L["Name"]</th>
+                            <th class="px-5 py-3 font-medium">@L["Job title"]</th>
+                            <th class="px-5 py-3 font-medium">@L["Company"]</th>
+                            <th class="px-5 py-3 font-medium">@L["Email"]</th>
+                            <th class="px-5 py-3 font-medium">@L["Phone"]</th>
+                            <th class="px-5 py-3 font-medium">@L["Status"]</th>
+                            <th class="px-5 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr class="hover:bg-muted/40 transition-colors">
+                                <td class="px-5 py-3.5">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="font-medium hover:text-cyan transition-colors">
+                                        @item.FullName
+                                    </a>
+                                </td>
+                                <td class="px-5 py-3.5 text-muted-foreground">@(item.JobTitle ?? "—")</td>
+                                <td class="px-5 py-3.5">
+                                    @if (item.CompanyId.HasValue)
+                                    {
+                                        <a asp-controller="CrmCompanies" asp-action="Details" asp-route-id="@item.CompanyId"
+                                           class="text-muted-foreground hover:text-cyan transition-colors">@item.CompanyName</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted-foreground">—</span>
+                                    }
+                                </td>
+                                <td class="px-5 py-3.5 text-muted-foreground">@(item.Email ?? "—")</td>
+                                <td class="px-5 py-3.5 text-muted-foreground">@(item.Phone ?? "—")</td>
+                                <td class="px-5 py-3.5"><partial name="_CrmStatusBadge" model="item.Status" /></td>
+                                <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title='@L["Edit"]'>
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <partial name="_CrmPagination" model="Model.Pagination" />
+</div>

@@ -1,0 +1,36 @@
+@model Neurix.Models.CmsTeamMemberFormViewModel
+@{
+    ViewData["Title"] = $"Edit Team Member — {Model.NameEn}";
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">@L["Edit Team Member"]</h1>
+            <p class="text-sm text-muted-foreground">Modify bio, credentials, or photo for @Model.NameEn.</p>
+        </div>
+        <a asp-action="Index" class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to List"]
+        </a>
+    </div>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        <partial name="_TeamMemberFields" model="Model" />
+
+        <div class="flex items-center justify-end gap-3 pt-4">
+            <a asp-action="Index" class="rounded-xl border border-border px-5 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                @L["Cancel"]
+            </a>
+            <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-cyan px-5 py-2.5 text-xs font-semibold text-slate-950 hover:bg-cyan/90 transition-colors shadow-sm">
+                <i data-lucide="save" class="w-4 h-4"></i> @L["Update Team Member"]
+            </button>
+        </div>
+    </form>
+
+</div>

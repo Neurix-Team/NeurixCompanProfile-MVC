@@ -1,0 +1,217 @@
+@*
+    Internal CRM shell. Deliberately separate from the public site's _Layout:
+    no WebGL sphere, no GSAP, no AI chat widget — but it reuses the same Tailwind
+    config and neurix.css design tokens for visual consistency.
+
+    Shares the dashboard localization infrastructure with _CmsLayout so both halves
+    of the back office switch language together off the same cookie.
+*@
+@using Neurix.Localization
+@{
+    var crmLang = CmsLanguage.Current;
+
+    // Same central title localization as _CmsLayout.
+    var crmTitleKey = ViewData["Title"] as string;
+    var crmTitle = string.IsNullOrEmpty(crmTitleKey) ? null : L[crmTitleKey];
+}
+<!DOCTYPE html>
+<html lang="@crmLang.Code" dir="@crmLang.Dir" class="@(crmLang.IsRightToLeft ? "font-arabic" : null)">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(crmTitle is null ? "Neurix CRM" : $"{crmTitle} — Neurix CRM")</title>
+    <meta name="robots" content="noindex, nofollow" />
+
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon.svg" />
+
+    <!-- Tailwind CSS (locally built, purged) -->
+    <link rel="stylesheet" href="~/css/tailwind.min.css" asp-append-version="true" />
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Neurix AI Design System -->
+    <link rel="stylesheet" href="~/css/neurix.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="min-h-screen bg-background text-foreground font-sans antialiased">
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+        string NavClass(string controller) => currentController == controller
+            ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium bg-cyan/10 text-cyan border border-cyan/20"
+            : "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent transition-colors";
+
+        <div class="flex min-h-screen">
+
+            @* ── Sidebar (fixed on md+, off-canvas drawer below) ── *@
+            <aside id="crm-sidebar"
+                   class="fixed inset-y-0 left-0 z-50 w-64 shrink-0 border-r border-border bg-card px-4 py-5 flex flex-col
+                          -translate-x-full transition-transform duration-300 md:translate-x-0 md:static md:z-auto">
+
+                <a asp-controller="CrmDashboard" asp-action="Index" class="flex items-center gap-2.5 px-2 mb-8">
+                    <img src="~/images/favicon.svg" alt="" class="w-7 h-7" />
+                    <span class="font-display font-semibold tracking-tight">
+                        Neurix <span class="text-gradient-brand">CRM</span>
+                    </span>
+                </a>
+
+                <nav class="flex flex-col gap-1.5">
+                    <a asp-controller="CrmDashboard" asp-action="Index" class="@NavClass("CrmDashboard")">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                        @L["Dashboard"]
+                    </a>
+                    <a asp-controller="CrmCompanies" asp-action="Index" class="@NavClass("CrmCompanies")">
+                        <i data-lucide="building-2" class="w-4 h-4 shrink-0"></i>
+                        @L["Companies"]
+                    </a>
+                    <a asp-controller="CrmContacts" asp-action="Index" class="@NavClass("CrmContacts")">
+                        <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
+                        @L["Contacts"]
+                    </a>
+                    <a asp-controller="CrmLeads" asp-action="Index" class="@NavClass("CrmLeads")">
+                        <i data-lucide="target" class="w-4 h-4 shrink-0"></i>
+                        @L["Leads"]
+                    </a>
+                    <a asp-controller="CrmDeals" asp-action="Index" class="@NavClass("CrmDeals")">
+                        <i data-lucide="handshake" class="w-4 h-4 shrink-0"></i>
+                        @L["Deals"]
+                    </a>
+                    <a asp-controller="CrmProfile" asp-action="Index" class="@NavClass("CrmProfile")">
+                        <i data-lucide="user-round" class="w-4 h-4 shrink-0"></i>
+                        @L["Profile"]
+                    </a>
+                </nav>
+
+                <div class="mt-auto pt-5 border-t border-border space-y-2">
+                    <a asp-controller="CmsDashboard" asp-action="Index"
+                       class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                        <i data-lucide="layout-grid" class="w-4 h-4 shrink-0 text-cyan"></i>
+                        @L["Switch to CMS"]
+                    </a>
+                    <a href="/" target="_blank"
+                       class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                        <i data-lucide="external-link" class="w-4 h-4 shrink-0 text-azure"></i>
+                        @L["View Public Website"]
+                    </a>
+
+                    <div class="pt-3 border-t border-border">
+                        <a asp-controller="CrmProfile" asp-action="Index"
+                           class="flex items-center gap-3 rounded-xl px-2 py-2 mb-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors truncate"
+                           title="@User.Identity?.Name">
+                            <i data-lucide="user-round" class="w-4 h-4 shrink-0"></i>
+                            <span class="truncate">@User.Identity?.Name</span>
+                        </a>
+                        <form asp-controller="CrmAccount" asp-action="Logout" method="post">
+                            <button type="submit"
+                                    class="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+                                <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i>
+                                @L["Log out"]
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+
+            @* Backdrop for the mobile drawer *@
+            <div id="crm-sidebar-backdrop"
+                 class="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm hidden md:hidden"></div>
+
+            <div class="flex-1 min-w-0 flex flex-col">
+
+                <header class="sticky top-0 z-30 border-b border-border bg-card/80 backdrop-blur-xl">
+                    <div class="px-5 sm:px-6 h-16 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <button type="button" id="crm-sidebar-toggle" aria-label='@L["Toggle navigation"]'
+                                    class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                                <i data-lucide="menu" class="w-4 h-4"></i>
+                            </button>
+                            <h1 class="font-display text-base font-semibold tracking-tight truncate">
+                                @crmTitle
+                            </h1>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <a href="/" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                                <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                                @L["Public Site"]
+                            </a>
+
+                            <partial name="_CmsLanguageToggle" />
+
+                            <button type="button" onclick="toggleTheme()" aria-label='@L["Toggle theme"]'
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0">
+                                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <main class="flex-1 px-5 sm:px-6 py-7">
+                    <partial name="_CrmAlert" />
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    }
+    else
+    {
+        <main>
+            @RenderBody()
+        </main>
+    }
+
+    <script>
+        // Theme toggle — shares the 'neurix-theme' key with the public site.
+        (function () {
+            const THEME_KEY = 'neurix-theme';
+            const root = document.documentElement;
+
+            function applyTheme(theme) {
+                root.classList.toggle('dark', theme === 'dark');
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+
+            window.toggleTheme = function () {
+                applyTheme(root.classList.contains('dark') ? 'light' : 'dark');
+            };
+        })();
+
+        // Mobile sidebar drawer — same class-toggle idiom as the public navbar.
+        (function () {
+            const btn = document.getElementById('crm-sidebar-toggle');
+            const sidebar = document.getElementById('crm-sidebar');
+            const backdrop = document.getElementById('crm-sidebar-backdrop');
+            if (!btn || !sidebar || !backdrop) return;
+
+            function open() {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            }
+            function close() {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+
+            btn.addEventListener('click', function () {
+                sidebar.classList.contains('-translate-x-full') ? open() : close();
+            });
+            backdrop.addEventListener('click', close);
+            sidebar.querySelectorAll('a').forEach(function (a) {
+                a.addEventListener('click', close);
+            });
+        })();
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

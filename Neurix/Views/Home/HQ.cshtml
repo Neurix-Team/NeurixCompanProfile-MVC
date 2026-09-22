@@ -1,0 +1,177 @@
+@model Neurix.BLL.Dtos.Cms.CmsDivisionPageDetailDto?
+@using Neurix.BLL.Common
+@using Neurix.Common
+@{
+    var titleEn = !string.IsNullOrWhiteSpace(Model?.HeroTitleEn) ? Model.HeroTitleEn : "The Corporate Core of Neurix AI Group.";
+    var titleAr = !string.IsNullOrWhiteSpace(Model?.HeroTitleAr) ? Model.HeroTitleAr : "النواة المؤسسية لمجموعة نيوركس AI.";
+    var subtitleEn = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleEn) ? Model.HeroSubtitleEn : "Neurix AI HQ serves as the parent and governance center of the group, coordinating operations, finance, human resources, brand governance, and cross-division alignment across the Neurix AI ecosystem.";
+    var subtitleAr = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleAr) ? Model.HeroSubtitleAr : "يمثل Neurix AI المركز الرئيسي والحوكمي للمجموعة، حيث يتولى تنسيق العمليات والشؤون المالية والموارد البشرية وحوكمة العلامة وضمان التكامل بين أذرع المنظومة.";
+
+    ViewData["Title"] = "Neurix AI HQ";
+
+    // ── CMS-managed bands (/cms/page-sections/hq) ──
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var heroBand = bands.Band(CmsPageKeys.Bands.Hero);
+    var overviewBand = bands.Band(CmsPageKeys.Bands.Overview);
+    var cardsBand = bands.Band(CmsPageKeys.Bands.Cards);
+
+    var heroChips = bands.ItemsOf(CmsPageKeys.Bands.Hero);
+    var functionItems = bands.ItemsOf(CmsPageKeys.Bands.Cards);
+
+    var functions = functionItems.Count > 0
+        ? functionItems.Select(f => new {
+            Icon = string.IsNullOrWhiteSpace(f.IconName) ? "sparkles" : f.IconName!,
+            TitleEn = f.TitleEn,
+            TitleAr = f.TitleAr,
+            DescEn = f.DescriptionEn ?? string.Empty,
+            DescAr = f.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+            new { Icon = "building", TitleEn = "Group Governance", TitleAr = "حوكمة المجموعة", DescEn = "Parent-level oversight, strategic direction, and alignment across all Neurix AI divisions.", DescAr = "إشراف عام وتوجيه استراتيجي وضمان الاتساق عبر جميع أقسام نيوركس AI." },
+            new { Icon = "settings", TitleEn = "Operations Management", TitleAr = "إدارة العمليات", DescEn = "Coordinating internal workflows, execution standards, reporting structures, and operational continuity.", DescAr = "تنسيق سير العمل الداخلي ومعايير التنفيذ وآليات المتابعة والاستمرارية التشغيلية." },
+            new { Icon = "wallet", TitleEn = "Finance & Administration", TitleAr = "الشؤون المالية والإدارية", DescEn = "Managing financial planning, administrative controls, and group-level resource coordination.", DescAr = "إدارة التخطيط المالي والضوابط الإدارية وتنسيق الموارد على مستوى المجموعة." },
+            new { Icon = "users", TitleEn = "Human Resources", TitleAr = "الموارد البشرية", DescEn = "Supporting recruitment, talent development, internal policies, and people operations.", DescAr = "دعم التوظيف وتطوير الفرق والسياسات الداخلية وإدارة شؤون الأفراد." },
+            new { Icon = "badge-check", TitleEn = "Brand Governance", TitleAr = "حوكمة العلامة التجارية", DescEn = "Maintaining communication standards, identity guidelines, and consistency across all divisions.", DescAr = "الحفاظ على معايير التواصل وإرشادات الهوية واتساق العلامة عبر جميع الأقسام." },
+            new { Icon = "git-merge", TitleEn = "Cross-Division Coordination", TitleAr = "تنسيق أذرع المجموعة", DescEn = "Ensuring Labs, Technology, Club, Plus, and future branches operate as one connected ecosystem.", DescAr = "ضمان عمل المختبرات والتقنيات والنادي وبلص والمقر الرئيسي كمنظومة واحدة مترابطة." }
+        }.ToList();
+
+    var overviewImage = CmsBandText.Pick(overviewBand?.ImagePath, "/images/HQ Role.png");
+}
+
+@if (heroBand?.IsPublished != false)
+{
+    <section class="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-14 md:pt-36 md:pb-18">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+        <div class="container relative z-30 px-6 text-center max-w-5xl">
+            @{
+                var heroBadgeEn = CmsBandText.Pick(heroBand?.BadgeEn, "Our Leadership");
+                var heroBadgeAr = CmsBandText.Pick(heroBand?.BadgeAr, "قيادتنا");
+            }
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+            </div>
+
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] text-slate-900 dark:text-white mb-6">
+                <span data-en="@titleEn" data-ar="@titleAr">@titleEn</span>
+            </h1>
+
+            <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed"
+               data-en="@subtitleEn"
+               data-ar="@subtitleAr">
+                @subtitleEn
+            </p>
+
+            <div class="mt-14 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-600/70 dark:text-slate-300/70">
+                @if (heroChips.Count > 0)
+                {
+                    @for (var i = 0; i < heroChips.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            <span class="h-px w-8 bg-border"></span>
+                        }
+                        <span data-en="@heroChips[i].TitleEn" data-ar="@heroChips[i].TitleAr">@heroChips[i].TitleEn</span>
+                    }
+                }
+                else
+                {
+                    <span data-en="Operations" data-ar="العمليات">Operations</span><span class="h-px w-8 bg-border"></span><span data-en="Finance" data-ar="الشؤون المالية">Finance</span><span class="h-px w-8 bg-border"></span><span data-en="Human Resources" data-ar="الموارد البشرية">Human Resources</span><span class="h-px w-8 bg-border"></span><span data-en="Brand Governance" data-ar="حوكمة العلامة">Brand Governance</span><span class="h-px w-8 bg-border"></span><span data-en="Group Alignment" data-ar="تنسيق المجموعة">Group Alignment</span>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (overviewBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/30 dark:bg-background/10">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+                <!-- Left Side (Content Column - lg:col-span-6) -->
+                <div class="lg:col-span-6 flex flex-col text-left rtl:text-right">
+                    @{
+                        var overviewBadgeEn = CmsBandText.Pick(overviewBand?.BadgeEn, "Central Hub");
+                        var overviewBadgeAr = CmsBandText.Pick(overviewBand?.BadgeAr, "المركز الأساسي");
+                        var overviewPrefixEn = CmsBandText.Pick(overviewBand?.TitlePrefixEn, "Where governance, ");
+                        var overviewPrefixAr = CmsBandText.Pick(overviewBand?.TitlePrefixAr, "حيث تلتقي الحوكمة ");
+                        var overviewHighlightEn = CmsBandText.Pick(overviewBand?.TitleHighlightEn, "operations, & strategy");
+                        var overviewHighlightAr = CmsBandText.Pick(overviewBand?.TitleHighlightAr, "والتشغيل والاستراتيجية");
+                        var overviewSuffixEn = CmsBandText.Pick(overviewBand?.TitleSuffixEn, " come together.");
+                        var overviewSuffixAr = CmsBandText.Pick(overviewBand?.TitleSuffixAr, " معاً.");
+                        var overviewBodyEn = CmsBandText.Pick(overviewBand?.BodyEn, "Neurix AI HQ provides the internal structure that keeps the group organized, aligned, and operationally consistent through centralized management, oversight, and coordination.");
+                        var overviewBodyAr = CmsBandText.Pick(overviewBand?.BodyAr, "يوفر المقر الرئيسي لنيوركس AI الهيكل الداخلي الذي يحافظ على تنظيم المجموعة واتساقها التشغيلي من خلال الإدارة المركزية والرقابة والتنسيق.");
+                    }
+                    <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6 self-start">
+                        <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                        <span data-en="@overviewBadgeEn" data-ar="@overviewBadgeAr">@overviewBadgeEn</span>
+                    </div>
+
+                    <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-tight mb-8">
+                        <span class="inline-block" data-en="@overviewPrefixEn" data-ar="@overviewPrefixAr">@overviewPrefixEn</span>
+                        <span class="inline-block text-gradient-brand" data-en="@overviewHighlightEn" data-ar="@overviewHighlightAr">@overviewHighlightEn</span>
+                        <span class="inline-block" data-en="@overviewSuffixEn" data-ar="@overviewSuffixAr">@overviewSuffixEn</span>
+                    </h2>
+
+                    <p class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed"
+                       data-en="@overviewBodyEn"
+                       data-ar="@overviewBodyAr">
+                        @overviewBodyEn
+                    </p>
+                </div>
+
+                <!-- Right Side (Single Premium Image Column - lg:col-span-6) -->
+                <div class="lg:col-span-6">
+                    <div class="group rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] aspect-[4/3] bg-slate-100 dark:bg-card transition-all duration-500 hover:scale-[1.02] hover:border-cyan/50 hover:shadow-[0_20px_45px_hsl(var(--cyan)/0.15)]">
+                        <img src="@overviewImage" alt="HQ Role Diagram" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+
+@if (cardsBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30">
+        <div class="container px-6 max-w-7xl mx-auto">
+            @{
+                var cardsTitleEn = CmsBandText.Pick(cardsBand?.TitlePrefixEn, "Core HQ Functions");
+                var cardsTitleAr = CmsBandText.Pick(cardsBand?.TitlePrefixAr, "الوظائف الأساسية للمقر الرئيسي");
+                var cardsBodyEn = CmsBandText.Pick(cardsBand?.BodyEn, "Neurix AI HQ connects specialized divisions through shared corporate functions and centralized governance.");
+                var cardsBodyAr = CmsBandText.Pick(cardsBand?.BodyAr, "يربط المقر الرئيسي لنيوركس AI بين أذرع المجموعة المتخصصة من خلال وظائف مؤسسية مشتركة وحوكمة مركزية.");
+            }
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4" data-en="@cardsTitleEn" data-ar="@cardsTitleAr">@cardsTitleEn</h2>
+                <p class="text-lg text-slate-600 dark:text-slate-300" data-en="@cardsBodyEn"
+                data-ar="@cardsBodyAr">
+                    @cardsBodyEn
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach (var f in functions)
+                {
+                    <div class="magnetic-card card-glow-border bg-slate-100/60 dark:bg-card/40 border border-slate-300 dark:border-white/10 rounded-2xl p-7">
+                        <div class="h-12 w-12 rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-6 shadow-[0_0_15px_hsl(var(--cyan)/0.2)]">
+                            <i data-lucide="@f.Icon" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="@f.TitleEn" data-ar="@f.TitleAr">@f.TitleEn</h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6" data-en="@f.DescEn" data-ar="@f.DescAr">@f.DescEn</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+}

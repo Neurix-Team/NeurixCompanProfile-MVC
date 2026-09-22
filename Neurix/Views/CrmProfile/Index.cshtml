@@ -1,0 +1,63 @@
+@model Neurix.Models.CrmProfileIndexViewModel
+@using Neurix.Models
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="max-w-3xl mx-auto space-y-6">
+
+    <div class="bg-card/60 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-sm">
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-12 h-12 rounded-2xl bg-cyan/10 flex items-center justify-center text-cyan shrink-0">
+                <i data-lucide="user-round" class="w-6 h-6"></i>
+            </div>
+            <div class="min-w-0">
+                <h1 class="font-display text-xl font-semibold tracking-tight truncate">@Model.Profile.FullName</h1>
+                <p class="text-sm text-muted-foreground truncate">@Model.Profile.Email</p>
+            </div>
+        </div>
+
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div class="rounded-2xl border border-border bg-background/40 px-4 py-3">
+                <dt class="text-xs font-medium text-muted-foreground mb-1">@L["Email"]</dt>
+                <dd class="text-sm truncate">@Model.Profile.Email</dd>
+            </div>
+            <div class="rounded-2xl border border-border bg-background/40 px-4 py-3">
+                <dt class="text-xs font-medium text-muted-foreground mb-1">@L["Roles"]</dt>
+                <dd class="text-sm truncate">@(string.Join(", ", Model.Profile.Roles))</dd>
+            </div>
+        </dl>
+
+        <form asp-controller="CrmProfile" asp-action="Update" method="post"
+              class="rounded-2xl border border-border bg-background/40 p-6 space-y-4">
+            <h2 class="text-sm font-semibold">@L["Edit profile"]</h2>
+
+            <div asp-validation-summary="ModelOnly"
+                 class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-500 empty:hidden"></div>
+
+            <div>
+                <label asp-for="Form.FullName" class="block text-sm font-medium mb-2"></label>
+                <input asp-for="Form.FullName" autocomplete="name"
+                       class="w-full rounded-xl bg-background/60 border border-border px-4 h-12 text-sm outline-none transition-all duration-300 focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+                <span asp-validation-for="Form.FullName" class="text-xs text-rose-500/80 mt-1.5 block font-medium"></span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="submit"
+                        class="inline-flex items-center justify-center gap-2 rounded-[16px] px-6 py-3 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_36px_hsl(var(--cyan)/0.55)] transition-all duration-300">
+                    @L["Save"]
+                </button>
+                <a asp-controller="CrmProfile" asp-action="ChangePassword"
+                   class="inline-flex items-center gap-2 rounded-[16px] px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                    <i data-lucide="key-round" class="w-4 h-4"></i>
+                    @L["Change password"]
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

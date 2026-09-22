@@ -1,0 +1,256 @@
+@model Neurix.BLL.Dtos.Cms.CmsDivisionPageDetailDto?
+@using Neurix.BLL.Common
+@using Neurix.Common
+@{
+    var titleEn = !string.IsNullOrWhiteSpace(Model?.HeroTitleEn) ? Model.HeroTitleEn : "A Global Network for Digital & Tech Talent";
+    var titleAr = !string.IsNullOrWhiteSpace(Model?.HeroTitleAr) ? Model.HeroTitleAr : "شبكة عالمية للمواهب التقنية والرقمية";
+    var subtitleEn = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleEn) ? Model.HeroSubtitleEn : "Neurix AI Club connects researchers, developers, designers, and students in collaborative communities focused on professional development and remote work.";
+    var subtitleAr = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleAr) ? Model.HeroSubtitleAr : "منظومة مهنية وتقنية تجمع الكفاءات حول العالم ومواهب العمل عن بعد في مجتمعات متخصصة، تسعى لتبادل الخبرات وتطوير المهارات وبناء مسارات عمل مرنة تلائم متطلبات المستقبل.";
+
+    ViewData["Title"] = "Neurix AI Club";
+
+    // ── CMS-managed bands (/cms/page-sections/club) ──
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var heroBand = bands.Band(CmsPageKeys.Bands.Hero);
+    var overviewBand = bands.Band(CmsPageKeys.Bands.Overview);
+    var cardsBand = bands.Band(CmsPageKeys.Bands.Cards);
+
+    var personaItems = bands.ItemsOf(CmsPageKeys.Bands.Overview);
+    var perkItems = bands.ItemsOf(CmsPageKeys.Bands.Cards);
+
+    var personas = personaItems.Count > 0
+        ? personaItems.Select(p => new {
+            Icon = string.IsNullOrWhiteSpace(p.IconName) ? "users" : p.IconName!,
+            TitleEn = p.TitleEn,
+            TitleAr = p.TitleAr,
+            DescEn = p.DescriptionEn ?? string.Empty,
+            DescAr = p.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+            new {
+                Icon = "microscope",
+                TitleEn = "For Researchers & Experts",
+                TitleAr = "للباحثين والخبراء",
+                DescEn = "Connect with specialized scientific and technical minds to exchange expertise and lead advanced research and innovation initiatives.",
+                DescAr = "تواصل مع عقول علمية وتقنية متخصصة لتبادل الخبرات وقيادة مبادرات بحثية وابتكارية متقدمة"
+            },
+            new {
+                Icon = "graduation-cap",
+                TitleEn = "For Students",
+                TitleAr = "للطلاب",
+                DescEn = "Learn, build practical tech skills, and prepare for future digital economy opportunities in a supportive environment.",
+                DescAr = "تعلّم وابنِ مهارات تقنية عملية واستعد لفرص الاقتصاد الرقمي القادمة في بيئة داعمة ومحفزة"
+            },
+            new {
+                Icon = "briefcase",
+                TitleEn = "For Professionals",
+                TitleAr = "للمهنيين",
+                DescEn = "Join a specialized professional network across software engineering, business analysis, and design, and grow through collaboration.",
+                DescAr = "انضم إلى شبكة مهنية متخصصة في هندسة البرمجيات وتحليل الأعمال والتصميم، ووسّع آفاقك عبر التعاون"
+            },
+            new {
+                Icon = "laptop",
+                TitleEn = "For Remote Talent",
+                TitleAr = "لمواهب العمل عن بعد",
+                DescEn = "Discover task-based work opportunities that connect you with global markets and technical networks without boundaries.",
+                DescAr = "اكتشف فرص عمل قائمة على المهام تربطك بالأسواق العالمية والشبكات التقنية دون حدود جغرافية"
+            }
+        }.ToList();
+
+    var perks = perkItems.Count > 0
+        ? perkItems.Select(p => new {
+            Icon = string.IsNullOrWhiteSpace(p.IconName) ? "users" : p.IconName!,
+            TitleEn = p.TitleEn,
+            TitleAr = p.TitleAr,
+            DescEn = p.DescriptionEn ?? string.Empty,
+            DescAr = p.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+            new {
+                Icon = "users",
+                TitleEn = "Specialized Communities",
+                TitleAr = "مجتمعات متخصصة",
+                DescEn = "Dedicated groups in software development, business analysis, and design built for learning and professional growth.",
+                DescAr = "مجموعات مخصصة في تطوير البرمجيات، تحليل الأعمال، والتصميم مهيأة للتعلم والنمو المهني."
+            },
+            new {
+                Icon = "network",
+                TitleEn = "Collaboration with Experts",
+                TitleAr = "التعاون مع الخبراء",
+                DescEn = "Direct communication pathways with researchers, technologists, and industry leaders for active knowledge exchange.",
+                DescAr = "قنوات اتصال مباشرة مع الباحثين، التقنيين، وقادة الصناعة لتبادل المعرفة النشط."
+            },
+            new {
+                Icon = "workflow",
+                TitleEn = "Flexible Digital Work Opportunities",
+                TitleAr = "فرص عمل رقمية مرنة",
+                DescEn = "Access to task-based remote work models integrated into the global economy.",
+                DescAr = "فرص عمل عن بعد قائمة على المهام تمكنك من المشاركة في الاقتصاد العالمي."
+            }
+        }.ToList();
+
+    var overviewBackground = CmsBandText.Pick(overviewBand?.ImagePath, "/images/Infrastructure.png");
+}
+
+@if (heroBand?.IsPublished != false)
+{
+    <section class="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-14 md:pt-36 md:pb-18">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+        <div class="container relative z-30 px-6 text-center max-w-5xl">
+            @{
+                var heroBadgeEn = CmsBandText.Pick(heroBand?.BadgeEn, "Our Global Community");
+                var heroBadgeAr = CmsBandText.Pick(heroBand?.BadgeAr, "مجتمعنا العالمي");
+            }
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10 animate-fade-in">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+            </div>
+
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] text-slate-900 dark:text-white mb-6 animate-fade-in-up">
+                <span data-en="@titleEn" data-ar="@titleAr">@titleEn</span>
+            </h1>
+
+            <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed animate-fade-in-up"
+               data-en="@subtitleEn"
+               data-ar="@subtitleAr">
+                @subtitleEn
+            </p>
+        </div>
+    </section>
+}
+
+@if (overviewBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/50 dark:bg-background/20">
+        @* Half Background ("infrastructure") - faded bright modern server room *@
+        <div class="absolute inset-y-0 right-0 w-full lg:w-1/2 opacity-25 dark:opacity-[0.06] mix-blend-overlay pointer-events-none z-0">
+            <img src="@overviewBackground" alt="Infrastructure Background" class="w-full h-full object-cover object-right" />
+            @* Smooth gradient transition to transparent *@
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-50 dark:from-background via-slate-50/40 dark:via-background/40 to-transparent"></div>
+        </div>
+
+        <div class="container px-6 max-w-7xl mx-auto relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+                <!-- Left Side (55% space - lg:col-span-7) -->
+                <div class="lg:col-span-7 flex flex-col text-left rtl:text-right">
+                    @{
+                        var overviewBadgeEn = CmsBandText.Pick(overviewBand?.BadgeEn, "Your Journey");
+                        var overviewBadgeAr = CmsBandText.Pick(overviewBand?.BadgeAr, "رحلتك");
+                        var overviewPrefixEn = CmsBandText.Pick(overviewBand?.TitlePrefixEn, "Find Your ");
+                        var overviewPrefixAr = CmsBandText.Pick(overviewBand?.TitlePrefixAr, "اعثر على ");
+                        var overviewHighlightEn = CmsBandText.Pick(overviewBand?.TitleHighlightEn, "Path");
+                        var overviewHighlightAr = CmsBandText.Pick(overviewBand?.TitleHighlightAr, "مسارك");
+                        var overviewBodyEn = CmsBandText.Pick(overviewBand?.BodyEn, "Neurix AI Club brings together students, professionals, experts, and digital talent through specialized communities, technical collaboration, and meaningful work opportunities.");
+                        var overviewBodyAr = CmsBandText.Pick(overviewBand?.BodyAr, "يجمع نادي نيوركس AI بين الطلاب والمهنيين والخبراء والمواهب الرقمية من خلال مجتمعات متخصصة وتعاون تقني فعال وفرص عمل ذات قيمة.");
+                    }
+                    <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6 self-start">
+                        <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                        <span data-en="@overviewBadgeEn" data-ar="@overviewBadgeAr">@overviewBadgeEn</span>
+                    </div>
+
+                    <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                        <span data-en="@overviewPrefixEn" data-ar="@overviewPrefixAr">@overviewPrefixEn</span>
+                        <span class="text-gradient-brand" data-en="@overviewHighlightEn" data-ar="@overviewHighlightAr">@overviewHighlightEn</span>
+                    </h2>
+
+                    <p class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-10"
+                       data-en="@overviewBodyEn"
+                       data-ar="@overviewBodyAr">
+                        @overviewBodyEn
+                    </p>
+
+                    <!-- 2x2 Grid of Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        @foreach (var p in personas)
+                        {
+                            var borderHoverClass = "hover:border-cyan/50 hover:shadow-[0_0_20px_-5px_hsl(var(--cyan)/0.15)] dark:hover:shadow-[0_0_30px_-5px_hsl(var(--cyan)/0.2)]";
+                            var iconBgClass = "bg-cyan/10 text-cyan";
+                            if (p.Icon == "graduation-cap")
+                            {
+                                borderHoverClass = "hover:border-azure/50 hover:shadow-[0_0_20px_-5px_hsl(var(--azure)/0.15)] dark:hover:shadow-[0_0_30px_-5px_hsl(var(--azure)/0.2)]";
+                                iconBgClass = "bg-azure/10 text-azure";
+                            }
+                            else if (p.Icon == "briefcase")
+                            {
+                                borderHoverClass = "hover:border-purple-500/50 hover:shadow-[0_0_20px_-5px_rgba(168,85,247,0.15)] dark:hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.2)]";
+                                iconBgClass = "bg-purple-500/10 text-purple-500";
+                            }
+                            else if (p.Icon == "laptop")
+                            {
+                                borderHoverClass = "hover:border-emerald-500/50 hover:shadow-[0_0_20px_-5px_rgba(16,185,129,0.15)] dark:hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.2)]";
+                                iconBgClass = "bg-emerald-500/10 text-emerald-500";
+                            }
+
+                            <div class="group relative flex flex-col rounded-2xl border border-slate-300/80 dark:border-white/10 bg-slate-100/40 dark:bg-card/20 backdrop-blur-md p-6 transition-all duration-300 @borderHoverClass">
+                                <div class="w-10 h-10 rounded-xl @iconBgClass flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+                                    <i data-lucide="@p.Icon" class="w-5 h-5"></i>
+                                </div>
+                                <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base" data-en="@p.TitleEn" data-ar="@p.TitleAr">@p.TitleEn</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed" data-en="@p.DescEn" data-ar="@p.DescAr">@p.DescEn</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Right Side (45% space - lg:col-span-5) - Overlapping premium cards -->
+                <div class="lg:col-span-5 relative w-full h-[450px] sm:h-[550px] lg:h-[620px] flex items-center justify-center">
+
+                    @* Top Image ("software") *@
+                    <div class="absolute top-0 left-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
+                        <img src="~/images/Software.png" alt="Software Office Desk Setup" class="w-full h-full object-cover" />
+                    </div>
+
+                    @* Bottom Image ("research") *@
+                    <div class="absolute bottom-0 right-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
+                        <img src="~/images/Research.png" alt="Pristine Laboratory Setup" class="w-full h-full object-cover" />
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+
+@if (cardsBand?.IsPublished != false)
+{
+    <section class="relative py-20 md:py-24 z-30 bg-slate-50 dark:bg-slate-900 border-y border-slate-300 dark:border-white/10">
+        <div class="container px-6 max-w-7xl mx-auto">
+            @{
+                var perksTitleEn = CmsBandText.Pick(cardsBand?.TitlePrefixEn, "What Neurix AI Club Offers");
+                var perksTitleAr = CmsBandText.Pick(cardsBand?.TitlePrefixAr, "ماذا يقدم نادي نيوركس AI؟");
+                var perksBodyEn = CmsBandText.Pick(cardsBand?.BodyEn, "Membership gives you access to a connected professional ecosystem built for growth, collaboration, and opportunity.");
+                var perksBodyAr = CmsBandText.Pick(cardsBand?.BodyAr, "تمنحك العضوية وصولاً إلى منظومة مهنية مترابطة مصممة لدعم النمو والتعاون وفتح آفاق الفرص.");
+            }
+            <div class="text-center mb-14">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4" data-en="@perksTitleEn" data-ar="@perksTitleAr">@perksTitleEn</h2>
+                <p class="text-lg text-slate-600 dark:text-slate-300" data-en="@perksBodyEn" data-ar="@perksBodyAr">
+                    @perksBodyEn
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                @foreach (var perk in perks)
+                {
+                    <div class="magnetic-card card-glow-border bg-white dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded-2xl p-8 text-center">
+                        <div class="h-12 w-12 mx-auto rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-5 shadow-[0_0_15px_hsl(var(--cyan)/0.2)]">
+                            <i data-lucide="@perk.Icon" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2" data-en="@perk.TitleEn" data-ar="@perk.TitleAr">@perk.TitleEn</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300" data-en="@perk.DescEn" data-ar="@perk.DescAr">@perk.DescEn</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+}

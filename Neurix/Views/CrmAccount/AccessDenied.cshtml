@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="min-h-screen flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-md text-center">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl border border-border bg-card/60 mb-6">
+            <i data-lucide="shield-alert" class="w-6 h-6 text-rose-500"></i>
+        </div>
+
+        <h1 class="font-display text-2xl font-bold tracking-tight mb-3">@L["Access denied"]</h1>
+        <p class="text-sm text-muted-foreground mb-8">
+            @L["Your account doesn't have permission to view this page. Contact a CRM administrator if you believe this is a mistake."]
+        </p>
+
+        <a asp-controller="CrmDashboard" asp-action="Index"
+           class="inline-flex items-center gap-2 rounded-xl border border-border px-5 h-11 text-sm font-medium hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+            @L["Back to dashboard"]
+        </a>
+    </div>
+</div>

@@ -1,0 +1,234 @@
+@model Neurix.Models.CmsCompanyProfileDetailsViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = $"{Model.Profile.NameEn} Profile";
+    var p = Model.Profile;
+    var primary = string.IsNullOrWhiteSpace(p.PrimaryColor) ? "#00C2D4" : p.PrimaryColor;
+    var accent = string.IsNullOrWhiteSpace(p.AccentColor) ? "#5B5FEF" : p.AccentColor;
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+            @if (!string.IsNullOrWhiteSpace(p.LogoPath))
+            {
+                <img src="@p.LogoPath" alt="@p.NameEn" class="w-16 h-16 rounded-2xl object-contain border border-border bg-card p-2 shadow-sm" />
+            }
+            else
+            {
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-2xl border shadow-sm text-white"
+                     style="background: linear-gradient(135deg, @primary, @accent); border-color: @primary 40;">
+                    @p.NameEn.Substring(0, Math.Min(2, p.NameEn.Length)).ToUpper()
+                </div>
+            }
+            <div>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold font-display tracking-tight text-foreground">@p.NameEn</h2>
+                    <partial name="_CmsStatusBadge" model="p.IsPublished" />
+                </div>
+                <p class="text-sm text-muted-foreground font-arabic" dir="rtl">@p.NameAr</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <a asp-action="Edit" asp-route-id="@p.Id" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-cyan/30 bg-cyan/10 text-cyan hover:bg-cyan/20 font-medium text-sm transition-colors">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                @L["Edit Profile"]
+            </a>
+            <a asp-action="Index" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+                @L["Back"]
+            </a>
+        </div>
+    </div>
+
+    <!-- Metadata & Slug Bar -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div class="flex items-center gap-2">
+            <span class="text-muted-foreground">@L["URL Slug:"]</span>
+            <code class="px-2.5 py-1 rounded-lg bg-muted text-cyan font-mono font-semibold">@p.Slug</code>
+        </div>
+        <div class="flex items-center gap-6 text-muted-foreground">
+            <span>Created: @p.CreatedAtUtc.ToString("MMM dd, yyyy HH:mm") UTC</span>
+            @if (p.UpdatedAtUtc.HasValue)
+            {
+                <span>Updated: @p.UpdatedAtUtc.Value.ToString("MMM dd, yyyy HH:mm") UTC</span>
+            }
+        </div>
+    </div>
+
+    <!-- Brand Assets & Color Theme Card -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-5">
+        <div class="flex items-center gap-2 text-foreground font-bold text-sm border-b border-border pb-3">
+            <i data-lucide="palette" class="w-4 h-4 text-cyan"></i>
+            @L["Brand Theme & Visual Assets"]
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            <!-- Primary Color Swatch -->
+            <div class="p-3.5 rounded-xl bg-background/50 border border-border/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl border border-white/20 shadow-md shrink-0" style="background-color: @primary;"></div>
+                <div class="space-y-0.5">
+                    <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">@L["Primary Color"]</span>
+                    <p class="font-mono font-bold text-foreground text-sm">@primary</p>
+                </div>
+            </div>
+
+            <!-- Accent Color Swatch -->
+            <div class="p-3.5 rounded-xl bg-background/50 border border-border/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl border border-white/20 shadow-md shrink-0" style="background-color: @accent;"></div>
+                <div class="space-y-0.5">
+                    <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">@L["Accent Color"]</span>
+                    <p class="font-mono font-bold text-foreground text-sm">@accent</p>
+                </div>
+            </div>
+
+            <!-- Logo Asset -->
+            <div class="p-3.5 rounded-xl bg-background/50 border border-border/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-card border border-border p-1 flex items-center justify-center shrink-0">
+                    @if (!string.IsNullOrWhiteSpace(p.LogoPath))
+                    {
+                        <img src="@p.LogoPath" alt='@L["Logo"]' class="w-full h-full object-contain" />
+                    }
+                    else
+                    {
+                        <i data-lucide="image" class="w-4 h-4 text-muted-foreground"></i>
+                    }
+                </div>
+                <div class="space-y-0.5 min-w-0">
+                    <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">@L["Brand Logo"]</span>
+                    <p class="font-mono text-muted-foreground text-xs truncate" title="@p.LogoPath">@(p.LogoPath ?? "Not set")</p>
+                </div>
+            </div>
+
+            <!-- Favicon Asset -->
+            <div class="p-3.5 rounded-xl bg-background/50 border border-border/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-card border border-border p-1 flex items-center justify-center shrink-0">
+                    @if (!string.IsNullOrWhiteSpace(p.FaviconPath))
+                    {
+                        <img src="@p.FaviconPath" alt='@L["Favicon"]' class="w-6 h-6 object-contain" />
+                    }
+                    else
+                    {
+                        <i data-lucide="globe" class="w-4 h-4 text-muted-foreground"></i>
+                    }
+                </div>
+                <div class="space-y-0.5 min-w-0">
+                    <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">@L["Favicon"]</span>
+                    <p class="font-mono text-muted-foreground text-xs truncate" title="@p.FaviconPath">@(p.FaviconPath ?? "Not set")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Brand Demo Banner -->
+        <div class="p-4 rounded-xl border border-border bg-gradient-to-r from-card/80 to-background/90 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold"
+                      style="background-color: @primary 1A; color: @primary; border: 1px solid @primary 40;">
+                    @L["Active Brand Gradient"]
+                </span>
+                <span class="h-2.5 w-24 rounded-full"
+                      style="background: linear-gradient(90deg, @primary, @accent);"></span>
+            </div>
+            <div class="px-4 py-1.5 rounded-xl text-xs font-bold text-white shadow-md flex items-center gap-2"
+                 style="background: linear-gradient(135deg, @primary, @accent); box-shadow: 0 0 15px @primary 40;">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                @L["Sample Button"]
+            </div>
+        </div>
+    </div>
+
+    <!-- Taglines & Descriptions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- English Section -->
+        <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-4">
+            <div class="flex items-center gap-2 text-cyan font-semibold text-xs uppercase tracking-wider border-b border-border pb-2">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                @L["English Profile Content"]
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Tagline"]</label>
+                <p class="text-sm font-medium text-foreground">@(p.TaglineEn ?? "—")</p>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Short Description"]</label>
+                <p class="text-sm text-foreground/80 leading-relaxed">@(p.ShortDescriptionEn ?? "—")</p>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Full Description"]</label>
+                <p class="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">@(p.DescriptionEn ?? "—")</p>
+            </div>
+        </div>
+
+        <!-- Arabic Section -->
+        <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-4 text-right" dir="rtl">
+            <div class="flex items-center gap-2 text-cyan font-semibold text-xs uppercase tracking-wider border-b border-border pb-2">
+                <i data-lucide="globe" class="w-4 h-4"></i>
+                محتوى الملف التعريفي بالعربية
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">الشعار اللفظي</label>
+                <p class="text-sm font-medium text-foreground font-arabic">@(p.TaglineAr ?? "—")</p>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">الوصف المختصر</label>
+                <p class="text-sm text-foreground/80 leading-relaxed font-arabic">@(p.ShortDescriptionAr ?? "—")</p>
+            </div>
+
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">الوصف الكامل</label>
+                <p class="text-sm text-foreground/80 leading-relaxed whitespace-pre-line font-arabic">@(p.DescriptionAr ?? "—")</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Location Card -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-4">
+        <div class="flex items-center gap-2 text-foreground font-bold text-sm border-b border-border pb-3">
+            <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400"></i>
+            @L["Contact & Address Information"]
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Email"]</label>
+                <span class="text-foreground font-medium">@(p.Email ?? "—")</span>
+            </div>
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Phone"]</label>
+                <span class="text-foreground font-medium">@(p.Phone ?? "—")</span>
+            </div>
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["Official Website"]</label>
+                @if (!string.IsNullOrWhiteSpace(p.Website))
+                {
+                    <a href="@p.Website" target="_blank" class="text-cyan hover:underline inline-flex items-center gap-1">
+                        @p.Website
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                }
+                else
+                {
+                    <span class="text-muted-foreground">—</span>
+                }
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm pt-3 border-t border-border">
+            <div>
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">@L["English Address"]</label>
+                <p class="text-foreground/80">@(p.AddressEn ?? "—")</p>
+            </div>
+            <div class="text-right" dir="rtl">
+                <label class="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">العنوان بالعربية</label>
+                <p class="text-foreground/80 font-arabic">@(p.AddressAr ?? "—")</p>
+            </div>
+        </div>
+    </div>
+</div>

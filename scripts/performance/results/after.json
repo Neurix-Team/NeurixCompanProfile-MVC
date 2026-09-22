@@ -1,0 +1,249 @@
+{
+  "rows": [
+    {
+      "path": "/",
+      "renderer": "worker",
+      "dom": 323,
+      "fcp": 252,
+      "frameP95": 50,
+      "over50": 4,
+      "maxFrame": 117,
+      "longTasks": [
+        {
+          "at": 139.90000000596046,
+          "ms": 87
+        },
+        {
+          "at": 241.2000000178814,
+          "ms": 54
+        }
+      ],
+      "gl": []
+    },
+    {
+      "path": "/Home/Labs",
+      "renderer": "worker",
+      "dom": 327,
+      "fcp": 312,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [
+        {
+          "at": 219.39999997615814,
+          "ms": 57
+        }
+      ],
+      "gl": []
+    },
+    {
+      "path": "/Home/Technology",
+      "renderer": "worker",
+      "dom": 206,
+      "fcp": 136,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 34,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Club",
+      "renderer": "worker",
+      "dom": 218,
+      "fcp": 128,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 34,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Plus",
+      "renderer": "worker",
+      "dom": 197,
+      "fcp": 120,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/HQ",
+      "renderer": "worker",
+      "dom": 190,
+      "fcp": 116,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Portfolio",
+      "renderer": "worker",
+      "dom": 198,
+      "fcp": 136,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Insights",
+      "renderer": "worker",
+      "dom": 179,
+      "fcp": 120,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 18,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/About",
+      "renderer": "worker",
+      "dom": 272,
+      "fcp": 152,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [
+        {
+          "at": 147.59999999403954,
+          "ms": 57
+        }
+      ],
+      "gl": []
+    },
+    {
+      "path": "/Home/Contact",
+      "renderer": "worker",
+      "dom": 341,
+      "fcp": 204,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Contact",
+      "renderer": "worker",
+      "dom": 201,
+      "fcp": 112,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/About",
+      "renderer": "worker",
+      "dom": 202,
+      "fcp": 116,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Insights",
+      "renderer": "worker",
+      "dom": 179,
+      "fcp": 128,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 18,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Portfolio",
+      "renderer": "worker",
+      "dom": 160,
+      "fcp": 100,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/HQ",
+      "renderer": "worker",
+      "dom": 162,
+      "fcp": 104,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Plus",
+      "renderer": "worker",
+      "dom": 156,
+      "fcp": 104,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Club",
+      "renderer": "worker",
+      "dom": 163,
+      "fcp": 104,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 50,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Technology",
+      "renderer": "worker",
+      "dom": 175,
+      "fcp": 104,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Labs",
+      "renderer": "worker",
+      "dom": 189,
+      "fcp": 120,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/",
+      "renderer": "worker",
+      "dom": 239,
+      "fcp": 132,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [
+        {
+          "at": 120,
+          "ms": 62
+        }
+      ],
+      "gl": []
+    }
+  ],
+  "errors": []
+}

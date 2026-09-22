@@ -1,0 +1,123 @@
+@model Neurix.Models.CmsDivisionItemFormViewModel
+@{
+    var isEdit = Model.Id.HasValue && Model.Id.Value != Guid.Empty;
+    ViewData["Title"] = isEdit ? L["Edit Division Card"] : L["Add Division Card"];
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-3xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-azure/10 text-azure">#divisions</span>
+                <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">
+                    @(isEdit ? L["Edit Division Card"] : L["Add New Division Card"])
+                </h1>
+            </div>
+            <p class="text-sm text-muted-foreground mt-1">@L["Configure icon, bilingual copy, destination link, and display ordering."]</p>
+        </div>
+        <a asp-action="EditDivisions" asp-route-companyId="@Model.CompanyProfileId" class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to Our Ecosystem"]
+        </a>
+    </div>
+
+    <!-- Form -->
+    <form asp-action="@(isEdit ? "EditDivisionItem" : "CreateDivisionItem")" asp-route-id="@(isEdit ? Model.Id : null)" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyProfileId" />
+
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+
+            <!-- 1. Icon & Display Order -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-border pb-6">
+                <div>
+                    <label asp-for="IconName" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="IconName" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-mono focus:ring-2 focus:ring-azure focus:outline-none" placeholder="beaker" />
+                    <p class="text-[11px] text-muted-foreground mt-1">@L["Lucide icon name (e.g. beaker, cpu, users, zap, layers, building-2)"]</p>
+                    <span asp-validation-for="IconName" class="text-xs text-rose-500"></span>
+                </div>
+
+                <div>
+                    <label asp-for="DisplayOrder" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="DisplayOrder" type="number" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-azure focus:outline-none" />
+                    <p class="text-[11px] text-muted-foreground mt-1">@L["The first three cards fill the top row; the rest fill the wider row beneath."]</p>
+                    <span asp-validation-for="DisplayOrder" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+
+            <!-- 2. Titles -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="TitleEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="TitleEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-azure focus:outline-none" placeholder="Neurix AI Labs" />
+                    <span asp-validation-for="TitleEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="TitleAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="TitleAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-azure focus:outline-none" />
+                    <span asp-validation-for="TitleAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+
+            <!-- 3. Descriptions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="DescriptionEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="DescriptionEn" rows="4" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-azure focus:outline-none"></textarea>
+                    <span asp-validation-for="DescriptionEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="DescriptionAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="DescriptionAr" rows="4" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-azure focus:outline-none"></textarea>
+                    <span asp-validation-for="DescriptionAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+
+            <!-- 4. Link -->
+            <div class="space-y-4 pt-4 border-t border-border">
+                <div>
+                    <label asp-for="LinkUrl" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="LinkUrl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-mono focus:ring-2 focus:ring-azure focus:outline-none" placeholder="/Home/Labs" />
+                    <p class="text-[11px] text-muted-foreground mt-1">@L["Where the whole card links to, e.g. /Home/Labs, /Home/Technology, or an external URL."]</p>
+                    <span asp-validation-for="LinkUrl" class="text-xs text-rose-500"></span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="LinkTextEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <input asp-for="LinkTextEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-azure focus:outline-none" placeholder="Explore" />
+                        <span asp-validation-for="LinkTextEn" class="text-xs text-rose-500"></span>
+                    </div>
+                    <div>
+                        <label asp-for="LinkTextAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <input asp-for="LinkTextAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-azure focus:outline-none" />
+                        <span asp-validation-for="LinkTextAr" class="text-xs text-rose-500"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Published Toggle -->
+            <div class="flex items-center gap-3 pt-4 border-t border-border">
+                <input asp-for="IsPublished" type="checkbox" class="h-4 w-4 rounded border-border text-azure focus:ring-azure bg-background" />
+                <div>
+                    <label asp-for="IsPublished" class="text-xs font-semibold text-foreground"></label>
+                    <p class="text-[11px] text-muted-foreground">@L["Controls whether this card appears on the public website."]</p>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-4 border-t border-border flex items-center justify-end gap-3">
+                <a asp-action="EditDivisions" asp-route-companyId="@Model.CompanyProfileId" class="px-4 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                    @L["Cancel"]
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] shadow-[0_0_15px_hsl(var(--azure)/0.25)] transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    @(isEdit ? L["Update Division Card"] : L["Create Division Card"])
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

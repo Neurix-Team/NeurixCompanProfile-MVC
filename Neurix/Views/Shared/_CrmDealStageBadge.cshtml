@@ -1,0 +1,15 @@
+@model Neurix.DAL.Enums.DealStage
+@using Neurix.DAL.Enums
+
+@{
+    var (cls, label) = Model switch
+    {
+        DealStage.New          => ("border-azure/30 bg-azure/10 text-azure", "New"),
+        DealStage.Contacted    => ("border-cyan/30 bg-cyan/10 text-cyan", "Contacted"),
+        DealStage.ProposalSent => ("border-amber-500/30 bg-amber-500/10 text-amber-500", "Proposal sent"),
+        DealStage.Won          => ("border-emerald-500/30 bg-emerald-500/10 text-emerald-500", "Won"),
+        _                      => ("border-border bg-muted text-muted-foreground", "Lost")
+    };
+}
+
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium @cls">@L[label]</span>

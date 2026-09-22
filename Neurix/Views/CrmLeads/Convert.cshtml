@@ -1,0 +1,80 @@
+@model Neurix.Models.CrmLeadConversionViewModel
+
+@{
+    const string InputCls = "w-full rounded-xl bg-background/60 border border-border px-4 h-11 text-sm outline-none transition-all duration-300 focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]";
+    const string LabelCls = "block text-sm font-medium mb-2";
+}
+
+<div class="max-w-3xl">
+
+    <a asp-action="Details" asp-route-id="@Model.LeadId" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+        @L["Back to lead"]
+    </a>
+
+    <div class="mb-6">
+        <h2 class="font-display text-xl font-bold tracking-tight mb-1.5">@L["Convert this lead"]</h2>
+        <p class="text-sm text-muted-foreground">
+            @L["This creates a contact (and a company, unless you pick an existing one) and marks the lead as converted."]
+        </p>
+    </div>
+
+    <form asp-action="Convert" asp-route-id="@Model.LeadId" method="post" class="rounded-2xl border border-border bg-card/60 p-6 sm:p-8">
+
+        @* ── What is being converted ── *@
+        <h3 class="font-display text-sm font-semibold mb-5">@L["Lead"]</h3>
+
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm mb-8">
+            <div>
+                <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Name"]</dt>
+                <dd>@Model.FullName</dd>
+            </div>
+            <div>
+                <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Email"]</dt>
+                <dd class="break-all">@Model.Email</dd>
+            </div>
+            <div>
+                <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Phone"]</dt>
+                <dd>@(string.IsNullOrWhiteSpace(Model.Phone) ? "—" : Model.Phone)</dd>
+            </div>
+            <div>
+                <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Company given"]</dt>
+                <dd>@(Model.HasCompanyName ? Model.CompanyName : "—")</dd>
+            </div>
+        </dl>
+
+        @* ── The one decision ── *@
+        <div class="pt-6 border-t border-border">
+            <label asp-for="SelectedCompanyId" class="@LabelCls">@L["Company"]</label>
+            <select asp-for="SelectedCompanyId" asp-items="Model.CompanyOptions" class="@InputCls"></select>
+            <p class="text-xs text-muted-foreground mt-2">
+                @if (Model.HasCompanyName)
+                {
+                    @* Format() keeps the company name out of the translation key. *@
+                    <text>@L.Format("A company matching “{0}” is pre-selected when one exists. Pick a different one if this belongs elsewhere.", Model.CompanyName)</text>
+                }
+                else
+                {
+                    <text>@L["This lead did not name a company. Pick one to link the new contact, or leave it as is."]</text>
+                }
+            </p>
+        </div>
+
+        @if (Model.HasExistingContact)
+        {
+            <div class="mt-6 rounded-xl border border-azure/30 bg-azure/10 px-4 py-3 text-sm text-azure">
+                <span class="font-medium">@Model.ExistingContactName</span>
+                @L["already uses this email address. That contact will be linked instead of creating a second record for the same person — update their details afterwards if anything has changed."]
+            </div>
+        }
+
+        <div class="flex items-center gap-3 mt-8 pt-6 border-t border-border">
+            <button type="submit"
+                    class="inline-flex items-center gap-2 rounded-[16px] px-6 py-2.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--cyan)/0.5)] transition-all duration-300">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+                @L["Convert lead"]
+            </button>
+            <a asp-action="Details" asp-route-id="@Model.LeadId" class="text-sm text-muted-foreground hover:text-foreground transition-colors">@L["Cancel"]</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,126 @@
+@model Neurix.Models.CmsServiceFormViewModel
+
+<div class="space-y-8">
+    <!-- Live Homepage Placement Banner -->
+    <div class="rounded-2xl border border-cyan/30 bg-cyan/5 p-4 text-xs text-foreground/80 flex items-start gap-3">
+        <i data-lucide="info" class="w-4 h-4 text-cyan shrink-0 mt-0.5"></i>
+        <div>
+            <span class="font-semibold text-foreground">@L["Live Homepage Placement:"]</span>
+            <span class="text-muted-foreground">
+                @L["These service cards are published on the homepage inside the Ecosystem Framework (Vision) section. The standalone AI & Engineering section is managed under Homepage Sections."]
+            </span>
+        </div>
+    </div>
+
+    <!-- Hidden fields for unused properties preserved for backward compatibility -->
+    <input type="hidden" asp-for="ImagePath" />
+    <input type="hidden" asp-for="DescriptionEn" />
+    <input type="hidden" asp-for="DescriptionAr" />
+
+    <!-- Brand & Key Settings -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="building" class="w-5 h-5 text-cyan"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Brand Association & Order"]</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Company Profile Dropdown -->
+            <div>
+                <label asp-for="CompanyProfileId" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <select asp-for="CompanyProfileId" asp-items="Model.CompanyOptions" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30">
+                </select>
+                <span asp-validation-for="CompanyProfileId" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Slug -->
+            <div>
+                <label asp-for="Slug" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="Slug" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground font-mono placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder='@L["e.g. software-engineering"]' />
+                <span asp-validation-for="Slug" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Display Order -->
+            <div>
+                <label asp-for="DisplayOrder" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="DisplayOrder" type="number" min="0" max="1000" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" />
+                <span asp-validation-for="DisplayOrder" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Names (Bilingual) -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="tag" class="w-5 h-5 text-azure"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Service Name (Bilingual)"]</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- English Name -->
+            <div>
+                <label asp-for="NameEn" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="NameEn" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder='@L["e.g. Research & Development"]' />
+                <span asp-validation-for="NameEn" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Arabic Name -->
+            <div>
+                <label asp-for="NameAr" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <input asp-for="NameAr" dir="rtl" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground font-arabic placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder="مثال: البحث والتطوير" />
+                <span asp-validation-for="NameAr" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visual Assets (Card Icon) -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Card Icon"]</h3>
+        </div>
+
+        <div>
+            <label asp-for="IconName" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+            <input asp-for="IconName" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder='@L["e.g. microscope, cpu, code, users, zap, database"]' />
+            <span asp-validation-for="IconName" class="text-xs text-rose-500 mt-1 block"></span>
+            <p class="text-[11px] text-muted-foreground mt-1">@L["Lucide icon identifier (e.g. 'cpu', 'microscope', 'bar-chart-2', 'code', 'users', 'zap')."]</p>
+        </div>
+    </div>
+
+    <!-- Short Descriptions (Bilingual) -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+        <div class="flex items-center gap-2 border-b border-border pb-3">
+            <i data-lucide="align-left" class="w-5 h-5 text-emerald-400"></i>
+            <h3 class="text-base font-bold text-foreground">@L["Short Summary (Bilingual)"]</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Short Description English -->
+            <div>
+                <label asp-for="ShortDescriptionEn" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <textarea asp-for="ShortDescriptionEn" rows="3" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30 resize-none"></textarea>
+                <span asp-validation-for="ShortDescriptionEn" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+
+            <!-- Short Description Arabic -->
+            <div>
+                <label asp-for="ShortDescriptionAr" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                <textarea asp-for="ShortDescriptionAr" dir="rtl" rows="3" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground font-arabic placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30 resize-none"></textarea>
+                <span asp-validation-for="ShortDescriptionAr" class="text-xs text-rose-500 mt-1 block"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Publication Settings -->
+    <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 flex items-center justify-between gap-4">
+        <div>
+            <h4 class="text-sm font-bold text-foreground">@L["Publication Status"]</h4>
+            <p class="text-xs text-muted-foreground mt-0.5">@L["When published, this service appears in the capabilities and solutions sections on the public site."]</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" asp-for="IsPublished" class="sr-only peer" />
+            <div class="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan"></div>
+        </label>
+    </div>
+</div>

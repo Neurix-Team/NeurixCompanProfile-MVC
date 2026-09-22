@@ -1,0 +1,138 @@
+@model Neurix.Models.CrmCompanyDetailsViewModel
+
+<div class="max-w-5xl">
+
+    <a asp-action="Index" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+        @L["Back to companies"]
+    </a>
+
+    @* ── Header ── *@
+    <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div class="min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+                <h2 class="font-display text-xl font-bold tracking-tight truncate">@Model.Name</h2>
+                <partial name="_CrmStatusBadge" model="Model.Status" />
+            </div>
+            <p class="text-sm text-muted-foreground">
+                @(Model.Industry ?? "No industry set")
+                @if (!string.IsNullOrWhiteSpace(Model.City) || !string.IsNullOrWhiteSpace(Model.Country))
+                {
+                    <span class="mx-1.5 text-border">·</span>
+                    @(string.Join(", ", new[] { Model.City, Model.Country }.Where(x => !string.IsNullOrWhiteSpace(x))))
+                }
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+            <a asp-action="Edit" asp-route-id="@Model.Id"
+               class="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 h-10 text-sm font-medium hover:bg-muted transition-colors">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+                @L["Edit"]
+            </a>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('@L["Delete this company? Contacts must be reassigned or deleted first."]');">
+                <button type="submit"
+                        class="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/30 px-4 h-10 text-sm font-medium text-rose-500 hover:bg-rose-500/10 transition-colors">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    @L["Delete"]
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        @* ── Details card ── *@
+        <div class="lg:col-span-2 rounded-2xl border border-border bg-card/60 p-6">
+            <h3 class="font-display text-sm font-semibold mb-5">@L["Company details"]</h3>
+
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Website"]</dt>
+                    <dd>
+                        @if (!string.IsNullOrWhiteSpace(Model.Website))
+                        {
+                            <a href="@Model.Website" target="_blank" rel="noopener noreferrer" class="text-cyan hover:underline break-all">@Model.Website</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted-foreground">—</span>
+                        }
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Email"]</dt>
+                    <dd>
+                        @if (!string.IsNullOrWhiteSpace(Model.Email))
+                        {
+                            <a href="mailto:@Model.Email" class="text-cyan hover:underline break-all">@Model.Email</a>
+                        }
+                        else
+                        {
+                            <span class="text-muted-foreground">—</span>
+                        }
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Phone"]</dt>
+                    <dd>@(string.IsNullOrWhiteSpace(Model.Phone) ? "—" : Model.Phone)</dd>
+                </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Address"]</dt>
+                    <dd>@(string.IsNullOrWhiteSpace(Model.Address) ? "—" : Model.Address)</dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Description"]</dt>
+                    <dd class="whitespace-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Description) ? "—" : Model.Description)</dd>
+                </div>
+            </dl>
+
+            <div class="mt-6 pt-5 border-t border-border text-xs text-muted-foreground">
+                Created @Model.CreatedAtUtc.ToString("dd MMM yyyy, HH:mm") UTC
+                @if (Model.UpdatedAtUtc.HasValue)
+                {
+                    <span class="mx-1.5 text-border">·</span>
+                    <text>Updated @Model.UpdatedAtUtc.Value.ToString("dd MMM yyyy, HH:mm") UTC</text>
+                }
+            </div>
+        </div>
+
+        @* ── Contacts card ── *@
+        <div class="rounded-2xl border border-border bg-card/60 p-6">
+            <div class="flex items-center justify-between gap-3 mb-5">
+                <h3 class="font-display text-sm font-semibold">Contacts (@Model.Contacts.Count)</h3>
+                <a asp-controller="CrmContacts" asp-action="Create" asp-route-companyId="@Model.Id"
+                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title='@L["Add contact"]'>
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            @if (Model.Contacts.Count == 0)
+            {
+                <p class="text-sm text-muted-foreground">
+                    @L["No contacts yet."]
+                    <a asp-controller="CrmContacts" asp-action="Create" asp-route-companyId="@Model.Id" class="text-cyan hover:underline">@L["Add one"]</a>.
+                </p>
+            }
+            else
+            {
+                <ul class="flex flex-col divide-y divide-border -my-2">
+                    @foreach (var contact in Model.Contacts)
+                    {
+                        <li class="py-2.5">
+                            <a asp-controller="CrmContacts" asp-action="Details" asp-route-id="@contact.Id"
+                               class="block group">
+                                <span class="text-sm font-medium group-hover:text-cyan transition-colors">@contact.FullName</span>
+                                <span class="block text-xs text-muted-foreground truncate">
+                                    @(contact.JobTitle ?? contact.Email ?? "—")
+                                </span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>

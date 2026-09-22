@@ -1,0 +1,15 @@
+@model Neurix.DAL.Enums.LeadStatus
+@using Neurix.DAL.Enums
+
+@{
+    var (cls, label) = Model switch
+    {
+        LeadStatus.New         => ("border-azure/30 bg-azure/10 text-azure", "New"),
+        LeadStatus.Contacted   => ("border-cyan/30 bg-cyan/10 text-cyan", "Contacted"),
+        LeadStatus.Qualified   => ("border-emerald-500/30 bg-emerald-500/10 text-emerald-500", "Qualified"),
+        LeadStatus.Converted   => ("border-violet-500/30 bg-violet-500/10 text-violet-400", "Converted"),
+        _                      => ("border-border bg-muted text-muted-foreground", "Unqualified")
+    };
+}
+
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium @cls">@L[label]</span>

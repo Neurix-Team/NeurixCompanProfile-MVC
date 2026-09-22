@@ -1,0 +1,288 @@
+@model Neurix.Models.CmsDivisionPageFormViewModel
+@{
+    ViewData["Title"] = $"Edit Division — {Model.HeroTitleEn}";
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-4xl mx-auto space-y-8">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan/10 text-cyan">
+                    @L["Division Page:"] @Model.Slug.ToUpperInvariant()
+                </span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold @(Model.IsPublished ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500")">
+                    @(Model.IsPublished ? L["Published"] : L["Draft"])
+                </span>
+            </div>
+            <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">@L["Edit Division Content"]</h1>
+            <p class="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                @L["Modify dynamic headlines, subtitles, mission statements, and live page blocks for"] <span class="text-foreground font-semibold">@Model.HeroTitleEn</span>.
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="/Home/@(char.ToUpper(Model.Slug[0]) + Model.Slug.Substring(1))" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <i data-lucide="external-link" class="w-4 h-4 text-azure"></i> @L["View Live Page"]
+            </a>
+            <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+               class="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to List"]
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <partial name="_CmsAlert" />
+
+    <!-- Main Division Metadata Form (Hero & Mission) -->
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Slug" />
+        <input type="hidden" asp-for="CompanyProfileId" />
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        @* Hero section *@
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-cyan"></i>
+                    @L["Hero Header"]
+                </h3>
+                <span class="text-xs font-mono font-bold uppercase text-cyan bg-cyan/10 px-2.5 py-0.5 rounded-lg">
+                    @L["Division:"] @Model.Slug
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="HeroTitleEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="HeroTitleEn"
+                           class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    <span asp-validation-for="HeroTitleEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="HeroTitleAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="HeroTitleAr" dir="rtl"
+                           class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    <span asp-validation-for="HeroTitleAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="HeroSubtitleEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="HeroSubtitleEn" rows="3"
+                              class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                    <span asp-validation-for="HeroSubtitleEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="HeroSubtitleAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="HeroSubtitleAr" rows="3" dir="rtl"
+                              class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                    <span asp-validation-for="HeroSubtitleAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+        </div>
+
+        @* Mission & Mandate *@
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4 shadow-sm">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                <i data-lucide="target" class="w-4 h-4 text-cyan"></i>
+                @L["Mission & Strategic Mandate"]
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="MissionEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="MissionEn" rows="4"
+                              class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                    <span asp-validation-for="MissionEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="MissionAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="MissionAr" rows="4" dir="rtl"
+                              class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                    <span asp-validation-for="MissionAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" asp-for="CoverImagePath" />
+
+        @* Status & Save *@
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-center gap-3">
+                <input asp-for="IsPublished" type="checkbox"
+                       class="w-4 h-4 rounded border-border text-cyan focus:ring-cyan bg-background" />
+                <div>
+                    <label asp-for="IsPublished" class="text-xs font-semibold text-foreground cursor-pointer"></label>
+                    <p class="text-[11px] text-muted-foreground">@L["When checked, this division page is live and accessible on the public website."]</p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3">
+                <a asp-action="Index" class="rounded-xl border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    @L["Cancel"]
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-button-gradient px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-lg shadow-azure/20 hover:scale-[1.02] transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i> @L["Update Division Header"]
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- DEDICATED LIVE PAGE BLOCKS & CAPABILITIES SECTION                 -->
+    <!-- Directly addresses Issue 6: Surfaces "Lab Capabilities" and     -->
+    <!-- capability cards right inside the division editor.               -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <div class="rounded-2xl border border-cyan/30 bg-card/80 backdrop-blur-xl p-6 sm:p-7 space-y-6 shadow-xl shadow-cyan/5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-cyan/10 text-cyan flex items-center justify-center">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-foreground font-display">
+                            @L["Live Page Blocks & Capabilities"]
+                        </h2>
+                        <p class="text-xs text-muted-foreground">
+                            @L["Content sections visibly published on this live page beyond the hero headline, including capability cards and gallery images."]
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <a asp-controller="CmsPageBands" asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+               class="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan hover:underline self-start sm:self-auto">
+                <i data-lucide="rows-3" class="w-3.5 h-3.5"></i>
+                @L["Manage All Page Sections"] &rarr;
+            </a>
+        </div>
+
+        @if (Model.LiveBands == null || Model.LiveBands.Count == 0)
+        {
+            <div class="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground space-y-2">
+                <i data-lucide="inbox" class="w-8 h-8 mx-auto text-muted-foreground/50"></i>
+                <p class="text-xs">@L["No live page bands configured for this division yet."]</p>
+            </div>
+        }
+        else
+        {
+            <div class="space-y-5">
+                @foreach (var band in Model.LiveBands)
+                {
+                    var isCapabilitiesBand = band.BandKey.Equals("cards", StringComparison.OrdinalIgnoreCase);
+                    <div class="rounded-xl border @(isCapabilitiesBand ? "border-cyan/40 bg-cyan/5 dark:bg-cyan/5" : "border-border bg-background/50") p-5 space-y-4 transition-all">
+                        <!-- Band Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start sm:items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl @(isCapabilitiesBand ? "bg-cyan/20 text-cyan" : "bg-muted text-muted-foreground") flex items-center justify-center shrink-0">
+                                    <i data-lucide="@(isCapabilitiesBand ? "sparkles" : (band.BandKey == "overview" ? "grid" : "tag"))" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="text-sm font-bold text-foreground">
+                                            @(string.IsNullOrWhiteSpace(band.TitlePrefixEn) ? L[band.Label] : band.TitlePrefixEn)
+                                        </h3>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold @(band.IsPublished ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500")">
+                                            @(band.IsPublished ? L["Live"] : L["Hidden"])
+                                        </span>
+                                        @if (isCapabilitiesBand)
+                                        {
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan/15 text-cyan border border-cyan/30">
+                                                @L["Core Capabilities"]
+                                            </span>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(band.TitlePrefixAr))
+                                    {
+                                        <p class="text-xs text-muted-foreground font-arabic mt-0.5" dir="rtl">@band.TitlePrefixAr</p>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Band Action Buttons -->
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                @if (band.SupportsItems)
+                                {
+                                    <a href="@band.CreateItemUrl"
+                                       class="inline-flex items-center gap-1.5 rounded-lg bg-card border border-border hover:bg-muted px-3 py-1.5 text-xs font-semibold text-foreground transition-all">
+                                        <i data-lucide="plus" class="w-3.5 h-3.5 text-cyan"></i>
+                                        @L["Add"] @L[band.ItemsLabel]
+                                    </a>
+                                }
+                                <a href="@band.EditBandUrl"
+                                   class="inline-flex items-center gap-1.5 rounded-lg bg-button-gradient px-3.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm hover:scale-[1.02] transition-all">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    @L["Edit Section"]
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Band Description if present -->
+                        @if (!string.IsNullOrWhiteSpace(band.BodyEn))
+                        {
+                            <p class="text-xs text-muted-foreground leading-relaxed pl-12">
+                                @band.BodyEn
+                            </p>
+                        }
+
+                        <!-- Band Items (e.g. Capability Cards) -->
+                        @if (band.SupportsItems)
+                        {
+                            <div class="mt-3 pl-12 space-y-2">
+                                <div class="flex items-center justify-between text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                                    <span>@band.ItemCount @L[band.ItemsLabel]</span>
+                                    <span class="font-mono text-[10px] text-muted-foreground/80">@L["Rendered in display order"]</span>
+                                </div>
+
+                                @if (band.Items.Count == 0)
+                                {
+                                    <p class="text-xs text-muted-foreground py-2 italic">
+                                        @L["Nothing saved yet in CMS — the live page is currently showing default fallback cards."]</p>
+                                }
+                                else
+                                {
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                        @foreach (var item in band.Items)
+                                        {
+                                            <div class="flex items-center justify-between p-2.5 rounded-xl bg-card border border-border hover:border-cyan/30 transition-all text-xs">
+                                                <div class="flex items-center gap-2.5 min-w-0">
+                                                    @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                                                    {
+                                                        <img src="@item.ImagePath" alt="@item.TitleEn" class="w-8 h-8 rounded-lg object-cover border border-border shrink-0" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="w-8 h-8 rounded-lg bg-cyan/10 text-cyan flex items-center justify-center shrink-0">
+                                                            <i data-lucide="@(string.IsNullOrWhiteSpace(item.IconName) ? "sparkles" : item.IconName)" class="w-4 h-4"></i>
+                                                        </div>
+                                                    }
+                                                    <div class="min-w-0">
+                                                        <div class="font-semibold text-foreground truncate">@item.TitleEn</div>
+                                                        <div class="text-[10px] text-muted-foreground font-arabic truncate" dir="rtl">@item.TitleAr</div>
+                                                    </div>
+                                                </div>
+
+                                                <a href="@item.EditItemUrl" class="p-1.5 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted transition-colors shrink-0" title='@L["Edit Card"]'>
+                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</div>

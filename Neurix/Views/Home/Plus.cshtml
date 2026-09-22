@@ -1,0 +1,215 @@
+@model Neurix.BLL.Dtos.Cms.CmsDivisionPageDetailDto?
+@using Neurix.BLL.Common
+@using Neurix.Common
+@{
+    var titleEn = !string.IsNullOrWhiteSpace(Model?.HeroTitleEn) ? Model.HeroTitleEn : "Sovereign & Strategic Partnerships";
+    var titleAr = !string.IsNullOrWhiteSpace(Model?.HeroTitleAr) ? Model.HeroTitleAr : "شراكات سيادية واستراتيجية";
+    var subtitleEn = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleEn) ? Model.HeroSubtitleEn : "Neurix AI Plus leads high-level government relations, industrial and academic protocols, and international trade cooperation initiatives supporting public institutions, universities, and strategic partners.";
+    var subtitleAr = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleAr) ? Model.HeroSubtitleAr : "تقود نيوركس AI بلس العلاقات الحكومية رفيعة المستوى والبروتوكولات الصناعية والأكاديمية ومبادرات التعاون التجاري الدولي، بما يدعم المؤسسات العامة والجامعات والشركاء الاستراتيجيين.";
+
+    ViewData["Title"] = "Neurix AI Plus";
+
+    // ── CMS-managed bands (/cms/page-sections/plus) ──
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var heroBand = bands.Band(CmsPageKeys.Bands.Hero);
+    var overviewBand = bands.Band(CmsPageKeys.Bands.Overview);
+    var cardsBand = bands.Band(CmsPageKeys.Bands.Cards);
+
+    var scopeItems = bands.ItemsOf(CmsPageKeys.Bands.Overview);
+    var pathwayItems = bands.ItemsOf(CmsPageKeys.Bands.Cards);
+
+    var scopeCards = scopeItems.Count > 0
+        ? scopeItems.Select(c => new {
+            TitleEn = c.TitleEn,
+            TitleAr = c.TitleAr,
+            DescEn = c.DescriptionEn ?? string.Empty,
+            DescAr = c.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+            new {
+                TitleEn = "Academic & Industrial Protocols",
+                TitleAr = "البروتوكولات الأكاديمية والصناعية",
+                DescEn = "Building partnerships with universities and industrial institutions to support scientific exchange, joint scholarship programs, and advanced artificial intelligence initiatives.",
+                DescAr = "تطوير شراكات مع الجامعات والمؤسسات الصناعية لدعم التبادل العلمي، المنح المشتركة، وبرامج الذكاء الاصطناعي المتقدمة."
+            },
+            new {
+                TitleEn = "Government Relations",
+                TitleAr = "العلاقات الحكومية",
+                DescEn = "Managing tenders, operational frameworks, maintenance agreements, and collaborative research and development programs with government entities and public institutions.",
+                DescAr = "إدارة المناقصات، أطر الصيانة، وبرامج البحث والتطوير التعاوني بالشراكة مع الجهات الحكومية والمؤسسات العامة."
+            },
+            new {
+                TitleEn = "International Strategic Partnerships",
+                TitleAr = "الشراكات التجارية الدولية",
+                DescEn = "Supporting international trade projects, industrial tenders, and large-scale strategic collaboration opportunities.",
+                DescAr = "دعم الصفقات التجارية الدولية، المناقصات الصناعية، وفرص التعاون الاستراتيجي واسعة النطاق."
+            }
+        }.ToList();
+
+    var pathwayCards = pathwayItems.Count > 0
+        ? pathwayItems.Select(c => new {
+            TitleEn = c.TitleEn,
+            TitleAr = c.TitleAr,
+            DescEn = c.DescriptionEn ?? string.Empty,
+            DescAr = c.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+            new {
+                TitleEn = "Collaboration with Experts",
+                TitleAr = "تعاون مع الخبراء",
+                DescEn = "Connect with professionals, researchers, and specialists within a collaborative environment that encourages knowledge sharing and practical experience exchange.",
+                DescAr = "تواصل مع المهنيين والباحثين والمتخصصين ضمن بيئة تعاونية تدعم تبادل المعرفة والخبرات العملية"
+            },
+            new {
+                TitleEn = "Specialized Communities",
+                TitleAr = "مجتمعات متخصصة",
+                DescEn = "Professional communities focused on programming, business analysis, and UI/UX design, created to support continuous learning and professional development.",
+                DescAr = "مجتمعات مهنية متخصصة في البرمجة، تحليل الأعمال، وتصميم وتجربة المستخدم، تهدف إلى دعم التعلم والتطور المهني المستمر."
+            },
+            new {
+                TitleEn = "Flexible Digital Work Opportunities",
+                TitleAr = "فرص عمل رقمية مرنة",
+                DescEn = "Benefit from a modern digital work environment built around task-based collaboration and flexible opportunities within the global digital economy.",
+                DescAr = "استفد من بيئة عمل رقمية متطورة تعتمد على المهام والتعاون لتوفير فرص عملية ضمن الاقتصاد الرقمي العالمي"
+            }
+        }.ToList();
+
+    var overviewImage = CmsBandText.Pick(overviewBand?.ImagePath, "/images/International Strategic Partnerships.png");
+}
+
+@if (heroBand?.IsPublished != false)
+{
+    <section class="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-14 md:pt-36 md:pb-18">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+        <div class="container relative z-30 px-6 text-center max-w-5xl">
+            @{
+                var heroBadgeEn = CmsBandText.Pick(heroBand?.BadgeEn, "Strategic Division");
+                var heroBadgeAr = CmsBandText.Pick(heroBand?.BadgeAr, "القسم الاستراتيجي");
+            }
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10 animate-fade-in">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+            </div>
+
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] text-slate-900 dark:text-white mb-6 animate-fade-in-up">
+                <span data-en="@titleEn" data-ar="@titleAr">@titleEn</span>
+            </h1>
+
+            <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed animate-fade-in-up"
+               data-en="@subtitleEn"
+               data-ar="@subtitleAr">
+                @subtitleEn
+            </p>
+        </div>
+    </section>
+}
+
+@if (overviewBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/30 dark:bg-background/10">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+                <!-- Left Side: Content & Stacked Cards (lg:col-span-7) -->
+                <div class="lg:col-span-7 flex flex-col text-left rtl:text-right">
+                    @{
+                        var scopeTitleEn = CmsBandText.Pick(overviewBand?.TitlePrefixEn, "The Scope of Neurix AI Plus");
+                        var scopeTitleAr = CmsBandText.Pick(overviewBand?.TitlePrefixAr, "نطاق عمل نيوركس AI بلس");
+                        var scopeBodyEn = CmsBandText.Pick(overviewBand?.BodyEn, "Neurix AI Plus operates through three strategic pillars that define its role within the broader Neurix ecosystem and support institutional collaboration and international expansion.");
+                        var scopeBodyAr = CmsBandText.Pick(overviewBand?.BodyAr, "ترتكز نيوركس AI بلس على ثلاثة مسارات استراتيجية تحدد دورها داخل منظومة نيوركس وتدعم التعاون المؤسسي والتوسع الدولي.");
+                    }
+                    <!-- Title Block -->
+                    <div class="max-w-3xl mb-12">
+                        <h2 class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6"
+                            data-en="@scopeTitleEn"
+                            data-ar="@scopeTitleAr">@scopeTitleEn</h2>
+                        <p class="text-base md:text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed"
+                            data-en="@scopeBodyEn"
+                            data-ar="@scopeBodyAr">
+                            @scopeBodyEn
+                        </p>
+                    </div>
+
+                    <!-- Stacked Cards -->
+                    <div class="flex flex-col gap-6 w-full">
+                        @foreach (var card in scopeCards)
+                        {
+                            <div class="group relative flex flex-col rounded-2xl border border-slate-300/80 dark:border-white/10 bg-slate-100/40 dark:bg-card/20 backdrop-blur-md p-6 transition-all duration-300 hover:border-cyan/50 hover:shadow-[0_15px_30px_-5px_hsl(var(--cyan)/0.15)] dark:hover:shadow-[0_15px_30px_-5px_hsl(var(--cyan)/0.2)]">
+                                <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base md:text-lg"
+                                    data-en="@card.TitleEn"
+                                    data-ar="@card.TitleAr">
+                                    @card.TitleEn
+                                </h4>
+                                <p class="text-xs md:text-sm text-slate-600 dark:text-slate-400 leading-relaxed"
+                                    data-en="@card.DescEn"
+                                    data-ar="@card.DescAr">
+                                    @card.DescEn
+                                </p>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+
+                <!-- Right Side: Handshake Globe Image (lg:col-span-5) -->
+                <div class="lg:col-span-5">
+                    <div class="group rounded-[2rem] overflow-hidden border border-slate-300/50 dark:border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.18)] bg-transparent transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_25px_60px_rgba(0,0,0,0.15)]">
+                        <img src="@overviewImage" alt="International Strategic Partnerships" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-103" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+
+@if (cardsBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30">
+        <div class="container px-6 max-w-7xl mx-auto">
+            @{
+                var pathTitleEn = CmsBandText.Pick(cardsBand?.TitlePrefixEn, "Strategic Partnership Pathways");
+                var pathTitleAr = CmsBandText.Pick(cardsBand?.TitlePrefixAr, "مسارات الشراكة الاستراتيجية");
+                var pathBodyEn = CmsBandText.Pick(cardsBand?.BodyEn, "Neurix AI Plus supports high-level cooperation with government entities, academic institutions, industrial partners, and strategic international organizations.");
+                var pathBodyAr = CmsBandText.Pick(cardsBand?.BodyAr, "تدعم نيوركس AI بلس التعاون رفيع المستوى مع الجهات الحكومية والمؤسسات الأكاديمية والشركاء الصناعيين والمنظمات الدولية الاستراتيجية.");
+            }
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4" data-en="@pathTitleEn" data-ar="@pathTitleAr">@pathTitleEn</h2>
+                <p class="text-lg text-slate-600 dark:text-slate-300"
+                    data-en="@pathBodyEn"
+                    data-ar="@pathBodyAr">
+                    @pathBodyEn
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                @foreach (var card in pathwayCards)
+                {
+                    <div class="magnetic-card card-glow-border bg-slate-100/60 dark:bg-card/40 border border-slate-300 dark:border-white/10 rounded-2xl p-7 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3"
+                                data-en="@card.TitleEn"
+                                data-ar="@card.TitleAr">
+                                @card.TitleEn
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mb-6"
+                                data-en="@card.DescEn"
+                                data-ar="@card.DescAr">
+                                @card.DescEn
+                            </p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+}

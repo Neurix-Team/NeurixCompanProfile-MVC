@@ -1,0 +1,181 @@
+@model Neurix.Models.CmsBlogPostFormViewModel
+
+<div class="space-y-6">
+
+    @* Brand profile & Category *@
+    <div class="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+            <i data-lucide="folder" class="w-4 h-4 text-cyan"></i>
+            @L["Classification"]
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="CompanyProfileId" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <select asp-for="CompanyProfileId" asp-items="Model.CompanyOptions"
+                        class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none"></select>
+                <span asp-validation-for="CompanyProfileId" class="text-xs text-rose-500"></span>
+            </div>
+
+            <div>
+                <label asp-for="Category" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="Category" placeholder='@L["e.g. AI Research, Sovereign Tech, News"]'
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="Category" class="text-xs text-rose-500"></span>
+            </div>
+        </div>
+    </div>
+
+    @* Slug & Title *@
+    <div class="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-cyan"></i>
+            @L["Title & URL"]
+        </h3>
+
+        <div>
+            <label asp-for="Slug" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+            <input asp-for="Slug" placeholder='@L["e.g. human-centered-ai-paradigm"]'
+                   class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm font-mono focus:ring-2 focus:ring-cyan focus:outline-none" />
+            <span asp-validation-for="Slug" class="text-xs text-rose-500"></span>
+            <p class="mt-1 text-[11px] text-muted-foreground">@L["Unique URL slug (e.g. /insights/human-centered-ai-paradigm)"]</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="TitleEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="TitleEn" placeholder='@L["English headline..."]'
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="TitleEn" class="text-xs text-rose-500"></span>
+            </div>
+            <div>
+                <label asp-for="TitleAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="TitleAr" dir="rtl" placeholder="عنوان المقال بالعربية..."
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="TitleAr" class="text-xs text-rose-500"></span>
+            </div>
+        </div>
+    </div>
+
+    @* Summary *@
+    <div class="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+            <i data-lucide="align-left" class="w-4 h-4 text-cyan"></i>
+            @L["Summary / Excerpt"]
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="SummaryEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <textarea asp-for="SummaryEn" rows="3" placeholder='@L["Summary of the article..."]'
+                          class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                <span asp-validation-for="SummaryEn" class="text-xs text-rose-500"></span>
+            </div>
+            <div>
+                <label asp-for="SummaryAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <textarea asp-for="SummaryAr" rows="3" dir="rtl" placeholder="ملخص المقال بالعربية..."
+                          class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                <span asp-validation-for="SummaryAr" class="text-xs text-rose-500"></span>
+            </div>
+        </div>
+    </div>
+
+    @* Body *@
+    <div class="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+            <i data-lucide="book-open" class="w-4 h-4 text-cyan"></i>
+            @L["Full Article Content"]
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="BodyEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <textarea asp-for="BodyEn" rows="10" placeholder='@L["Full article body content (Markdown or HTML supported)..."]'
+                          class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none font-mono"></textarea>
+                <span asp-validation-for="BodyEn" class="text-xs text-rose-500"></span>
+            </div>
+            <div>
+                <label asp-for="BodyAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <textarea asp-for="BodyAr" rows="10" dir="rtl" placeholder="محتوى المقال كاملاً بالعربية..."
+                          class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none font-mono"></textarea>
+                <span asp-validation-for="BodyAr" class="text-xs text-rose-500"></span>
+            </div>
+        </div>
+    </div>
+
+    @* Author & Cover Image *@
+    <div class="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+            <i data-lucide="image" class="w-4 h-4 text-cyan"></i>
+            @L["Author & Media"]
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="AuthorNameEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="AuthorNameEn" placeholder='@L["e.g. Neurix Labs"]'
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="AuthorNameEn" class="text-xs text-rose-500"></span>
+            </div>
+            <div>
+                <label asp-for="AuthorNameAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="AuthorNameAr" dir="rtl" placeholder="مثال: مختبرات نيوركس"
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="AuthorNameAr" class="text-xs text-rose-500"></span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="CoverImageFile" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="CoverImageFile" type="file" accept="image/*"
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-cyan/10 file:text-cyan hover:file:bg-cyan/20 focus:outline-none" />
+                <span asp-validation-for="CoverImageFile" class="text-xs text-rose-500"></span>
+            </div>
+            <div>
+                <label asp-for="CoverImagePath" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="CoverImagePath" placeholder="/uploads/blog/cover.jpg"
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="CoverImagePath" class="text-xs text-rose-500"></span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="Tags" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="Tags" placeholder="AI, Research, Systems"
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="Tags" class="text-xs text-rose-500"></span>
+            </div>
+            <div>
+                <label asp-for="ReadTimeMinutes" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                <input asp-for="ReadTimeMinutes" type="number"
+                       class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-cyan focus:outline-none" />
+                <span asp-validation-for="ReadTimeMinutes" class="text-xs text-rose-500"></span>
+            </div>
+        </div>
+    </div>
+
+    @* Publishing & Promotion *@
+    <div class="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+            <i data-lucide="globe" class="w-4 h-4 text-cyan"></i>
+            @L["Publishing"]
+        </h3>
+
+        <div class="flex flex-wrap items-center gap-6">
+            <div class="flex items-center gap-3">
+                <input asp-for="IsPublished" type="checkbox"
+                       class="w-4 h-4 rounded border-border text-cyan focus:ring-cyan" />
+                <label asp-for="IsPublished" class="text-sm font-medium text-foreground"></label>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <input asp-for="IsFeatured" type="checkbox"
+                       class="w-4 h-4 rounded border-border text-cyan focus:ring-cyan" />
+                <label asp-for="IsFeatured" class="text-sm font-medium text-foreground"></label>
+            </div>
+        </div>
+    </div>
+
+</div>

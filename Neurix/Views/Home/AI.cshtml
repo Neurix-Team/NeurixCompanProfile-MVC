@@ -1,0 +1,68 @@
+@using Neurix.BLL.Common
+@using Neurix.Common
+@{
+    ViewData["Title"] = "AI Capabilities";
+
+    // ── CMS-managed band (/cms/page-sections/ai) ──
+    // This page has no CmsDivisionPage row of its own, so the band below is the whole page.
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var heroBand = bands.Band(CmsPageKeys.Bands.Hero);
+    var heroButtons = bands.ItemsOf(CmsPageKeys.Bands.Hero);
+
+    var badgeEn = CmsBandText.Pick(heroBand?.BadgeEn, "Core Technologies");
+    var badgeAr = CmsBandText.Pick(heroBand?.BadgeAr, "التقنيات الأساسية");
+    var prefixEn = CmsBandText.Pick(heroBand?.TitlePrefixEn, "AI is embedded ");
+    var prefixAr = CmsBandText.Pick(heroBand?.TitlePrefixAr, "الذكاء الاصطناعي مدمج ");
+    var highlightEn = CmsBandText.Pick(heroBand?.TitleHighlightEn, "across Neurix AI.");
+    var highlightAr = CmsBandText.Pick(heroBand?.TitleHighlightAr, "عبر نيوريكس AI.");
+    var bodyEn = CmsBandText.Pick(heroBand?.BodyEn, "According to the corporate structure, AI is not a standalone subsidiary. AI capabilities are implemented within Neurix AI Labs and Neurix Technology to deliver verified-data processing, smart analytical tools, and practical human-centered solutions.");
+    var bodyAr = CmsBandText.Pick(heroBand?.BodyAr, "وفقاً للهيكل المؤسسي، لا يمثل الذكاء الاصطناعي فرعاً مستقلاً. يتم تنفيذ قدراته ضمن Neurix AI Labs وNeurix AI Technology لتقديم معالجة بيانات موثقة وأدوات تحليل ذكية وحلول عملية متمحورة حول الإنسان.");
+}
+
+@if (heroBand?.IsPublished != false)
+{
+    <section class="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-14 md:pt-36 md:pb-18">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+        <div class="container relative z-30 px-6 text-center max-w-5xl">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10 animate-fade-in">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@badgeEn" data-ar="@badgeAr">@badgeEn</span>
+            </div>
+
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] text-slate-900 dark:text-white mb-6 animate-fade-in-up">
+                <span data-en="@prefixEn" data-ar="@prefixAr">@prefixEn</span>
+                <span class="text-gradient-brand" data-en="@highlightEn" data-ar="@highlightAr">@highlightEn</span>
+            </h1>
+
+            <p class="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed animate-fade-in-up"
+               style="animation-delay: 120ms;"
+               data-en="@bodyEn"
+               data-ar="@bodyAr">
+                @bodyEn
+            </p>
+
+            <div class="mt-12 flex flex-wrap items-center justify-center gap-4">
+                @if (heroButtons.Count > 0)
+                {
+                    @for (var i = 0; i < heroButtons.Count; i++)
+                    {
+                        var button = heroButtons[i];
+                        var labelEn = CmsBandText.PickPair(button.LinkTextEn, button.TitleEn, button.TitleEn);
+                        var labelAr = CmsBandText.PickPair(button.LinkTextAr, button.TitleAr, button.TitleAr);
+                        // The first button is the primary action; the rest are secondary, which
+                        // matches how the two hardcoded buttons were styled.
+                        var buttonClass = i == 0 ? "btn-primary rounded-[16px]" : "btn-secondary rounded-[16px]";
+
+                        <a href="@CmsBandText.Pick(button.LinkUrl, "/")" class="@buttonClass" data-en="@labelEn" data-ar="@labelAr">@labelEn</a>
+                    }
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Labs" class="btn-primary rounded-[16px]" data-en="Go to Neurix AI Labs" data-ar="اذهب إلى Neurix AI Labs">Go to Neurix AI Labs</a>
+                    <a asp-controller="Home" asp-action="Technology" class="btn-secondary rounded-[16px]" data-en="Go to Neurix AI Technology" data-ar="اذهب إلى Neurix AI Technology">Go to Neurix AI Technology</a>
+                }
+            </div>
+        </div>
+    </section>
+}

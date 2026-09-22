@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Neurix.BLL/Neurix.BLL.csproj" />
+  <Project Path="Neurix.DAL/Neurix.DAL.csproj" />
+  <Project Path="Neurix/Neurix.csproj" />
+  <Project Path="Neurix.Tests/Neurix.Tests.csproj" />
+</Solution>

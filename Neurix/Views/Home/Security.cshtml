@@ -1,0 +1,107 @@
+@model Neurix.BLL.Dtos.Cms.CmsContentPageDetailDto?
+@{
+    // CMS-managed. With no body written yet the page shows an honest "Coming Soon"
+    // card; once an editor saves body content the document renders instead.
+    string Pick(string? cmsValue, string fallback) => string.IsNullOrWhiteSpace(cmsValue) ? fallback : cmsValue!;
+
+    var titleEn = Pick(Model?.TitleEn, "Security");
+    var titleAr = Pick(Model?.TitleAr, "الأمان");
+    var badgeEn = Pick(Model?.HeroBadgeEn, "Legal Information");
+    var badgeAr = Pick(Model?.HeroBadgeAr, "المعلومات القانونية");
+
+    var hasBody = !string.IsNullOrWhiteSpace(Model?.BodyEn) || !string.IsNullOrWhiteSpace(Model?.BodyAr);
+
+    ViewData["Title"] = titleEn;
+}
+
+@if (hasBody)
+{
+    @* ── Document layout: wide, left-aligned prose ── *@
+    <div class="relative min-h-[75vh] pt-32 pb-16 overflow-hidden">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+        <main class="container relative z-30 mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                    <span data-en="@badgeEn" data-ar="@badgeAr">@badgeEn</span>
+                </div>
+                <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+                    <span class="text-gradient-brand" data-en="@titleEn" data-ar="@titleAr">@titleEn</span>
+                </h1>
+            </div>
+
+            @*  Body is HTML authored by an admin in the CMS and sanitized on save
+                (CmsContentPageService), so it is rendered raw rather than escaped. *@
+            <div id="security-body-en" class="legal-prose text-slate-700 dark:text-slate-300 leading-relaxed space-y-4">
+                @Html.Raw(Model?.BodyEn)
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model?.BodyAr))
+            {
+                <div id="security-body-ar" class="legal-prose text-slate-700 dark:text-slate-300 leading-relaxed space-y-4 hidden" dir="rtl">
+                    @Html.Raw(Model!.BodyAr)
+                </div>
+            }
+        </main>
+    </div>
+
+}
+else
+{
+<div class="relative min-h-[75vh] flex flex-col items-center justify-center pt-32 pb-16 overflow-hidden">
+    <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+    <main class="container relative z-30 mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl flex items-center justify-center">
+        <div class="magnetic-card w-full bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-3xl p-10 md:p-14 text-center shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-in-up flex flex-col items-center">
+
+            <div class="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-50/70 dark:bg-background/60 text-cyan shadow-[0_0_20px_hsl(var(--cyan)/0.4)] transition-transform duration-500 hover:scale-110 hover:border-cyan/50">
+                <i data-lucide="shield" class="h-8 w-8"></i>
+            </div>
+
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-50/60 dark:bg-background/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@badgeEn" data-ar="@badgeAr">@badgeEn</span>
+            </div>
+
+            <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4">
+                <span class="text-gradient-brand" data-en="@titleEn" data-ar="@titleAr">@titleEn</span>
+            </h1>
+
+            <p class="text-slate-500 dark:text-slate-400 text-lg md:text-xl font-medium tracking-wide" data-en="Coming Soon" data-ar="قريباً">
+                Coming Soon
+            </p>
+
+        </div>
+    </main>
+</div>
+}
+
+@section Scripts {
+    <script>
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+
+    @if (hasBody)
+    {
+        <script>
+            (function () {
+                var en = document.getElementById('security-body-en');
+                var ar = document.getElementById('security-body-ar');
+                if (!en || !ar) return;
+
+                function apply() {
+                    var isAr = document.documentElement.getAttribute('lang') === 'ar';
+                    en.classList.toggle('hidden', isAr);
+                    ar.classList.toggle('hidden', !isAr);
+                }
+
+                apply();
+                new MutationObserver(apply).observe(document.documentElement, {
+                    attributes: true, attributeFilter: ['lang']
+                });
+            })();
+        </script>
+    }
+}

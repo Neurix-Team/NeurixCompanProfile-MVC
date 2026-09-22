@@ -1,0 +1,484 @@
+@model Neurix.Models.CmsContentPageFormViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Edit Content Page";
+
+    const string InputCls = "w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30";
+    const string AreaCls = "w-full rounded-xl bg-background/60 border border-border px-4 py-3 text-sm text-foreground placeholder-muted-foreground outline-none transition-all resize-y focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30";
+    const string LabelCls = "block text-xs font-semibold text-foreground/80 mb-2";
+    const string ErrCls = "text-xs text-rose-500 mt-1 block";
+    const string CardCls = "rounded-2xl border border-border bg-card p-5 space-y-4";
+}
+
+<div class="space-y-6 max-w-5xl">
+
+    <div class="flex items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">@L["Edit Content Page"]</h1>
+            <p class="text-sm text-muted-foreground">
+                @L["Updating"] <code class="text-cyan">@Model.Slug</code>
+            </p>
+        </div>
+        <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+           class="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to List"]
+        </a>
+    </div>
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="space-y-5">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        @* Slug identifies the page and maps to a fixed public route, so it is not editable. *@
+        <input type="hidden" asp-for="Slug" />
+
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-500 empty:hidden"></div>
+
+        @* ── Identity & meta ── *@
+        <div class="@CardCls">
+            <h2 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                <i data-lucide="file-text" class="w-4 h-4 text-cyan"></i>@L["Page Identity & SEO"]
+            </h2>
+
+            <div>
+                <label asp-for="CompanyProfileId" class="@LabelCls"></label>
+                <select asp-for="CompanyProfileId" asp-items="Model.CompanyOptions" class="@InputCls"></select>
+                <span asp-validation-for="CompanyProfileId" class="@ErrCls"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="TitleEn" class="@LabelCls"></label>
+                    <input asp-for="TitleEn" class="@InputCls" />
+                    <span asp-validation-for="TitleEn" class="@ErrCls"></span>
+                </div>
+                <div>
+                    <label asp-for="TitleAr" class="@LabelCls"></label>
+                    <input asp-for="TitleAr" dir="rtl" class="@InputCls" />
+                    <span asp-validation-for="TitleAr" class="@ErrCls"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="MetaDescriptionEn" class="@LabelCls"></label>
+                    <textarea asp-for="MetaDescriptionEn" rows="2" class="@AreaCls"></textarea>
+                    <span asp-validation-for="MetaDescriptionEn" class="@ErrCls"></span>
+                </div>
+                <div>
+                    <label asp-for="MetaDescriptionAr" class="@LabelCls"></label>
+                    <textarea asp-for="MetaDescriptionAr" rows="2" dir="rtl" class="@AreaCls"></textarea>
+                    <span asp-validation-for="MetaDescriptionAr" class="@ErrCls"></span>
+                </div>
+            </div>
+        </div>
+
+        @* ── Hero ── *@
+        <div class="@CardCls">
+            <h2 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                <i data-lucide="layout" class="w-4 h-4 text-cyan"></i>@L["Hero Section"]
+            </h2>
+            @if (Model.Slug != "privacy")
+            {
+                <p class="text-xs text-muted-foreground">
+                    @L["The hero title renders in two parts: the plain part followed by the highlighted (gradient) part."]
+                </p>
+            }
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="HeroBadgeEn" class="@LabelCls"></label>
+                    <input asp-for="HeroBadgeEn" class="@InputCls" />
+                    <span asp-validation-for="HeroBadgeEn" class="@ErrCls"></span>
+                </div>
+                <div>
+                    <label asp-for="HeroBadgeAr" class="@LabelCls"></label>
+                    <input asp-for="HeroBadgeAr" dir="rtl" class="@InputCls" />
+                    <span asp-validation-for="HeroBadgeAr" class="@ErrCls"></span>
+                </div>
+
+                @if (Model.Slug != "privacy")
+                {
+                    <div>
+                        <label asp-for="HeroTitlePrefixEn" class="@LabelCls"></label>
+                        <input asp-for="HeroTitlePrefixEn" class="@InputCls" />
+                        <span asp-validation-for="HeroTitlePrefixEn" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="HeroTitlePrefixAr" class="@LabelCls"></label>
+                        <input asp-for="HeroTitlePrefixAr" dir="rtl" class="@InputCls" />
+                        <span asp-validation-for="HeroTitlePrefixAr" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="HeroTitleHighlightEn" class="@LabelCls"></label>
+                        <input asp-for="HeroTitleHighlightEn" class="@InputCls" />
+                        <span asp-validation-for="HeroTitleHighlightEn" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="HeroTitleHighlightAr" class="@LabelCls"></label>
+                        <input asp-for="HeroTitleHighlightAr" dir="rtl" class="@InputCls" />
+                        <span asp-validation-for="HeroTitleHighlightAr" class="@ErrCls"></span>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="HeroTitlePrefixEn" />
+                    <input type="hidden" asp-for="HeroTitlePrefixAr" />
+                    <input type="hidden" asp-for="HeroTitleHighlightEn" />
+                    <input type="hidden" asp-for="HeroTitleHighlightAr" />
+                    <input type="hidden" asp-for="HeroSubtitleEn" />
+                    <input type="hidden" asp-for="HeroSubtitleAr" />
+                }
+            </div>
+
+            @if (Model.Slug != "privacy")
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="HeroSubtitleEn" class="@LabelCls"></label>
+                        <textarea asp-for="HeroSubtitleEn" rows="4" class="@AreaCls"></textarea>
+                        <span asp-validation-for="HeroSubtitleEn" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="HeroSubtitleAr" class="@LabelCls"></label>
+                        <textarea asp-for="HeroSubtitleAr" rows="4" dir="rtl" class="@AreaCls"></textarea>
+                        <span asp-validation-for="HeroSubtitleAr" class="@ErrCls"></span>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @* ── Mission / Vision (About only) ── *@
+        @if (Model.ShowMissionVision)
+        {
+            <div class="@CardCls">
+                <h2 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="target" class="w-4 h-4 text-cyan"></i>@L["Mission & Vision"]
+                </h2>
+                <p class="text-xs text-muted-foreground">
+                    @L["In each title, the final word renders in the accent colour — for example 'Our Mission'."]
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="MissionTitleEn" class="@LabelCls"></label>
+                        <input asp-for="MissionTitleEn" class="@InputCls" />
+                        <span asp-validation-for="MissionTitleEn" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="MissionTitleAr" class="@LabelCls"></label>
+                        <input asp-for="MissionTitleAr" dir="rtl" class="@InputCls" />
+                        <span asp-validation-for="MissionTitleAr" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="MissionTextEn" class="@LabelCls"></label>
+                        <textarea asp-for="MissionTextEn" rows="5" class="@AreaCls"></textarea>
+                        <span asp-validation-for="MissionTextEn" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="MissionTextAr" class="@LabelCls"></label>
+                        <textarea asp-for="MissionTextAr" rows="5" dir="rtl" class="@AreaCls"></textarea>
+                        <span asp-validation-for="MissionTextAr" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="VisionTitleEn" class="@LabelCls"></label>
+                        <input asp-for="VisionTitleEn" class="@InputCls" />
+                        <span asp-validation-for="VisionTitleEn" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="VisionTitleAr" class="@LabelCls"></label>
+                        <input asp-for="VisionTitleAr" dir="rtl" class="@InputCls" />
+                        <span asp-validation-for="VisionTitleAr" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="VisionTextEn" class="@LabelCls"></label>
+                        <textarea asp-for="VisionTextEn" rows="5" class="@AreaCls"></textarea>
+                        <span asp-validation-for="VisionTextEn" class="@ErrCls"></span>
+                    </div>
+                    <div>
+                        <label asp-for="VisionTextAr" class="@LabelCls"></label>
+                        <textarea asp-for="VisionTextAr" rows="5" dir="rtl" class="@AreaCls"></textarea>
+                        <span asp-validation-for="VisionTextAr" class="@ErrCls"></span>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* ── Rich body (Privacy / Terms / future pages) ── *@
+        @if (Model.ShowBody)
+        {
+            <div class="@CardCls">
+                <h2 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="align-left" class="w-4 h-4 text-cyan"></i>@L["Body Content"]
+                </h2>
+                <p class="text-xs text-muted-foreground">
+                    @L["HTML is allowed (headings, paragraphs, lists). Leave empty to keep the page's placeholder state."]
+                </p>
+
+                <div>
+                    <label asp-for="BodyEn" class="@LabelCls"></label>
+                    <textarea asp-for="BodyEn" rows="14" class="@AreaCls font-mono text-xs"></textarea>
+                    <span asp-validation-for="BodyEn" class="@ErrCls"></span>
+                </div>
+                <div>
+                    <label asp-for="BodyAr" class="@LabelCls"></label>
+                    <textarea asp-for="BodyAr" rows="14" dir="rtl" class="@AreaCls font-mono text-xs"></textarea>
+                    <span asp-validation-for="BodyAr" class="@ErrCls"></span>
+                </div>
+            </div>
+        }
+
+        @* ── Closing CTA banner (About only) ── *@
+        @if (Model.ShowCta)
+        {
+            <div class="@CardCls">
+                <h2 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="megaphone" class="w-4 h-4 text-cyan"></i>@L["Closing CTA Banner"]
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="CtaBadgeEn" class="@LabelCls"></label>
+                        <input asp-for="CtaBadgeEn" class="@InputCls" />
+                    </div>
+                    <div>
+                        <label asp-for="CtaBadgeAr" class="@LabelCls"></label>
+                        <input asp-for="CtaBadgeAr" dir="rtl" class="@InputCls" />
+                    </div>
+                    <div>
+                        <label asp-for="CtaTitleEn" class="@LabelCls"></label>
+                        <input asp-for="CtaTitleEn" class="@InputCls" />
+                    </div>
+                    <div>
+                        <label asp-for="CtaTitleAr" class="@LabelCls"></label>
+                        <input asp-for="CtaTitleAr" dir="rtl" class="@InputCls" />
+                    </div>
+                    <div>
+                        <label asp-for="CtaSubtitleEn" class="@LabelCls"></label>
+                        <textarea asp-for="CtaSubtitleEn" rows="3" class="@AreaCls"></textarea>
+                    </div>
+                    <div>
+                        <label asp-for="CtaSubtitleAr" class="@LabelCls"></label>
+                        <textarea asp-for="CtaSubtitleAr" rows="3" dir="rtl" class="@AreaCls"></textarea>
+                    </div>
+                    <div>
+                        <label asp-for="CtaButtonTextEn" class="@LabelCls"></label>
+                        <input asp-for="CtaButtonTextEn" class="@InputCls" />
+                    </div>
+                    <div>
+                        <label asp-for="CtaButtonTextAr" class="@LabelCls"></label>
+                        <input asp-for="CtaButtonTextAr" dir="rtl" class="@InputCls" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* ── Live Page Blocks: Five Pillars & Core Beliefs (About only) ── *@
+        @if (Model.Slug == "about")
+        {
+            <div class="rounded-2xl border border-cyan/30 bg-card/80 backdrop-blur-xl p-6 sm:p-7 space-y-6 shadow-xl shadow-cyan/5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-cyan/10 text-cyan flex items-center justify-center">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-bold text-foreground font-display">
+                                @L["Live Page Blocks: Five Pillars & Core Beliefs"]
+                            </h2>
+                            <p class="text-xs text-muted-foreground">
+                                @L["Sections visibly published on the About Us page including Five Pillars, One Vision and What We Believe In cards."]
+                            </p>
+                        </div>
+                    </div>
+
+                    <a asp-controller="CmsPageBands" asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+                       class="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan hover:underline self-start sm:self-auto">
+                        <i data-lucide="rows-3" class="w-3.5 h-3.5"></i>
+                        @L["Manage All Page Sections"] &rarr;
+                    </a>
+                </div>
+
+                @if (Model.LiveBands == null || Model.LiveBands.Count == 0)
+                {
+                    <div class="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground space-y-2">
+                        <i data-lucide="inbox" class="w-8 h-8 mx-auto text-muted-foreground/50"></i>
+                        <p class="text-xs">@L["No live page blocks configured for the About page yet."]</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="space-y-5">
+                        @foreach (var band in Model.LiveBands)
+                        {
+                            var isBeliefs = band.BandKey == "principles";
+                            var isStructure = band.BandKey == "structure";
+                            var isTeam = band.BandKey == "team";
+
+                            <div class="rounded-xl border @(isBeliefs || isStructure ? "border-cyan/40 bg-cyan/5 dark:bg-cyan/5" : "border-border bg-background/50") p-5 space-y-4 transition-all">
+                                <!-- Band Header -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div class="flex items-start sm:items-center gap-3">
+                                        <div class="w-9 h-9 rounded-xl @(isBeliefs ? "bg-purple-500/20 text-purple-400" : isStructure ? "bg-cyan/20 text-cyan" : "bg-muted text-muted-foreground") flex items-center justify-center shrink-0">
+                                            <i data-lucide="@(isBeliefs ? "heart" : isStructure ? "layers" : "users")" class="w-4 h-4"></i>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-2">
+                                                <h3 class="text-sm font-bold text-foreground">
+                                                    @(string.IsNullOrWhiteSpace(band.TitlePrefixEn) ? L[band.Label] : band.TitlePrefixEn)
+                                                    @if (!string.IsNullOrWhiteSpace(band.TitleHighlightEn))
+                                                    {
+                                                        <span class="text-cyan font-bold">@band.TitleHighlightEn</span>
+                                                    }
+                                                </h3>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold @(band.IsPublished ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500")">
+                                                    @(band.IsPublished ? L["Live"] : L["Hidden"])
+                                                </span>
+                                                @if (isBeliefs)
+                                                {
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">
+                                                        @L["Core Beliefs"]
+                                                    </span>
+                                                }
+                                                else if (isStructure)
+                                                {
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan/15 text-cyan border border-cyan/30">
+                                                        @L["5 Divisions"]
+                                                    </span>
+                                                }
+                                            </div>
+                                            @if (!string.IsNullOrWhiteSpace(band.TitlePrefixAr))
+                                            {
+                                                <p class="text-xs text-muted-foreground font-arabic mt-0.5" dir="rtl">
+                                                    @band.TitlePrefixAr @band.TitleHighlightAr
+                                                </p>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Band Action Buttons -->
+                                    <div class="flex items-center gap-2 self-end sm:self-auto">
+                                        @if (band.SupportsItems)
+                                        {
+                                            <a href="@band.CreateItemUrl"
+                                               class="inline-flex items-center gap-1.5 rounded-lg bg-card border border-border hover:bg-muted px-3 py-1.5 text-xs font-semibold text-foreground transition-all">
+                                                <i data-lucide="plus" class="w-3.5 h-3.5 text-cyan"></i>
+                                                @L["Add"] @L[band.ItemsLabel]
+                                            </a>
+                                        }
+                                        else if (isTeam)
+                                        {
+                                            <a asp-controller="CmsTeamMembers" asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+                                               class="inline-flex items-center gap-1.5 rounded-lg bg-card border border-border hover:bg-muted px-3 py-1.5 text-xs font-semibold text-foreground transition-all">
+                                                <i data-lucide="users" class="w-3.5 h-3.5 text-azure"></i>
+                                                @L["Team Members"]
+                                            </a>
+                                        }
+                                        <a href="@band.EditBandUrl"
+                                           class="inline-flex items-center gap-1.5 rounded-lg bg-button-gradient px-3.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm hover:scale-[1.02] transition-all">
+                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                            @L["Edit Section"]
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Band Description if present -->
+                                @if (!string.IsNullOrWhiteSpace(band.BodyEn))
+                                {
+                                    <p class="text-xs text-muted-foreground leading-relaxed pl-12">
+                                        @band.BodyEn
+                                    </p>
+                                }
+
+                                <!-- Band Items (Principle Cards or Subsidiary Division Cards) -->
+                                @if (band.SupportsItems)
+                                {
+                                    <div class="mt-3 pl-12 space-y-2">
+                                        <div class="flex items-center justify-between text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                                            <span>@band.ItemCount @L[band.ItemsLabel]</span>
+                                            <span class="font-mono text-[10px] text-muted-foreground/80">@L["Rendered in display order"]</span>
+                                        </div>
+
+                                        @if (band.Items.Count == 0)
+                                        {
+                                            <p class="text-xs text-muted-foreground py-2 italic">
+                                                @L["Nothing saved yet in CMS — the live page is currently showing default fallback cards."]
+                                            </p>
+                                        }
+                                        else
+                                        {
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                                                @foreach (var item in band.Items)
+                                                {
+                                                    <div class="rounded-xl border border-border bg-card/60 p-3.5 flex items-start justify-between gap-3 hover:border-cyan/40 transition-colors">
+                                                        <div class="flex items-start gap-3 min-w-0">
+                                                            <div class="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-cyan shrink-0">
+                                                                <i data-lucide="@(!string.IsNullOrWhiteSpace(item.IconName) ? item.IconName : "sparkles")" class="w-4 h-4"></i>
+                                                            </div>
+                                                            <div class="min-w-0">
+                                                                <h4 class="text-xs font-bold text-foreground truncate">@item.TitleEn</h4>
+                                                                @if (!string.IsNullOrWhiteSpace(item.TitleAr))
+                                                                {
+                                                                    <p class="text-[11px] text-muted-foreground font-arabic truncate" dir="rtl">@item.TitleAr</p>
+                                                                }
+                                                                @if (!string.IsNullOrWhiteSpace(item.DescriptionEn))
+                                                                {
+                                                                    <p class="text-[11px] text-muted-foreground/80 mt-1 line-clamp-2 leading-relaxed">
+                                                                        @item.DescriptionEn
+                                                                    </p>
+                                                                }
+                                                                @if (!string.IsNullOrWhiteSpace(item.LinkUrl))
+                                                                {
+                                                                    <span class="text-[10px] font-mono text-cyan/90 mt-1 block truncate">@item.LinkUrl</span>
+                                                                }
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="flex flex-col items-end gap-1 shrink-0">
+                                                            <span class="text-[10px] font-mono text-muted-foreground">#@item.DisplayOrder</span>
+                                                            <a href="@item.EditItemUrl"
+                                                               class="inline-flex items-center gap-1 text-[11px] font-semibold text-cyan hover:underline mt-1">
+                                                                <i data-lucide="pencil" class="w-3 h-3"></i>
+                                                                @L["Edit Card"]
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @* ── Publish ── *@
+        <div class="@CardCls">
+            <h2 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                <i data-lucide="globe" class="w-4 h-4 text-cyan"></i>@L["Publication Status"]
+            </h2>
+            <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                <input asp-for="IsPublished" class="w-4 h-4 rounded border-border accent-cyan" />
+                <span class="text-sm text-foreground">@Html.DisplayNameFor(m => m.IsPublished)</span>
+            </label>
+            <p class="text-xs text-muted-foreground">
+                @L["When unpublished, the public page falls back to its built-in default content."]
+            </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button type="submit"
+                    class="inline-flex items-center gap-2 rounded-xl bg-cyan px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-cyan/90 transition-colors shadow-sm">
+                <i data-lucide="save" class="w-4 h-4"></i>@L["Save Changes"]
+            </button>
+            <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+               class="text-sm text-muted-foreground hover:text-foreground transition-colors">@L["Cancel"]</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

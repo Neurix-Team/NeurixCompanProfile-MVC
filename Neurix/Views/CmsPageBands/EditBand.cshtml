@@ -1,0 +1,320 @@
+@model Neurix.Models.CmsPageBandFormViewModel
+@{
+    ViewData["Title"] = L["Edit Page Section"];
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan/10 text-cyan">@Model.PageLabel</span>
+                <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">@L[Model.BandLabel]</h1>
+            </div>
+            <p class="text-sm text-muted-foreground mt-1">@L["Edit every piece of copy this band shows on the live page."]</p>
+        </div>
+        <div class="flex items-center gap-2">
+            @if (Neurix.BLL.Common.CmsPageKeys.IsDivisionPage(Model.PageKey))
+            {
+                <a asp-controller="CmsDivisionPages" asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+                   class="inline-flex items-center gap-1.5 rounded-xl border border-cyan/30 bg-cyan/10 px-3 py-2 text-xs font-semibold text-cyan hover:bg-cyan/20 transition-colors">
+                    <i data-lucide="layers" class="w-3.5 h-3.5"></i> @L["Division:"] @Model.PageLabel
+                </a>
+            }
+            @if (Model.PageKey == "about")
+            {
+                <a asp-controller="CmsContentPages" asp-action="Index" asp-route-companyId="@Model.CompanyProfileId"
+                   class="inline-flex items-center gap-1.5 rounded-xl border border-cyan/30 bg-cyan/10 px-3 py-2 text-xs font-semibold text-cyan hover:bg-cyan/20 transition-colors">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> @L["Content Page: About Us"]
+                </a>
+            }
+            <a href="@Model.PublicUrl" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <i data-lucide="external-link" class="w-4 h-4"></i> @L["View Page"]
+            </a>
+            <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to Pages"]
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <partial name="_CmsAlert" />
+
+    <form asp-action="EditBand" asp-route-pageKey="@Model.PageKey" asp-route-bandKey="@Model.BandKey" method="post" enctype="multipart/form-data" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyProfileId" />
+        <input type="hidden" asp-for="PageKey" />
+        <input type="hidden" asp-for="BandKey" />
+
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+
+            @if (Model.SupportsBadge)
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="BadgeEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <input asp-for="BadgeEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                        <p class="text-[11px] text-muted-foreground mt-1">@L["The small pill above the heading. Leave blank to hide it."]</p>
+                        <span asp-validation-for="BadgeEn" class="text-xs text-rose-500"></span>
+                    </div>
+                    <div>
+                        <label asp-for="BadgeAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <input asp-for="BadgeAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                        <span asp-validation-for="BadgeAr" class="text-xs text-rose-500"></span>
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsTitle)
+            {
+                <div class="space-y-4 @(Model.SupportsBadge ? "pt-4 border-t border-border" : "")">
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="heading" class="w-4 h-4 text-cyan"></i>
+                        @L["Heading"]
+                    </h3>
+                    <p class="text-[11px] text-muted-foreground">@L["The heading renders as one line. Anything in the highlighted box takes the brand gradient."]</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="TitlePrefixEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="TitlePrefixEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <span asp-validation-for="TitlePrefixEn" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="TitlePrefixAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="TitlePrefixAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <span asp-validation-for="TitlePrefixAr" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="TitleHighlightEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="TitleHighlightEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <p class="text-[11px] text-muted-foreground mt-1">@L["Leave blank for a single-colour heading."]</p>
+                            <span asp-validation-for="TitleHighlightEn" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="TitleHighlightAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="TitleHighlightAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <span asp-validation-for="TitleHighlightAr" class="text-xs text-rose-500"></span>
+                        </div>
+                        @if (Model.SupportsTitleSuffix)
+                        {
+                            <div>
+                                <label asp-for="TitleSuffixEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                                <input asp-for="TitleSuffixEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                                <span asp-validation-for="TitleSuffixEn" class="text-xs text-rose-500"></span>
+                            </div>
+                            <div>
+                                <label asp-for="TitleSuffixAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                                <input asp-for="TitleSuffixAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                                <span asp-validation-for="TitleSuffixAr" class="text-xs text-rose-500"></span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsBody)
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border">
+                    <div>
+                        <label asp-for="BodyEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <textarea asp-for="BodyEn" rows="4" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                        <span asp-validation-for="BodyEn" class="text-xs text-rose-500"></span>
+                    </div>
+                    <div>
+                        <label asp-for="BodyAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <textarea asp-for="BodyAr" rows="4" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                        <span asp-validation-for="BodyAr" class="text-xs text-rose-500"></span>
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsImage)
+            {
+                <div class="space-y-4 pt-4 border-t border-border">
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="image" class="w-4 h-4 text-cyan"></i>
+                        @L["Band Image"]
+                    </h3>
+                    @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+                    {
+                        <img src="@Model.ImagePath" alt="" class="h-28 rounded-xl border border-border object-cover" />
+                    }
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="ImageFile" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ImageFile" type="file" accept=".png,.jpg,.jpeg,.webp,.svg" class="w-full rounded-xl border border-border bg-background px-3.5 py-2 text-xs text-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-cyan/10 file:px-3 file:py-1.5 file:text-xs file:text-cyan" />
+                            <span asp-validation-for="ImageFile" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="ImagePath" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ImagePath" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-mono focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="/images/example.png" />
+                            <span asp-validation-for="ImagePath" class="text-xs text-rose-500"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsItemLink)
+            {
+                <div class="space-y-4 pt-4 border-t border-border">
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="link" class="w-4 h-4 text-cyan"></i>
+                        @L["Per-Card Link"]
+                    </h3>
+                    <p class="text-[11px] text-muted-foreground">@L["The small link on each card, e.g. Read Article. Leave blank to hide it."]</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="ItemLinkTextEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ItemLinkTextEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <span asp-validation-for="ItemLinkTextEn" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="ItemLinkTextAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ItemLinkTextAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <span asp-validation-for="ItemLinkTextAr" class="text-xs text-rose-500"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsEmptyState)
+            {
+                <div class="space-y-4 pt-4 border-t border-border">
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="inbox" class="w-4 h-4 text-cyan"></i>
+                        @L["Empty List Message"]
+                    </h3>
+                    <p class="text-[11px] text-muted-foreground">@L["Shown in place of the grid while nothing is published."]</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="EmptyStateEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <textarea asp-for="EmptyStateEn" rows="2" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                            <span asp-validation-for="EmptyStateEn" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="EmptyStateAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <textarea asp-for="EmptyStateAr" rows="2" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                            <span asp-validation-for="EmptyStateAr" class="text-xs text-rose-500"></span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.SupportsButton)
+            {
+                <div class="space-y-4 pt-4 border-t border-border">
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-cyan"></i>
+                        @L["Button"]
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="ButtonTextEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ButtonTextEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <p class="text-[11px] text-muted-foreground mt-1">@L["Leave blank to hide the button entirely."]</p>
+                            <span asp-validation-for="ButtonTextEn" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div>
+                            <label asp-for="ButtonTextAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                            <input asp-for="ButtonTextAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                            <span asp-validation-for="ButtonTextAr" class="text-xs text-rose-500"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="ButtonUrl" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                        <input asp-for="ButtonUrl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-mono focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="/Home/Contact" />
+                        <span asp-validation-for="ButtonUrl" class="text-xs text-rose-500"></span>
+                    </div>
+                </div>
+            }
+
+            <!-- Published Toggle -->
+            <div class="flex items-center justify-between pt-4 border-t border-border">
+                <div class="flex items-center gap-3">
+                    <input asp-for="IsPublished" type="checkbox" class="h-4 w-4 rounded border-border text-cyan focus:ring-cyan bg-background" />
+                    <div>
+                        <label asp-for="IsPublished" class="text-xs font-semibold text-foreground"></label>
+                        <p class="text-[11px] text-muted-foreground">@L["When disabled, the band falls back to its built-in wording."]</p>
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] shadow-[0_0_15px_hsl(var(--cyan)/0.25)] transition-all">
+                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                    @L["Save Changes"]
+                </button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.SupportsItems)
+    {
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                        <i data-lucide="layout-grid" class="w-4 h-4 text-cyan"></i>
+                        @L[Model.ItemsLabel]
+                    </h3>
+                    <p class="text-[11px] text-muted-foreground mt-1">@L["Rendered in display order. Removing every item makes the page fall back to its built-in set."]</p>
+                </div>
+                <a asp-action="CreateItem" asp-route-pageKey="@Model.PageKey" asp-route-bandKey="@Model.BandKey" asp-route-companyId="@Model.CompanyProfileId"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] transition-all">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    @L["Add"]
+                </a>
+            </div>
+
+            @if (Model.Items.Count == 0)
+            {
+                <p class="text-xs text-muted-foreground py-6 text-center">@L["Nothing added yet — the page is showing its built-in set."]</p>
+            }
+            else
+            {
+                <div class="divide-y divide-border">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="flex items-center gap-3 py-3">
+                            <span class="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-muted text-[11px] font-mono text-muted-foreground">@item.DisplayOrder</span>
+
+                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                            {
+                                <img src="@item.ImagePath" alt="" class="h-9 w-9 flex-shrink-0 rounded-lg border border-border object-cover" />
+                            }
+                            else if (!string.IsNullOrWhiteSpace(item.IconName))
+                            {
+                                <span class="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-cyan/10 text-cyan">
+                                    <i data-lucide="@item.IconName" class="w-4 h-4"></i>
+                                </span>
+                            }
+
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate text-sm font-medium text-foreground">@item.TitleEn</p>
+                                <p class="truncate text-[11px] text-muted-foreground font-arabic" dir="rtl">@item.TitleAr</p>
+                            </div>
+
+                            @if (!item.IsPublished)
+                            {
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-500">@L["Hidden"]</span>
+                            }
+
+                            <a asp-action="EditItem" asp-route-pageKey="@Model.PageKey" asp-route-bandKey="@Model.BandKey" asp-route-id="@item.Id"
+                               class="rounded-lg border border-border p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                            </a>
+
+                            <form asp-action="DeleteItem" asp-route-pageKey="@Model.PageKey" asp-route-bandKey="@Model.BandKey" asp-route-id="@item.Id" asp-route-companyId="@Model.CompanyProfileId" method="post" onsubmit="return confirm('@L["Are you sure you want to remove this item?"]');" class="inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="rounded-lg border border-border p-2 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

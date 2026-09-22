@@ -1,0 +1,49 @@
+@model Neurix.Models.CrmPaginationViewModel
+
+@if (Model.TotalPages > 1)
+{
+    <div class="flex items-center justify-between gap-4 mt-6 pt-5 border-t border-border">
+        <p class="text-xs text-muted-foreground">
+            Page @Model.Page of @Model.TotalPages · @Model.TotalCount record@(Model.TotalCount == 1 ? "" : "s")
+        </p>
+
+        <div class="flex items-center gap-2">
+            @{
+                var prev = new Dictionary<string, string>(Model.RouteValues) { ["page"] = (Model.Page - 1).ToString() };
+                var next = new Dictionary<string, string>(Model.RouteValues) { ["page"] = (Model.Page + 1).ToString() };
+            }
+
+            @if (Model.HasPrevious)
+            {
+                <a asp-all-route-data="prev"
+                   class="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 h-9 text-sm font-medium hover:bg-muted transition-colors">
+                    <i data-lucide="chevron-left" class="w-4 h-4 dir-flip"></i>
+                    @L["Previous"]
+                </a>
+            }
+            else
+            {
+                <span class="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 h-9 text-sm font-medium text-muted-foreground/50 cursor-not-allowed">
+                    <i data-lucide="chevron-left" class="w-4 h-4 dir-flip"></i>
+                    @L["Previous"]
+                </span>
+            }
+
+            @if (Model.HasNext)
+            {
+                <a asp-all-route-data="next"
+                   class="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 h-9 text-sm font-medium hover:bg-muted transition-colors">
+                    @L["Next"]
+                    <i data-lucide="chevron-right" class="w-4 h-4 dir-flip"></i>
+                </a>
+            }
+            else
+            {
+                <span class="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 h-9 text-sm font-medium text-muted-foreground/50 cursor-not-allowed">
+                    @L["Next"]
+                    <i data-lucide="chevron-right" class="w-4 h-4 dir-flip"></i>
+                </span>
+            }
+        </div>
+    </div>
+}

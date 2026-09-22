@@ -1,0 +1,254 @@
+@model Neurix.Models.CmsHeroSectionFormViewModel
+@{
+    ViewData["Title"] = L["Edit Hero Banner Section"];
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan/10 text-cyan">#hero</span>
+                <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">@L["Edit Hero Banner Section"]</h1>
+            </div>
+            <p class="text-sm text-muted-foreground mt-1">@L["Manage the headline, glowing highlighted keyword, subtitle, dual action buttons, and statistic metrics."]</p>
+        </div>
+        <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to Sections"]
+        </a>
+    </div>
+
+    <!-- Form -->
+    <form asp-action="EditHero" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyProfileId" />
+
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        <!-- 1. Eyebrow Badge -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
+                <i data-lucide="tag" class="w-4 h-4 text-cyan"></i>
+                @L["Eyebrow Badge"]
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="BadgeEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="BadgeEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    <span asp-validation-for="BadgeEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="BadgeAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="BadgeAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    <span asp-validation-for="BadgeAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Main Headline Breakdown -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-border pb-3">
+                <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="type" class="w-4 h-4 text-azure"></i>
+                    @L["Main Headline (with Highlighted Glowing Word)"]
+                </h3>
+                <span class="text-[11px] text-cyan font-mono">@L["Three-part breakdown for gradient rendering"]</span>
+            </div>
+
+            <!-- English Headline -->
+            <div class="p-4 rounded-xl bg-background/50 border border-border space-y-3">
+                <h4 class="text-xs font-bold text-foreground">@L["English Headline:"] <span class="font-normal text-muted-foreground">(Prefix + Highlight + Suffix)</span></h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label asp-for="TitlePrefixEn" class="block text-[11px] text-muted-foreground mb-1">@L["Prefix"]</label>
+                        <input asp-for="TitlePrefixEn" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="Building Human-Centered " />
+                    </div>
+                    <div>
+                        <label asp-for="TitleHighlightEn" class="block text-[11px] text-cyan font-bold mb-1">@L["Highlight (Glowing)"]</label>
+                        <input asp-for="TitleHighlightEn" class="w-full rounded-xl border border-cyan/40 bg-cyan/5 px-3 py-2 text-xs font-bold text-cyan focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="AI" />
+                    </div>
+                    <div>
+                        <label asp-for="TitleSuffixEn" class="block text-[11px] text-muted-foreground mb-1">@L["Suffix"]</label>
+                        <input asp-for="TitleSuffixEn" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder=" for Tomorrow" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arabic Headline -->
+            <div class="p-4 rounded-xl bg-background/50 border border-border space-y-3">
+                <h4 class="text-xs font-bold text-foreground" dir="rtl">@L["Arabic Headline:"] <span class="font-normal text-muted-foreground">(@L["Prefix"] + @L["Highlight (Glowing)"] + @L["Suffix"])</span></h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3" dir="rtl">
+                    <div>
+                        <label asp-for="TitlePrefixAr" class="block text-[11px] text-muted-foreground mb-1">@L["Prefix"]</label>
+                        <input asp-for="TitlePrefixAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-arabic text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder=" " />
+                    </div>
+                    <div>
+                        <label asp-for="TitleHighlightAr" class="block text-[11px] text-cyan font-bold mb-1">@L["Highlight (Glowing)"]</label>
+                        <input asp-for="TitleHighlightAr" dir="rtl" class="w-full rounded-xl border border-cyan/40 bg-cyan/5 px-3 py-2 text-xs font-bold font-arabic text-cyan focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="ذكاء اصطناعي" />
+                    </div>
+                    <div>
+                        <label asp-for="TitleSuffixAr" class="block text-[11px] text-muted-foreground mb-1">@L["Suffix"]</label>
+                        <input asp-for="TitleSuffixAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-arabic text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder=" محوره الإنسان، من أجل الغد" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Subtitle / Description -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
+                <i data-lucide="align-left" class="w-4 h-4 text-cyan"></i>
+                @L["Subtitle & Description"]
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="SubtitleEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="SubtitleEn" rows="3" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                    <span asp-validation-for="SubtitleEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="SubtitleAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="SubtitleAr" rows="3" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-cyan focus:outline-none"></textarea>
+                    <span asp-validation-for="SubtitleAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Action Buttons (CTAs) -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
+                <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-azure"></i>
+                @L["Action Buttons (CTAs)"]
+            </h3>
+
+            <!-- Primary CTA -->
+            <div class="p-4 rounded-xl bg-background/50 border border-border space-y-3">
+                <h4 class="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-cyan"></span>
+                    @L["Primary Button (Glowing Gradient)"]
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label asp-for="PrimaryButtonTextEn" class="block text-xs text-muted-foreground mb-1"></label>
+                        <input asp-for="PrimaryButtonTextEn" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                    <div>
+                        <label asp-for="PrimaryButtonTextAr" class="block text-xs text-muted-foreground mb-1"></label>
+                        <input asp-for="PrimaryButtonTextAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-arabic text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                    <div>
+                        <label asp-for="PrimaryButtonUrl" class="block text-xs text-muted-foreground mb-1"></label>
+                        <input asp-for="PrimaryButtonUrl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="#divisions" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secondary CTA -->
+            <div class="p-4 rounded-xl bg-background/50 border border-border space-y-3">
+                <h4 class="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    @L["Secondary Button (Outlined)"]
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label asp-for="SecondaryButtonTextEn" class="block text-xs text-muted-foreground mb-1"></label>
+                        <input asp-for="SecondaryButtonTextEn" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                    <div>
+                        <label asp-for="SecondaryButtonTextAr" class="block text-xs text-muted-foreground mb-1"></label>
+                        <input asp-for="SecondaryButtonTextAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-arabic text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                    <div>
+                        <label asp-for="SecondaryButtonUrl" class="block text-xs text-muted-foreground mb-1"></label>
+                        <input asp-for="SecondaryButtonUrl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="/Home/Contact" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Statistics Cards (3 Items) -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
+                <i data-lucide="bar-chart-2" class="w-4 h-4 text-cyan"></i>
+                @L["Bottom Statistics / Metrics Cards"]
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Stat 1 -->
+                <div class="p-4 rounded-xl bg-background/50 border border-border space-y-3">
+                    <h4 class="text-xs font-bold text-cyan">@L["Metric 1"]</h4>
+                    <div>
+                        <label asp-for="Stat1Value" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat1Value" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="6+" />
+                    </div>
+                    <div>
+                        <label asp-for="Stat1LabelEn" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat1LabelEn" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                    <div>
+                        <label asp-for="Stat1LabelAr" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat1LabelAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-arabic text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="p-4 rounded-xl bg-background/50 border border-border space-y-3">
+                    <h4 class="text-xs font-bold text-azure">@L["Metric 2"]</h4>
+                    <div>
+                        <label asp-for="Stat2Value" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat2Value" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="2+" />
+                    </div>
+                    <div>
+                        <label asp-for="Stat2LabelEn" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat2LabelEn" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                    <div>
+                        <label asp-for="Stat2LabelAr" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat2LabelAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-arabic text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="p-4 rounded-xl bg-background/50 border border-border space-y-3">
+                    <h4 class="text-xs font-bold text-cyan">@L["Metric 3"]</h4>
+                    <div>
+                        <label asp-for="Stat3Value" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat3Value" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-bold text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" placeholder="5+" />
+                    </div>
+                    <div>
+                        <label asp-for="Stat3LabelEn" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat3LabelEn" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                    <div>
+                        <label asp-for="Stat3LabelAr" class="block text-[11px] text-muted-foreground mb-1"></label>
+                        <input asp-for="Stat3LabelAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-arabic text-foreground focus:ring-2 focus:ring-cyan focus:outline-none" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Status & Submit -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <input asp-for="IsPublished" type="checkbox" class="w-4 h-4 rounded border-border text-cyan focus:ring-cyan" />
+                <label asp-for="IsPublished" class="text-sm font-medium text-foreground cursor-pointer">@L["Published on Live Website"]</label>
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="px-5 py-2.5 rounded-xl border border-border text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                    @L["Cancel"]
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-xs font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--cyan)/0.35)] hover:scale-105 transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    @L["Save Hero Changes"]
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

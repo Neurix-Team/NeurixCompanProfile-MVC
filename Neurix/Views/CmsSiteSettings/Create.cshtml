@@ -1,0 +1,118 @@
+@model Neurix.Models.CmsSiteSettingFormViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Create Site Setting";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="hover:text-foreground">@L["Site Settings"]</a>
+                <span>/</span>
+                <span class="text-foreground">@L["Create"]</span>
+            </div>
+            <h2 class="text-2xl font-bold tracking-tight text-foreground font-display">@L["Add Site Setting"]</h2>
+        </div>
+        <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border border-border bg-card hover:bg-muted text-foreground transition-all">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+            @L["Back to List"]
+        </a>
+    </div>
+
+    <!-- Form -->
+    <form asp-action="Create" method="post" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="rounded-xl bg-rose-500/10 border border-rose-500/20 p-4 text-xs text-rose-400"></div>
+
+        <div class="space-y-8">
+            <!-- Setting Configuration -->
+            <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+                <div class="flex items-center gap-2 border-b border-border pb-3">
+                    <i data-lucide="sliders" class="w-5 h-5 text-cyan"></i>
+                    <h3 class="text-base font-bold text-foreground">@L["Setting Configuration"]</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Company Profile Dropdown -->
+                    <div class="md:col-span-2">
+                        <label asp-for="CompanyProfileId" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                        <select asp-for="CompanyProfileId" asp-items="Model.CompanyOptions" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30">
+                        </select>
+                        <span asp-validation-for="CompanyProfileId" class="text-xs text-rose-500 mt-1 block"></span>
+                    </div>
+
+                    <!-- Setting Key -->
+                    <div>
+                        <label asp-for="Key" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                        <input asp-for="Key" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground font-mono placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder='@L["e.g. seo.og.title"]' />
+                        <span asp-validation-for="Key" class="text-xs text-rose-500 mt-1 block"></span>
+                        <p class="text-[11px] text-muted-foreground mt-1">@L["Dot-separated lowercase alphanumeric format, e.g. seo.og.title"]</p>
+                    </div>
+
+                    <!-- Label -->
+                    <div>
+                        <label asp-for="Label" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                        <input asp-for="Label" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30" placeholder='@L["e.g. Open Graph Title"]' />
+                        <span asp-validation-for="Label" class="text-xs text-rose-500 mt-1 block"></span>
+                    </div>
+
+                    <!-- Setting Type Dropdown -->
+                    <div>
+                        <label asp-for="SettingType" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                        <select asp-for="SettingType" asp-items="Model.SettingTypeOptions" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30">
+                        </select>
+                        <span asp-validation-for="SettingType" class="text-xs text-rose-500 mt-1 block"></span>
+                    </div>
+
+                    <!-- Group Name Dropdown -->
+                    <div>
+                        <label asp-for="GroupName" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                        <select asp-for="GroupName" asp-items="Model.GroupOptions" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30">
+                        </select>
+                        <span asp-validation-for="GroupName" class="text-xs text-rose-500 mt-1 block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bilingual Values -->
+            <div class="rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 space-y-6">
+                <div class="flex items-center gap-2 border-b border-border pb-3">
+                    <i data-lucide="globe" class="w-5 h-5 text-azure"></i>
+                    <h3 class="text-base font-bold text-foreground">@L["Setting Values"]</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- English Value -->
+                    <div>
+                        <label asp-for="ValueEn" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                        <textarea asp-for="ValueEn" rows="3" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30"></textarea>
+                        <span asp-validation-for="ValueEn" class="text-xs text-rose-500 mt-1 block"></span>
+                    </div>
+
+                    <!-- Arabic Value -->
+                    <div>
+                        <label asp-for="ValueAr" class="block text-xs font-semibold text-foreground/80 mb-2"></label>
+                        <textarea asp-for="ValueAr" rows="3" dir="rtl" class="w-full rounded-xl bg-background/60 border border-border px-4 py-2.5 text-sm text-foreground placeholder-muted-foreground outline-none transition-all focus:border-cyan/70 focus:ring-1 focus:ring-cyan/30"></textarea>
+                        <span asp-validation-for="ValueAr" class="text-xs text-rose-500 mt-1 block"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-4 border-t border-border">
+            <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="px-5 py-2.5 rounded-xl border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
+                @L["Cancel"]
+            </a>
+            <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-button-gradient px-6 py-2.5 text-xs font-semibold text-primary-foreground shadow-lg shadow-azure/20 hover:scale-[1.02] hover:shadow-azure/30 transition-all duration-300">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                @L["Create Site Setting"]
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

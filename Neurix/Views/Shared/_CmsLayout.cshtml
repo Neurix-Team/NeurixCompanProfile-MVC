@@ -1,0 +1,272 @@
+﻿@*
+    Internal CMS shell. Deliberately separate from the public site's _Layout:
+    no WebGL sphere, no GSAP, no AI chat widget — but reuses the same Tailwind config
+    and neurix.css design tokens for visual consistency and sleek dark/light mode.
+*@
+@using Neurix.Localization
+@{
+    // Resolved server-side from the culture cookie / ?lang= query, so the very first
+    // byte of HTML already carries the right direction — no post-load flip like the
+    // public site does with its client-side engine.
+    var cmsLang = CmsLanguage.Current;
+
+    // Pages set ViewData["Title"] to an English string. Localizing it here means every
+    // page title and <h1> is translated without touching a single view.
+    var cmsTitleKey = ViewData["Title"] as string;
+    var cmsTitle = string.IsNullOrEmpty(cmsTitleKey) ? null : L[cmsTitleKey];
+}
+<!DOCTYPE html>
+<html lang="@cmsLang.Code" dir="@cmsLang.Dir" class="@(cmsLang.IsRightToLeft ? "font-arabic" : null)">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(cmsTitle is null ? "Neurix CMS" : $"{cmsTitle} — Neurix CMS")</title>
+    <meta name="robots" content="noindex, nofollow" />
+
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon.svg" />
+
+    <!-- Tailwind CSS (locally built, purged) -->
+    <link rel="stylesheet" href="~/css/tailwind.min.css" asp-append-version="true" />
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Neurix AI Design System -->
+    <link rel="stylesheet" href="~/css/neurix.css" asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="min-h-screen bg-background text-foreground font-sans antialiased">
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+        string NavClass(string controller) => currentController == controller
+            ? "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium bg-cyan/10 text-cyan border border-cyan/20"
+            : "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent transition-colors";
+
+        <div class="flex min-h-screen">
+
+            @* ── Sidebar (fixed on md+, off-canvas drawer below) ── *@
+            <aside id="cms-sidebar"
+                   class="fixed inset-y-0 left-0 z-50 w-64 shrink-0 border-r border-border bg-card px-4 py-5 flex flex-col
+                          -translate-x-full transition-transform duration-300 md:translate-x-0 md:static md:z-auto">
+
+                <a asp-controller="CmsDashboard" asp-action="Index" class="flex items-center gap-2.5 px-2 mb-8">
+                    <img src="~/images/favicon.svg" alt="" class="w-7 h-7" />
+                    <span class="font-display font-semibold tracking-tight">
+                        Neurix <span class="text-gradient-brand">CMS</span>
+                    </span>
+                </a>
+
+                <nav class="flex flex-col gap-1 overflow-y-auto pr-1">
+                    <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                        @L["Content Management"]
+                    </div>
+
+                    <a asp-controller="CmsDashboard" asp-action="Index" class="@NavClass("CmsDashboard")">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+                        @L["Dashboard"]
+                    </a>
+
+                    <a asp-controller="CmsCompanyProfiles" asp-action="Index" class="@NavClass("CmsCompanyProfiles")">
+                        <i data-lucide="building" class="w-4 h-4 shrink-0"></i>
+                        @L["Brand Profiles & Colors"]
+                    </a>
+
+                    <a asp-controller="CmsSiteSettings" asp-action="Index" class="@NavClass("CmsSiteSettings")">
+                        <i data-lucide="sliders" class="w-4 h-4 shrink-0"></i>
+                        @L["Global Site Settings"]
+                    </a>
+
+                    <a asp-controller="CmsHomeSections" asp-action="Index" class="@NavClass("CmsHomeSections")">
+                        <i data-lucide="layout" class="w-4 h-4 shrink-0"></i>
+                        @L["Homepage Sections"]
+                    </a>
+
+                    <a asp-controller="CmsPageBands" asp-action="Index" class="@NavClass("CmsPageBands")">
+                        <i data-lucide="rows-3" class="w-4 h-4 shrink-0"></i>
+                        @L["Page Sections"]
+                    </a>
+
+                    <a asp-controller="CmsContentPages" asp-action="Index" class="@NavClass("CmsContentPages")">
+                        <i data-lucide="file-text" class="w-4 h-4 shrink-0"></i>
+                        @L["Content Pages"]
+                    </a>
+
+                    <a asp-controller="CmsDivisionPages" asp-action="Index" class="@NavClass("CmsDivisionPages")">
+                        <i data-lucide="layers" class="w-4 h-4 shrink-0"></i>
+                        @L["Divisional Pages"]
+                    </a>
+
+                    <a asp-controller="CmsServices" asp-action="Index" class="@NavClass("CmsServices")">
+                        <i data-lucide="cpu" class="w-4 h-4 shrink-0"></i>
+                        @L["Services & Capabilities"]
+                    </a>
+
+                    <a asp-controller="CmsProjects" asp-action="Index" class="@NavClass("CmsProjects")">
+                        <i data-lucide="briefcase" class="w-4 h-4 shrink-0"></i>
+                        @L["Projects & Portfolio"]
+                    </a>
+
+                    <a asp-controller="CmsBlogPosts" asp-action="Index" class="@NavClass("CmsBlogPosts")">
+                        <i data-lucide="book-open" class="w-4 h-4 shrink-0"></i>
+                        @L["Articles & Insights"]
+                    </a>
+
+                    <a asp-controller="CmsTeamMembers" asp-action="Index" class="@NavClass("CmsTeamMembers")">
+                        <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
+                        @L["Team Members"]
+                    </a>
+
+                    <a asp-controller="CmsTestimonials" asp-action="Index" class="@NavClass("CmsTestimonials")">
+                        <i data-lucide="message-square" class="w-4 h-4 shrink-0"></i>
+                        @L["Client Testimonials"]
+                    </a>
+
+                    <a asp-controller="CmsSocialLinks" asp-action="Index" class="@NavClass("CmsSocialLinks")">
+                        <i data-lucide="share-2" class="w-4 h-4 shrink-0"></i>
+                        @L["Social Links"]
+                    </a>
+
+                    <a asp-controller="CmsMenuItems" asp-action="Index" class="@NavClass("CmsMenuItems")">
+                        <i data-lucide="menu" class="w-4 h-4 shrink-0"></i>
+                        @L["Navigation Menus"]
+                    </a>
+
+                    <a asp-controller="CmsMediaAssets" asp-action="Index" class="@NavClass("CmsMediaAssets")">
+                        <i data-lucide="image" class="w-4 h-4 shrink-0"></i>
+                        @L["Media Library"]
+                    </a>
+                </nav>
+
+                <div class="mt-auto pt-5 border-t border-border space-y-2">
+                    <div class="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                        @L["Quick Links"]
+                    </div>
+                    <a asp-controller="CrmDashboard" asp-action="Index"
+                       class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                        <i data-lucide="layers" class="w-4 h-4 shrink-0 text-cyan"></i>
+                        @L["Switch to CRM"]
+                    </a>
+                    <a href="/" target="_blank"
+                       class="flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                        <i data-lucide="external-link" class="w-4 h-4 shrink-0 text-azure"></i>
+                        @L["View Public Website"]
+                    </a>
+
+                    <div class="pt-3 border-t border-border">
+                        <p class="px-2 mb-2 text-xs text-muted-foreground truncate" title="@User.Identity?.Name">
+                            @User.Identity?.Name
+                        </p>
+                        <form asp-controller="CrmAccount" asp-action="Logout" method="post">
+                            <button type="submit"
+                                    class="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-colors">
+                                <i data-lucide="log-out" class="w-4 h-4 shrink-0"></i>
+                                @L["Log out"]
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+
+            @* Backdrop for the mobile drawer *@
+            <div id="cms-sidebar-backdrop"
+                 class="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm hidden md:hidden"></div>
+
+            <div class="flex-1 min-w-0 flex flex-col">
+
+                <header class="sticky top-0 z-30 border-b border-border bg-card/80 backdrop-blur-xl">
+                    <div class="px-5 sm:px-6 h-16 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <button type="button" id="cms-sidebar-toggle" aria-label='@L["Toggle navigation"]'
+                                    class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                                <i data-lucide="menu" class="w-4 h-4"></i>
+                            </button>
+                            <h1 class="font-display text-base font-semibold tracking-tight truncate">
+                                @cmsTitle
+                            </h1>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <a href="/" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                                <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                                @L["Public Site"]
+                            </a>
+
+                            <partial name="_CmsLanguageToggle" />
+
+                            <button type="button" onclick="toggleTheme()" aria-label='@L["Toggle theme"]'
+                                    class="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0">
+                                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <main class="flex-1 px-5 sm:px-6 py-7">
+                    <partial name="_CmsAlert" />
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    }
+    else
+    {
+        <main>
+            @RenderBody()
+        </main>
+    }
+
+    <script>
+        // Theme toggle — shares the 'neurix-theme' key with the public and CRM site.
+        (function () {
+            const THEME_KEY = 'neurix-theme';
+            const root = document.documentElement;
+
+            function applyTheme(theme) {
+                root.classList.toggle('dark', theme === 'dark');
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+
+            window.toggleTheme = function () {
+                applyTheme(root.classList.contains('dark') ? 'light' : 'dark');
+            };
+        })();
+
+        // Mobile sidebar drawer
+        (function () {
+            const btn = document.getElementById('cms-sidebar-toggle');
+            const sidebar = document.getElementById('cms-sidebar');
+            const backdrop = document.getElementById('cms-sidebar-backdrop');
+            if (!btn || !sidebar || !backdrop) return;
+
+            function open() {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            }
+            function close() {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+
+            btn.addEventListener('click', function () {
+                sidebar.classList.contains('-translate-x-full') ? open() : close();
+            });
+            backdrop.addEventListener('click', close);
+            sidebar.querySelectorAll('a').forEach(function (a) {
+                a.addEventListener('click', close);
+            });
+        })();
+
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

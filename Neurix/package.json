@@ -1,0 +1,11 @@
+{
+  "name": "neurix",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./Styles/tailwind.input.css -o ./wwwroot/css/tailwind.min.css --minify",
+    "watch:css": "tailwindcss -i ./Styles/tailwind.input.css -o ./wwwroot/css/tailwind.min.css --minify --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

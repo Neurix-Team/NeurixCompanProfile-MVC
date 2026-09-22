@@ -1,0 +1,233 @@
+@model Neurix.BLL.Dtos.Cms.CmsDivisionPageDetailDto?
+@using Neurix.BLL.Common
+@using Neurix.Common
+@{
+    var titleEn = !string.IsNullOrWhiteSpace(Model?.HeroTitleEn) ? Model.HeroTitleEn : "Neurix AI Labs — Shaping Tomorrow";
+    var titleAr = !string.IsNullOrWhiteSpace(Model?.HeroTitleAr) ? Model.HeroTitleAr : "مختبرات نيوركس AI — صناعة الغد";
+    var subtitleEn = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleEn) ? Model.HeroSubtitleEn : "An advanced R&D lab transforming AI and machine learning into practical intelligent solutions through scientific methodology and innovative engineering";
+    var subtitleAr = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleAr) ? Model.HeroSubtitleAr : "مختبر بحث وتطوير متقدم يحوّل تقنيات الذكاء الاصطناعي والتعلّم الآلي إلى حلول ذكية واقعية، مدعومة بمنهجية علمية وهندسة مبتكرة";
+    var missionEn = !string.IsNullOrWhiteSpace(Model?.MissionEn) ? Model.MissionEn : "Neurix AI Lab serves as the research and technological backbone of the Neurix AI ecosystem, developing analytical models, applied research, and technical infrastructure required to build practical systems supporting government, education, and healthcare sectors.";
+    var missionAr = !string.IsNullOrWhiteSpace(Model?.MissionAr) ? Model.MissionAr : "تمثل مختبرات نيوركس AI الركيزة البحثية الأساسية والتقنية لمنظومة، حيث يطوّر الأبحاث والنماذج التحليلية والبنية التقنية اللازمة لبناء أنظمة عملية تدعم قطاعات الحكومة والتعليم والرعاية الصحية.";
+
+    ViewData["Title"] = "Neurix AI Labs";
+
+    // ── CMS-managed bands (/cms/page-sections/labs) ──
+    // Every literal below survives as a fallback, so an empty or unreachable CMS leaves
+    // this page rendering exactly as it did before the bands existed.
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var heroBand = bands.Band(CmsPageKeys.Bands.Hero);
+    var overviewBand = bands.Band(CmsPageKeys.Bands.Overview);
+    var cardsBand = bands.Band(CmsPageKeys.Bands.Cards);
+
+    var heroChips = bands.ItemsOf(CmsPageKeys.Bands.Hero);
+    var overviewImages = bands.ItemsOf(CmsPageKeys.Bands.Overview);
+    var capabilityItems = bands.ItemsOf(CmsPageKeys.Bands.Cards);
+
+    var capabilities = capabilityItems.Count > 0
+        ? capabilityItems.Select(c => new {
+            Icon = string.IsNullOrWhiteSpace(c.IconName) ? "sparkles" : c.IconName!,
+            TitleEn = c.TitleEn,
+            TitleAr = c.TitleAr,
+            DescEn = c.DescriptionEn ?? string.Empty,
+            DescAr = c.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+            new {
+                Icon = "bar-chart-2",
+                TitleEn = "Data Visualization & Analytics",
+                TitleAr = "تصور البيانات وتحليلها",
+                DescEn = "We transform complex data into intuitive, interactive visual experiences that simplify understanding and accelerate decision-making.",
+                DescAr = "نحول البيانات المعقدة إلى تجارب بصرية تفاعلية تساعد على تبسيط الفهم وتسريع اتخاذ القرار",
+            },
+            new {
+                Icon = "brain-circuit",
+                TitleEn = "User & System Intelligence",
+                TitleAr = "ذكاء المستخدم والأنظمة",
+                DescEn = "We analyze user behavior and system interactions to develop intelligent solutions that are efficient, relevant, and impact-driven",
+                DescAr = "نحلل سلوك المستخدم وتفاعلات الأنظمة لتطوير حلول ذكية أكثر كفاءة وارتباطًا بالاحتياجات الواقعية"
+            },
+            new {
+                Icon = "cpu",
+                TitleEn = "Artificial Intelligence Research",
+                TitleAr = "أبحاث الذكاء الاصطناعي",
+                DescEn = "We develop and experiment with AI and machine learning models to build systems capable of understanding, learning, and making intelligent decisions.",
+                DescAr = "نطوّر ونختبر نماذج الذكاء الاصطناعي والتعلّم الآلي لبناء أنظمة قادرة على الفهم والتعلّم واتخاذ قرارات ذكية"
+            },
+            new {
+                Icon = "database",
+                TitleEn = "Big Data & Advanced Analytics",
+                TitleAr = "البيانات الضخمة والتحليلات",
+                DescEn = "We process large-scale datasets to uncover patterns, insights, and operational signals that enhance system intelligence and performance.",
+                DescAr = "نعالج مجموعات البيانات واسعة النطاق لاستخراج الأنماط والرؤى التي تعزز كفاءة الأنظمة وذكاءها التشغيلي"
+            }
+        }.ToList();
+
+    var missionImages = overviewImages.Count > 0
+        ? overviewImages.Select(i => new { Path = i.ImagePath ?? string.Empty, Alt = i.TitleEn }).ToList()
+        : new[] {
+            new { Path = "/images/The Research Core Behind the Ecosystem.png", Alt = "The Research Core Behind the Ecosystem" },
+            new { Path = "/images/Artificial Intelligence Research.png", Alt = "Artificial Intelligence Research" },
+            new { Path = "/images/Big Data & Advanced Analytics.png", Alt = "Big Data & Advanced Analytics" },
+            new { Path = "/images/Data Visualization & Analytics.png", Alt = "Data Visualization & Analytics" }
+        }.ToList();
+
+    var imageCardClass = "group rounded-2xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_15px_35px_rgba(0,0,0,0.08)] dark:shadow-[0_15px_35px_rgba(0,0,0,0.2)] aspect-[4/3] bg-slate-100 dark:bg-card/40 transition-all duration-500 hover:border-cyan/50 hover:shadow-[0_20px_45px_hsl(var(--cyan)/0.15)]";
+}
+
+@if (heroBand?.IsPublished != false)
+{
+    <section class="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-14 md:pt-36 md:pb-18">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+        <div class="container relative z-30 px-6 text-center max-w-5xl">
+            @{
+                var heroBadgeEn = CmsBandText.Pick(heroBand?.BadgeEn, "Our Innovation Core");
+                var heroBadgeAr = CmsBandText.Pick(heroBand?.BadgeAr, "جوهر ابتكارنا");
+            }
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10 animate-fade-in">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+            </div>
+
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] text-slate-900 dark:text-white mb-6 animate-fade-in-up">
+                <span data-en="@titleEn" data-ar="@titleAr">@titleEn</span>
+            </h1>
+
+            <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed animate-fade-in-up"
+               data-en="@subtitleEn"
+               data-ar="@subtitleAr">
+                @subtitleEn
+            </p>
+
+            <div class="mt-14 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-600/70 dark:text-slate-300/70">
+                @if (heroChips.Count > 0)
+                {
+                    @for (var i = 0; i < heroChips.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            <span class="h-px w-8 bg-border"></span>
+                        }
+                        <span data-en="@heroChips[i].TitleEn" data-ar="@heroChips[i].TitleAr">@heroChips[i].TitleEn</span>
+                    }
+                }
+                else
+                {
+                    <span data-en="Research" data-ar="البحث">Research</span>
+                    <span class="h-px w-8 bg-border"></span>
+                    <span data-en="Development" data-ar="التطوير">Development</span>
+                    <span class="h-px w-8 bg-border"></span>
+                    <span data-en="AI &amp; ML" data-ar="الذكاء الاصطناعي">AI &amp; ML</span>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (overviewBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/30 dark:bg-background/10">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+                <!-- Left Side (Content Column - lg:col-span-6) -->
+                <div class="lg:col-span-6 flex flex-col text-left rtl:text-right">
+                    @{
+                        var overviewBadgeEn = CmsBandText.Pick(overviewBand?.BadgeEn, "Our Backbone");
+                        var overviewBadgeAr = CmsBandText.Pick(overviewBand?.BadgeAr, "عمودنا الفقري");
+                        var overviewPrefixEn = CmsBandText.Pick(overviewBand?.TitlePrefixEn, "The Research Core ");
+                        var overviewPrefixAr = CmsBandText.Pick(overviewBand?.TitlePrefixAr, "المحرك البحثي ");
+                        var overviewHighlightEn = CmsBandText.Pick(overviewBand?.TitleHighlightEn, "Behind the Ecosystem");
+                        var overviewHighlightAr = CmsBandText.Pick(overviewBand?.TitleHighlightAr, "وراء المنظومة");
+                    }
+                    <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6 self-start">
+                        <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                        <span data-en="@overviewBadgeEn" data-ar="@overviewBadgeAr">@overviewBadgeEn</span>
+                    </div>
+
+                    <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-tight mb-8">
+                        <span data-en="@overviewPrefixEn" data-ar="@overviewPrefixAr">@overviewPrefixEn</span>
+                        <span class="text-gradient-brand" data-en="@overviewHighlightEn" data-ar="@overviewHighlightAr">@overviewHighlightEn</span>
+                    </h2>
+
+                    <p class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed"
+                       data-en="@missionEn"
+                       data-ar="@missionAr">
+                        @missionEn
+                    </p>
+                </div>
+
+                <!-- Right Side (Staggered Grid Column - lg:col-span-6) -->
+                <div class="lg:col-span-6">
+                    <div class="grid grid-cols-2 gap-4 sm:gap-6 items-start">
+
+                        <!-- Left Column -->
+                        <div class="space-y-4 sm:space-y-6">
+                            @foreach (var image in missionImages.Where((m, i) => i % 2 == 0))
+                            {
+                                <div class="@imageCardClass">
+                                    <img src="@image.Path" alt="@image.Alt" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Right Column (Staggered Down) -->
+                        <div class="space-y-4 sm:space-y-6 pt-10 sm:pt-14">
+                            @foreach (var image in missionImages.Where((m, i) => i % 2 == 1))
+                            {
+                                <div class="@imageCardClass">
+                                    <img src="@image.Path" alt="@image.Alt" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+
+@if (cardsBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30">
+        <div class="container px-6 max-w-7xl mx-auto">
+            @{
+                var cardsTitleEn = CmsBandText.Pick(cardsBand?.TitlePrefixEn, "Laboratory Capabilities");
+                var cardsTitleAr = CmsBandText.Pick(cardsBand?.TitlePrefixAr, "قدرات المختبر");
+                var cardsBodyEn = CmsBandText.Pick(cardsBand?.BodyEn, "A research and technology infrastructure that bridges scientific research, systems engineering, and applied innovation to support internal projects and sector-focused solutions.");
+                var cardsBodyAr = CmsBandText.Pick(cardsBand?.BodyAr, "بنية بحثية وتقنية تربط بين الأبحاث العلمية، هندسة الأنظمة، والابتكار التطبيقي لدعم المشروعات الداخلية والحلول القطاعية");
+            }
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4" data-en="@cardsTitleEn" data-ar="@cardsTitleAr">@cardsTitleEn</h2>
+                <p class="text-lg text-slate-600 dark:text-slate-300"
+                   data-en="@cardsBodyEn"
+                   data-ar="@cardsBodyAr">
+                    @cardsBodyEn
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                @foreach (var cap in capabilities)
+                {
+                    <div class="magnetic-card card-glow-border bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-2xl p-7 md:p-8">
+                        <div class="h-12 w-12 rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-6 shadow-[0_0_15px_hsl(var(--cyan)/0.2)]">
+                            <i data-lucide="@cap.Icon" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="@cap.TitleEn" data-ar="@cap.TitleAr">@cap.TitleEn</h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6" data-en="@cap.DescEn" data-ar="@cap.DescAr">@cap.DescEn</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+}

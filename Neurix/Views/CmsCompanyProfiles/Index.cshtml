@@ -1,0 +1,98 @@
+@model Neurix.Models.CmsCompanyProfileListViewModel
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Company Profiles";
+}
+
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold font-display tracking-tight text-foreground">@L["Company Profile"]</h2>
+            <p class="text-sm text-muted-foreground mt-1">
+                @L["Manage the public company profile, branding, contacts, and content settings for Neurix AI."]
+            </p>
+        </div>
+    </div>
+
+    <!-- Profiles Grid / Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        @foreach (var profile in Model.Profiles)
+        {
+            <div class="card-glow-border rounded-2xl border border-border bg-card/60 backdrop-blur-xl p-6 transition-all duration-300 hover:border-cyan/50 flex flex-col justify-between">
+                <div>
+                    <!-- Top row: Logo, Name, Badge -->
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            @if (!string.IsNullOrWhiteSpace(profile.LogoPath))
+                            {
+                                <img src="@profile.LogoPath" alt="@profile.NameEn" class="w-12 h-12 rounded-xl object-contain border border-border bg-muted/40 p-1.5" />
+                            }
+                            else
+                            {
+                                <div class="w-12 h-12 rounded-xl bg-cyan/10 text-cyan flex items-center justify-center font-bold text-lg border border-cyan/20">
+                                    @profile.NameEn.Substring(0, Math.Min(2, profile.NameEn.Length)).ToUpper()
+                                </div>
+                            }
+                            <div>
+                                <h3 class="text-lg font-bold text-foreground">@profile.NameEn</h3>
+                                <p class="text-sm text-muted-foreground font-arabic" dir="rtl">@profile.NameAr</p>
+                            </div>
+                        </div>
+
+                        <partial name="_CmsStatusBadge" model="profile.IsPublished" />
+                    </div>
+
+                    <!-- Slug, Website and Tagline -->
+                    <div class="mb-4 space-y-2 text-xs text-muted-foreground">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-medium text-foreground/70">@L["Slug:"]</span>
+                                <code class="px-2 py-0.5 rounded bg-muted font-mono text-cyan">@profile.Slug</code>
+                            </div>
+
+                            <!-- Color Palette preview dots -->
+                            <div class="flex items-center gap-1.5" title="@L["Primary:"] @(profile.PrimaryColor ?? "#00C2D4"), Accent: @(profile.AccentColor ?? "#5B5FEF")">
+                                <span class="w-3.5 h-3.5 rounded-full border border-white/20 shadow-sm" style="background-color: @(profile.PrimaryColor ?? "#00C2D4");"></span>
+                                <span class="w-3.5 h-3.5 rounded-full border border-white/20 shadow-sm" style="background-color: @(profile.AccentColor ?? "#5B5FEF");"></span>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(profile.TaglineEn))
+                        {
+                            <p class="text-xs text-foreground/80 italic">"@profile.TaglineEn"</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Footer: Actions & Timestamps -->
+                <div class="pt-4 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div class="text-muted-foreground">
+                        @L["Updated"] @(profile.UpdatedAtUtc?.ToString("MMM dd, yyyy") ?? profile.CreatedAtUtc.ToString("MMM dd, yyyy"))
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <a asp-action="Details" asp-route-id="@profile.Id" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            @L["Details"]
+                        </a>
+
+                        <a asp-action="Edit" asp-route-id="@profile.Id" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-cyan/30 bg-cyan/10 text-cyan hover:bg-cyan/20 transition-colors font-medium">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                            @L["Edit"]
+                        </a>
+
+                        <form asp-action="TogglePublish" asp-route-id="@profile.Id" method="post" class="inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="isPublished" value="@(!profile.IsPublished ? "true" : "false")" />
+                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" title='@(profile.IsPublished ? L["Unpublish"] : L["Publish"])'>
+                                <i data-lucide="@(profile.IsPublished ? "eye-off" : "check")" class="w-3.5 h-3.5"></i>
+                                @(profile.IsPublished ? L["Draft"] : L["Publish"])
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

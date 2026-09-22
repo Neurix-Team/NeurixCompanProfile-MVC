@@ -1,0 +1,22 @@
+@model Neurix.Models.CrmEmptyStateViewModel
+
+<div class="py-16 text-center">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl border border-border bg-background/60 mb-5">
+        <i data-lucide="@Model.Icon" class="w-6 h-6 text-muted-foreground"></i>
+    </div>
+
+@*  Callers build Title/Description/ActionText as English literals in their @{} blocks.
+    Localizing here means every CRM empty state translates from one place, using the
+    English text as the dictionary key. *@
+    <h3 class="font-display text-base font-semibold mb-2">@L[Model.Title]</h3>
+    <p class="text-sm text-muted-foreground max-w-sm mx-auto mb-6">@L[Model.Description]</p>
+
+    @if (!string.IsNullOrEmpty(Model.ActionText) && !string.IsNullOrEmpty(Model.ActionUrl))
+    {
+        <a href="@Model.ActionUrl"
+           class="inline-flex items-center gap-2 rounded-[16px] px-5 py-2.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--cyan)/0.5)] transition-all duration-300">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            @L[Model.ActionText]
+        </a>
+    }
+</div>

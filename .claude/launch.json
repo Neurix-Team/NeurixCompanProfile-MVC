@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "neurix-http",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "Neurix/Neurix.csproj", "--launch-profile", "http"],
+      "port": 5121
+    }
+  ]
+}

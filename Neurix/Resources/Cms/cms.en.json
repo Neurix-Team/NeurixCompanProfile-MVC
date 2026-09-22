@@ -1,0 +1,16 @@
+{
+  "_comment": "Central English dictionary for the CMS/CRM dashboard ONLY. The public site has its own separate mechanism (inline data-en/data-ar attributes in the views) and does not read this file. Keys are dotted and grouped by area. Add real dashboard strings here as they get localized.",
+
+  "Language.Name": "English",
+  "Language.Switch": "Arabic",
+
+  "Common.Save": "Save",
+  "Common.Cancel": "Cancel",
+  "Common.Delete": "Delete",
+  "Common.Edit": "Edit",
+  "Common.Required": "Required",
+
+  "Diagnostics.Title": "Localization self-test",
+  "Diagnostics.Direction": "Text direction",
+  "Diagnostics.MissingKeyProbe": "resolved-from-english"
+}

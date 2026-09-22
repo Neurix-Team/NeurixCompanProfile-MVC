@@ -1,0 +1,123 @@
+@model Neurix.Models.CrmDealDetailsViewModel
+
+<div class="max-w-5xl">
+
+    <a asp-action="Index" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i>
+        @L["Back to deals"]
+    </a>
+
+    @* ── Header ── *@
+    <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div class="min-w-0">
+            <div class="flex items-center gap-3 mb-2">
+                <h2 class="font-display text-xl font-bold tracking-tight truncate">@Model.Name</h2>
+                <partial name="_CrmDealStageBadge" model="Model.Stage" />
+            </div>
+            <p class="text-sm text-muted-foreground">
+                <a asp-controller="CrmCompanies" asp-action="Details" asp-route-id="@Model.CompanyId" class="hover:text-cyan transition-colors">
+                    @Model.CompanyName
+                </a>
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+            <a asp-action="Edit" asp-route-id="@Model.Id"
+               class="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 h-10 text-sm font-medium hover:bg-muted transition-colors">
+                <i data-lucide="pencil" class="w-4 h-4"></i>
+                @L["Edit"]
+            </a>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                  onsubmit="return confirm('@L["Delete this deal?"]');">
+                <button type="submit"
+                        class="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/30 px-4 h-10 text-sm font-medium text-rose-500 hover:bg-rose-500/10 transition-colors">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    @L["Delete"]
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        @* ── Deal ── *@
+        <div class="lg:col-span-2 rounded-2xl border border-border bg-card/60 p-6">
+            <h3 class="font-display text-sm font-semibold mb-5">@L["Deal details"]</h3>
+
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Value"]</dt>
+                    <dd class="font-medium">@Model.Value.ToString("N2")</dd>
+                </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Stage"]</dt>
+                    <dd><partial name="_CrmDealStageBadge" model="Model.Stage" /></dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Notes"]</dt>
+                    <dd class="whitespace-pre-wrap">@(string.IsNullOrWhiteSpace(Model.Notes) ? "—" : Model.Notes)</dd>
+                </div>
+            </dl>
+
+            <div class="mt-6 pt-5 border-t border-border text-xs text-muted-foreground">
+                Created @Model.CreatedAtUtc.ToString("dd MMM yyyy, HH:mm") UTC
+                @if (Model.UpdatedAtUtc.HasValue)
+                {
+                    <span class="mx-1.5 text-border">·</span>
+                    <text>Updated @Model.UpdatedAtUtc.Value.ToString("dd MMM yyyy, HH:mm") UTC</text>
+                }
+            </div>
+        </div>
+
+        @* ── Who ── *@
+        <div class="rounded-2xl border border-border bg-card/60 p-6">
+            <h3 class="font-display text-sm font-semibold mb-5">@L["People"]</h3>
+
+            <dl class="space-y-4 text-sm">
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Company"]</dt>
+                    <dd>
+                        <a asp-controller="CrmCompanies" asp-action="Details" asp-route-id="@Model.CompanyId" class="text-cyan hover:underline">
+                            @Model.CompanyName
+                        </a>
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Primary contact"]</dt>
+                    <dd>
+                        @if (Model.HasContact)
+                        {
+                            <a asp-controller="CrmContacts" asp-action="Details" asp-route-id="@Model.ContactId" class="text-cyan hover:underline">
+                                @Model.ContactName
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(Model.ContactEmail))
+                            {
+                                <span class="block text-xs text-muted-foreground mt-0.5 break-all">@Model.ContactEmail</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted-foreground">@L["None —"]</span>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="text-cyan hover:underline">@L["add one"]</a>
+                        }
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-muted-foreground mb-1">@L["Assigned to"]</dt>
+                    <dd>
+                        @if (string.IsNullOrWhiteSpace(Model.AssignedToUserName))
+                        {
+                            <span class="text-muted-foreground">@L["Unassigned —"]</span>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="text-cyan hover:underline">@L["assign someone"]</a>
+                        }
+                        else
+                        {
+                            @Model.AssignedToUserName
+                        }
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>

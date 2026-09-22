@@ -1,0 +1,486 @@
+﻿@model Neurix.BLL.Dtos.Cms.CmsCompanyProfileDetailDto?
+@using Neurix.BLL.Common
+@using Neurix.Common
+@{
+    var brandNameEn = !string.IsNullOrWhiteSpace(Model?.NameEn) ? Model.NameEn : "Neurix AI";
+    var brandNameAr = !string.IsNullOrWhiteSpace(Model?.NameAr) ? Model.NameAr : "نيوركس AI";
+    // ── CMS-managed page content (Group 3) ──
+    // Every read goes through Pick(): the CMS value wins when present, otherwise the
+    // original hardcoded copy renders. A missing, empty or unpublished page therefore
+    // leaves this view looking exactly as it did before.
+    var cms = ViewData["ContentPage"] as Neurix.BLL.Dtos.Cms.CmsContentPageDetailDto;
+    string Pick(string? cmsValue, string fallback) => string.IsNullOrWhiteSpace(cmsValue) ? fallback : cmsValue!;
+
+    // ── CMS-managed bands (/cms/page-sections/about) ──
+    // The hero, mission, vision and closing CTA come from the content page above; these
+    // three bands cover the rest of the page. Every literal below stays as a fallback.
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var principlesBand = bands.Band(CmsPageKeys.Bands.Principles);
+    var structureBand = bands.Band(CmsPageKeys.Bands.Structure);
+    var teamBand = bands.Band(CmsPageKeys.Bands.Team);
+
+    var principleItems = bands.ItemsOf(CmsPageKeys.Bands.Principles);
+    var structureItems = bands.ItemsOf(CmsPageKeys.Bands.Structure);
+
+    // Card accents cycle in the order the five original cards used them, so a CMS-managed
+    // set of any length keeps the same palette rhythm.
+    var valueColors = new[] { "cyan", "azure", "emerald", "indigo", "purple" };
+
+    // Mission/Vision headings are stored as one string per language but render two-tone:
+    // everything up to the final space stays plain, the last word takes the accent colour.
+    (string Plain, string Accent) SplitHeading(string heading)
+    {
+        var t = heading.Trim();
+        var i = t.LastIndexOf(' ');
+        return i < 0 ? (string.Empty, t) : (t.Substring(0, i + 1), t.Substring(i + 1));
+    }
+
+    // Hero subtitle: page copy first, then the brand description, then this literal.
+    var descEn = Pick(cms?.HeroSubtitleEn, !string.IsNullOrWhiteSpace(Model?.DescriptionEn) ? Model.DescriptionEn : "Neurix AI is the technological engine and holding company of an integrated ecosystem. It provides scientific research, technical infrastructure, and implementation protocols, while active in managing government projects, university protocols, and international technology partnerships.");
+    var descAr = Pick(cms?.HeroSubtitleAr, !string.IsNullOrWhiteSpace(Model?.DescriptionAr) ? Model.DescriptionAr : "نيوركس AI هي المحرك التقني والشركة القابضة لمنظومة متكاملة، حيث تقدم الأبحاث العلمية والبنية التحتية التقنية وبروتوكولات التنفيذ، كما تنشط في إدارة المشاريع الحكومية والبروتوكولات الجامعية والشراكات التقنية الدولية.");
+
+    var heroBadgeEn = Pick(cms?.HeroBadgeEn, $"About {brandNameEn}");
+    var heroBadgeAr = Pick(cms?.HeroBadgeAr, $"عن {brandNameAr}");
+    var heroPrefixEn = Pick(cms?.HeroTitlePrefixEn, "Engineering at the ");
+    var heroPrefixAr = Pick(cms?.HeroTitlePrefixAr, "الهندسة عند ");
+    var heroHighlightEn = Pick(cms?.HeroTitleHighlightEn, "Point of Intersection");
+    var heroHighlightAr = Pick(cms?.HeroTitleHighlightAr, "نقطة التقاطع");
+
+    var missionHeadEn = SplitHeading(Pick(cms?.MissionTitleEn, "Our Mission"));
+    var missionHeadAr = SplitHeading(Pick(cms?.MissionTitleAr, "رسالتنا الرسالة"));
+    var visionHeadEn = SplitHeading(Pick(cms?.VisionTitleEn, "Our Vision"));
+    var visionHeadAr = SplitHeading(Pick(cms?.VisionTitleAr, "رؤيتنا الرؤية"));
+
+    var missionTextEn = Pick(cms?.MissionTextEn, "Our mission is to build a technology ecosystem focused on human development. We translate advanced scientific research and artificial intelligence into practical, ethical systems that serve institutions, communities, and future generations.");
+    var missionTextAr = Pick(cms?.MissionTextAr, "رسالتنا هي بناء منظومة تقنية متكاملة تتمحور حول الإنسان، وتحول البحث العلمي والذكاء الاصطناعي إلى حلول عملية وأخلاقية تخدم المؤسسات والمجتمعات والأجيال القادمة.");
+    var visionTextEn = Pick(cms?.VisionTextEn, "To establish a conscious technological civilization that serves humanity, maintains organized progress, and preserves human nature in alignment with the divine purpose of existence.");
+    var visionTextAr = Pick(cms?.VisionTextAr, "رؤيتنا هي تشكيل حضارة تقنية واعية، تضع الابتكار في خدمة الإنسان، وتدعم التقدم الحضاري المنظم، مع صون الفطرة والطبيعة البشرية بما يتوافق مع غايات الوجود.");
+
+    var ctaBadgeEn = Pick(cms?.CtaBadgeEn, "Let's Build Together");
+    var ctaBadgeAr = Pick(cms?.CtaBadgeAr, "لنبني معاً");
+    var ctaTitleEn = Pick(cms?.CtaTitleEn, "Bring your challenge.");
+    var ctaTitleAr = Pick(cms?.CtaTitleAr, "أحضر تحديك.");
+    var ctaSubtitleEn = Pick(cms?.CtaSubtitleEn, "We validate it, build it, and deliver it — on time, on spec, and production-ready.");
+    var ctaSubtitleAr = Pick(cms?.CtaSubtitleAr, "نتحقق منه، نبنيه، ونسلمه — في الوقت المحدد، وفق المواصفات، وجاهز للإنتاج.");
+    var ctaButtonEn = Pick(cms?.CtaButtonTextEn, "Start a Conversation");
+    var ctaButtonAr = Pick(cms?.CtaButtonTextAr, "ابدأ محادثة");
+
+    ViewData["Title"] = Pick(cms?.TitleEn, $"About {brandNameEn}");
+
+    // ── Master Card Classes ──
+    var mc = "magnetic-card card-glow-border group relative bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-2xl p-7 md:p-8 transition-all duration-500 ease-out hover:border-cyan/70 hover:-translate-y-1 hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.4),0_0_40px_-5px_hsl(var(--cyan)/0.45)] dark:hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.6),0_0_50px_-5px_hsl(var(--cyan)/0.55)] shadow-card-light dark:shadow-none";
+
+    // ── Core Beliefs ──
+    var values = principleItems.Count > 0
+        ? principleItems.Select((v, i) => new {
+            Icon = string.IsNullOrWhiteSpace(v.IconName) ? "sparkles" : v.IconName!,
+            TitleEn = v.TitleEn,
+            TitleAr = v.TitleAr,
+            DescEn = v.DescriptionEn ?? string.Empty,
+            DescAr = v.DescriptionAr ?? string.Empty,
+            Color = valueColors[i % valueColors.Length]
+        }).ToList()
+        : new[] {
+        new { Icon = "heart",         TitleEn = "Human-Centered Technology",        TitleAr = "التقنية في خدمة الإنسان",      DescEn = "Technology must remain a tool that supports the human spirit and guides ethical progress.",                   DescAr = "يجب أن تظل التقنية أداة تدعم الروح البشرية وتوجه التقدم الأخلاقي",           Color = "cyan" },
+        new { Icon = "brain",         TitleEn = "Purpose-Driven Intelligence",       TitleAr = "ذكاء ذو هدف ورسالة",           DescEn = "Our research and development are designed to solve real-world problems and build sustainable community value.", DescAr = "أبحاثنا وتطويرنا مصممان لحل مشكلات واقعية وبناء قيمة مجتمعية مستدامة", Color = "azure" },
+        new { Icon = "users",         TitleEn = "Systems Thinking",                 TitleAr = "تفكر الأنظمة المنظم",             DescEn = "We approach innovation with organized, structured methodologies to ensure stability, safety, and scalable impact.", DescAr = "نتبع منهجيات منظمة ومرتبة في الابتكار لضمان الاستقرار، الأمان، والأثر القابل للتوسع",    Color = "emerald" },
+        new { Icon = "shield-check",   TitleEn = "Trust by Design",                  TitleAr = "الثقة بالأمان والحوكمة",          DescEn = "Uncompromising security, data privacy, and ethical standards are embedded into every system we build.",       DescAr = "أمان صارم، خصوصية بيانات، ومعايير أخلاقية راسخة مدمجة في كل نظام نبنيه", Color = "indigo" },
+        new { Icon = "sparkles",      TitleEn = "Built for the Future",             TitleAr = "مستعدون للمستقبل",             DescEn = "Engineering adaptable platforms that anticipate the needs of tomorrow and empower future generations.",      DescAr = "هندسة منصات مرنة تتوقع احتياجات الغد وتمكن الأجيال القادمة.", Color = "purple" }
+    }.ToList();
+
+    // ── Subsidiary cards ──
+    // The About page keeps its own wording for these, separate from the homepage's
+    // #divisions band, so they are edited as items of the About structure band.
+    var divisions = structureItems.Count > 0
+        ? structureItems.Select(d => new {
+            Icon = string.IsNullOrWhiteSpace(d.IconName) ? "layers" : d.IconName!,
+            Url = CmsBandText.Pick(d.LinkUrl, "/"),
+            TitleEn = d.TitleEn,
+            TitleAr = d.TitleAr,
+            DescEn = d.DescriptionEn ?? string.Empty,
+            DescAr = d.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+        new { Icon = "layers", Url = "/Home/HQ",         TitleEn = "Neurix AI HQ",         TitleAr = "المقر الرئيسي لنيوركس AI",       DescEn = "The foundational management stack powering every division — secure, modular, scalable.",            DescAr = "الحزمة الإدارية والتأسيسية التي تشغل كل قسم — آمنة ومعيارية وقابلة للتطوير." },
+        new { Icon = "beaker", Url = "/Home/Labs",       TitleEn = "Neurix AI Labs",        TitleAr = "مختبرات نيوركس AI",       DescEn = "Advanced R&D center building analytical tools, scientific foundations, and applied research.",      DescAr = "مختبر بحث وتطوير متقدم يحوّل تقنيات الذكاء الاصطناعي والتعلّم الآلي إلى حلول ذكية واقعية." },
+        new { Icon = "cpu",    Url = "/Home/Technology", TitleEn = "Neurix AI Technology",        TitleAr = "تكنولوجيا نيوركس AI",     DescEn = "Transforms Labs' research outputs into advanced software platforms and scalable applications.",      DescAr = "تقوم بتحويل مخرجات مختبرات نيوركس AI البحثية إلى تطبيقات ومنصات تقنية متقدمة." },
+        new { Icon = "zap",    Url = "/Home/Plus",       TitleEn = "Neurix AI Plus",        TitleAr = "نيوركس AI بلس",           DescEn = "Leads high-level government relations, academic protocols, and strategic partnerships.",             DescAr = "تقود العلاقات الحكومية رفيعة المستوى والبروتوكولات الأكاديمية ومسارات الشراكة الاستراتيجية." },
+        new { Icon = "users",  Url = "/Home/Club",       TitleEn = "Neurix AI Club",        TitleAr = "نادي نيوركس AI",          DescEn = "A professional and tech network connecting digital talent and remote working experts.",              DescAr = "منظومة مهنية وتقنية تجمع الكفاءات حول العالم ومواهب العمل عن بعد في مجتمعات متخصصة." }
+    }.ToList();
+
+    string ValColor(string c) => c switch { "cyan" => "text-cyan", "azure" => "text-azure", "emerald" => "text-emerald-500", "indigo" => "text-indigo-500", "purple" => "text-purple-500", _ => "text-cyan" };
+    string ValBg(string c) => c switch { "cyan" => "bg-cyan/10", "azure" => "bg-azure/10", "emerald" => "bg-emerald-500/10", "indigo" => "bg-indigo-500/10", "purple" => "bg-purple-500/10", _ => "bg-cyan/10" };
+    string ValShadow(string c) => c switch { "cyan" => "shadow-[0_0_15px_hsl(var(--cyan)/0.2)]", "azure" => "shadow-[0_0_15px_hsl(var(--azure)/0.2)]", "emerald" => "shadow-[0_0_15px_rgba(16,185,129,0.2)]", "indigo" => "shadow-[0_0_15px_rgba(99,102,241,0.2)]", "purple" => "shadow-[0_0_15px_rgba(168,85,247,0.2)]", _ => "" };
+}
+
+@* ═══════════════════════════════════════════════════════════
+   HERO & ABOUT STATEMENT
+   ═══════════════════════════════════════════════════════════ *@
+<section class="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-14 md:pt-36 md:pb-18">
+    <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+    <div class="container relative z-30 px-6 text-center max-w-5xl">
+        <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10 animate-fade-in">
+            <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+            <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+        </div>
+        <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.1] text-slate-900 dark:text-white mb-6 animate-fade-in-up">
+            <span data-en="@heroPrefixEn" data-ar="@heroPrefixAr">@heroPrefixEn</span>
+            <span class="text-gradient-brand" data-en="@heroHighlightEn" data-ar="@heroHighlightAr">@heroHighlightEn</span>
+        </h1>
+        <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed animate-fade-in-up" style="animation-delay: 150ms;"
+           data-en="@descEn"
+           data-ar="@descAr">
+            @descEn
+        </p>
+    </div>
+</section>
+
+@* ═══════════════════════════════════════════════════════════
+   MISSION & VISION
+   ═══════════════════════════════════════════════════════════ *@
+<section class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/10 dark:bg-background/5">
+    <div class="container px-6 max-w-7xl mx-auto space-y-24 md:space-y-36">
+        
+        <!-- Row 1: Our Mission (Content Left, Image Right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <!-- Left Side: Content (lg:col-span-6) -->
+            <div class="lg:col-span-6 flex flex-col text-left rtl:text-right">
+                <h2 class="font-display text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                    <span data-en="@missionHeadEn.Plain" data-ar="@missionHeadAr.Plain">@missionHeadEn.Plain</span>
+                    <span class="text-cyan font-bold" data-en="@missionHeadEn.Accent" data-ar="@missionHeadAr.Accent">@missionHeadEn.Accent</span>
+                </h2>
+
+                <p class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed"
+                   data-en="@missionTextEn"
+                   data-ar="@missionTextAr">
+                    @missionTextEn
+                </p>
+            </div>
+            
+            <!-- Right Side: Image (lg:col-span-6) -->
+            <div class="lg:col-span-6">
+                <div class="group rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] aspect-[16/10] bg-slate-100 dark:bg-card transition-all duration-500 hover:scale-[1.02] hover:border-cyan/50 hover:shadow-[0_20px_45px_hsl(var(--cyan)/0.15)]">
+                    <img src="~/images/Mission & Vision.png" alt="Our Mission" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Our Vision (Image Left, Content Right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <!-- Left Side: Image (lg:col-span-6) - Order adjusted for mobile to show text first -->
+            <div class="lg:col-span-6 order-last lg:order-first">
+                <div class="group rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] aspect-[16/10] bg-slate-100 dark:bg-card transition-all duration-500 hover:scale-[1.02] hover:border-cyan/50 hover:shadow-[0_20px_45px_hsl(var(--cyan)/0.15)]">
+                    <img src="~/images/The Integrated Future.png" alt="Our Vision" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
+                </div>
+            </div>
+
+            <!-- Right Side: Content (lg:col-span-6) -->
+            <div class="lg:col-span-6 flex flex-col text-left rtl:text-right">
+                <h2 class="font-display text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                    <span data-en="@visionHeadEn.Plain" data-ar="@visionHeadAr.Plain">@visionHeadEn.Plain</span>
+                    <span class="text-cyan font-bold" data-en="@visionHeadEn.Accent" data-ar="@visionHeadAr.Accent">@visionHeadEn.Accent</span>
+                </h2>
+
+                <p class="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed"
+                   data-en="@visionTextEn"
+                   data-ar="@visionTextAr">
+                    @visionTextEn
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ═══════════════════════════════════════════════════════════
+   CORE BELIEFS (5 Cards)
+   ═══════════════════════════════════════════════════════════ *@
+@if (principlesBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30">
+        <div class="container px-6 max-w-7xl mx-auto">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                @{
+                    var principlesTitleEn = CmsBandText.Pick(principlesBand?.TitlePrefixEn, "What We Stand For");
+                    var principlesTitleAr = CmsBandText.Pick(principlesBand?.TitlePrefixAr, "ما الذي نؤمن به");
+                    var principlesBodyEn = CmsBandText.Pick(principlesBand?.BodyEn, "Five foundational principles that govern every line of code, every architectural decision, and guide our entire workflow.");
+                    var principlesBodyAr = CmsBandText.Pick(principlesBand?.BodyAr, "خمسة مبادئ أساسية تحكم كل سطر كود، وكل قرار معماري، وتوجه مسار عملنا بالكامل.");
+                }
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6" data-en="@principlesTitleEn" data-ar="@principlesTitleAr">@principlesTitleEn</h2>
+                <p class="text-lg text-slate-600 dark:text-slate-300" 
+                   data-en="@principlesBodyEn"
+                   data-ar="@principlesBodyAr">
+                    @principlesBodyEn
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                @foreach (var v in values.Take(3))
+                {
+                    <div class="@mc flex-col">
+                        <div class="h-12 w-12 rounded-xl @ValBg(v.Color) flex items-center justify-center @ValColor(v.Color) mb-6 @ValShadow(v.Color)">
+                            <i data-lucide="@v.Icon" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="@v.TitleEn" data-ar="@v.TitleAr">@v.TitleEn</h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm" data-en="@v.DescEn" data-ar="@v.DescAr">@v.DescEn</p>
+                    </div>
+                }
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto mt-8">
+                @foreach (var v in values.Skip(3))
+                {
+                    <div class="@mc flex-col">
+                        <div class="h-12 w-12 rounded-xl @ValBg(v.Color) flex items-center justify-center @ValColor(v.Color) mb-6 @ValShadow(v.Color)">
+                            <i data-lucide="@v.Icon" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3" data-en="@v.TitleEn" data-ar="@v.TitleAr">@v.TitleEn</h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm" data-en="@v.DescEn" data-ar="@v.DescAr">@v.DescEn</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@* ═══════════════════════════════════════════════════════════
+   ORG STRUCTURE — 5 DIVISIONS
+   ═══════════════════════════════════════════════════════════ *@
+@if (structureBand?.IsPublished != false)
+{
+    <section class="relative py-28 md:py-36 z-30 overflow-hidden">
+        <div class="container relative z-30 px-6 max-w-7xl mx-auto">
+            @{
+                var structureBadgeEn = CmsBandText.Pick(structureBand?.BadgeEn, "Organizational Structure");
+                var structureBadgeAr = CmsBandText.Pick(structureBand?.BadgeAr, "الهيكل التنظيمي");
+                var structurePrefixEn = CmsBandText.Pick(structureBand?.TitlePrefixEn, "Five pillars.");
+                var structurePrefixAr = CmsBandText.Pick(structureBand?.TitlePrefixAr, "خمس ركائز.");
+                var structureHighlightEn = CmsBandText.Pick(structureBand?.TitleHighlightEn, "One vision.");
+                var structureHighlightAr = CmsBandText.Pick(structureBand?.TitleHighlightAr, "رؤية واحدة.");
+                var structureBodyEn = CmsBandText.Pick(structureBand?.BodyEn, "Each division operates with full autonomy under unified strategic direction from the CEO.");
+                var structureBodyAr = CmsBandText.Pick(structureBand?.BodyAr, "يعمل كل قسم باستقلالية كاملة تحت التوجيه الاستراتيجي الموحد من الرئيس التنفيذي.");
+                var exploreEn = CmsBandText.Pick(structureBand?.ItemLinkTextEn, "Explore");
+                var exploreAr = CmsBandText.Pick(structureBand?.ItemLinkTextAr, "المزيد");
+            }
+            <div class="max-w-3xl mx-auto text-center mb-16 md:mb-24">
+                <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                    <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                    <span data-en="@structureBadgeEn" data-ar="@structureBadgeAr">@structureBadgeEn</span>
+                </div>
+                <h2 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-[1.1]">
+                    <span data-en="@structurePrefixEn" data-ar="@structurePrefixAr">@structurePrefixEn</span> <span class="text-gradient-brand" data-en="@structureHighlightEn" data-ar="@structureHighlightAr">@structureHighlightEn</span>
+                </h2>
+                <p class="mt-6 text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed"
+                   data-en="@structureBodyEn"
+                   data-ar="@structureBodyAr">
+                    @structureBodyEn
+                </p>
+            </div>
+
+            @{ int idx = 0; }
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-7 md:gap-8">
+                @foreach (var d in divisions.Take(3))
+                {
+                    <a href="@d.Url"
+                       class="magnetic-card division-card card-glow-border group relative flex flex-col rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-7 md:p-8 transition-all duration-500 ease-out hover:border-cyan/70 hover:-translate-y-1 hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.4),0_0_40px_-5px_hsl(var(--cyan)/0.45)] dark:hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.6),0_0_50px_-5px_hsl(var(--cyan)/0.55)]"
+                       style="transition-delay: @(idx * 110)ms;">
+                        <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-slate-300 dark:border-white/10 bg-slate-50/70 dark:bg-background/60 text-cyan transition-all duration-500 group-hover:border-cyan/60 group-hover:shadow-[0_0_20px_hsl(var(--cyan)/0.4)] group-hover:scale-110">
+                            <i data-lucide="@d.Icon" class="h-5 w-5"></i>
+                        </div>
+                        <h3 class="font-display text-xl md:text-2xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400"
+                            data-en="@d.TitleEn" data-ar="@d.TitleAr">
+                            @d.TitleEn
+                        </h3>
+                        <p class="text-sm md:text-[15px] text-slate-700 dark:text-slate-300 leading-relaxed mb-6"
+                           data-en="@d.DescEn" data-ar="@d.DescAr">
+                            @d.DescEn
+                        </p>
+                        <div class="mt-auto flex items-center justify-end gap-1.5 text-sm font-semibold text-azure transition-all duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 group-hover:gap-2.5"
+                             data-en="@exploreEn" data-ar="@exploreAr">
+                            @exploreEn
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl-flip">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </div>
+                    </a>
+                    idx++;
+                }
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-8 mt-8">
+                @foreach (var d in divisions.Skip(3))
+                {
+                    <a href="@d.Url"
+                       class="magnetic-card division-card card-glow-border group relative flex flex-col rounded-2xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl p-7 md:p-8 transition-all duration-500 ease-out hover:border-cyan/70 hover:-translate-y-1 hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.4),0_0_40px_-5px_hsl(var(--cyan)/0.45)] dark:hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.6),0_0_50px_-5px_hsl(var(--cyan)/0.55)]"
+                       style="transition-delay: @(idx * 110)ms;">
+                        <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-slate-300 dark:border-white/10 bg-slate-50/70 dark:bg-background/60 text-cyan transition-all duration-500 group-hover:border-cyan/60 group-hover:shadow-[0_0_20px_hsl(var(--cyan)/0.4)] group-hover:scale-110">
+                            <i data-lucide="@d.Icon" class="h-5 w-5"></i>
+                        </div>
+                        <h3 class="font-display text-xl md:text-2xl font-semibold text-slate-900 dark:text-white mb-3 transition-colors duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400"
+                            data-en="@d.TitleEn" data-ar="@d.TitleAr">
+                            @d.TitleEn
+                        </h3>
+                        <p class="text-sm md:text-[15px] text-slate-700 dark:text-slate-300 leading-relaxed mb-6"
+                           data-en="@d.DescEn" data-ar="@d.DescAr">
+                            @d.DescEn
+                        </p>
+                        <div class="mt-auto flex items-center justify-end gap-1.5 text-sm font-semibold text-azure transition-all duration-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 group-hover:gap-2.5"
+                             data-en="@exploreEn" data-ar="@exploreAr">
+                            @exploreEn
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                 class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl-flip">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </div>
+                    </a>
+                    idx++;
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@* ═══════════════════════════════════════════════════════════
+   LEADERSHIP & SCIENTIFIC TEAM (Dynamic CMS)
+   ═══════════════════════════════════════════════════════════ *@
+@{
+    var teamList = ViewData["TeamMembers"] as IReadOnlyList<Neurix.BLL.Dtos.Cms.CmsTeamMemberSummaryDto>;
+
+    var teamBadgeEn = CmsBandText.Pick(teamBand?.BadgeEn, "Leadership & Researchers");
+    var teamBadgeAr = CmsBandText.Pick(teamBand?.BadgeAr, "القيادة والباحثون");
+    var teamTitleEn = CmsBandText.Pick(teamBand?.TitlePrefixEn, "The Minds Behind Neurix");
+    var teamTitleAr = CmsBandText.Pick(teamBand?.TitlePrefixAr, "العقول وراء نيوركس");
+    var teamBodyEn = CmsBandText.Pick(teamBand?.BodyEn, "A multidisciplinary collective of AI scientists, systems architects, and sovereign technology strategists.");
+    var teamBodyAr = CmsBandText.Pick(teamBand?.BodyAr, "فريق متعدد التخصصات من علماء الذكاء الاصطناعي ومهندسي الأنظمة وخبراء التقنية السيادية.");
+}
+@if (teamBand?.IsPublished != false)
+{
+    @if (teamList != null && teamList.Count > 0)
+    {
+        <section class="relative py-24 md:py-32 z-30">
+            <div class="container px-6 max-w-7xl mx-auto">
+                <div class="max-w-3xl mx-auto text-center mb-16">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-6">
+                        <span class="h-1.5 w-1.5 rounded-full bg-cyan"></span>
+                        <span data-en="@teamBadgeEn" data-ar="@teamBadgeAr">@teamBadgeEn</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6"
+                        data-en="@teamTitleEn" data-ar="@teamTitleAr">@teamTitleEn</h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-300"
+                       data-en="@teamBodyEn"
+                       data-ar="@teamBodyAr">
+                        @teamBodyEn
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach (var member in teamList)
+                    {
+                        <div class="@mc flex-col text-center items-center">
+                            <div class="mb-5 relative">
+                                @if (!string.IsNullOrWhiteSpace(member.PhotoPath))
+                                {
+                                    <img src="@member.PhotoPath" alt="@member.NameEn" class="w-24 h-24 rounded-2xl object-cover border border-slate-300 dark:border-white/10 shadow-lg shadow-cyan/10" />
+                                }
+                                else
+                                {
+                                    <div class="w-24 h-24 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl font-bold font-display">
+                                        @member.NameEn.Substring(0, Math.Min(2, member.NameEn.Length)).ToUpper()
+                                    </div>
+                                }
+                            </div>
+
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-1"
+                                data-en="@member.NameEn" data-ar="@member.NameAr">
+                                @member.NameEn
+                            </h3>
+
+                            <p class="text-xs font-semibold text-cyan uppercase tracking-wider mb-4"
+                               data-en="@member.TitleEn" data-ar="@member.TitleAr">
+                                @member.TitleEn
+                            </p>
+
+                            @if (!string.IsNullOrWhiteSpace(member.BioEn) || !string.IsNullOrWhiteSpace(member.BioAr))
+                            {
+                                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3 mb-4"
+                                   data-en="@member.BioEn" data-ar="@member.BioAr">
+                                    @member.BioEn
+                                </p>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(member.LinkedInUrl) || !string.IsNullOrWhiteSpace(member.Email))
+                            {
+                                <div class="mt-auto flex items-center justify-center gap-3 pt-3 border-t border-slate-200 dark:border-white/10 w-full">
+                                    @if (!string.IsNullOrWhiteSpace(member.LinkedInUrl))
+                                    {
+                                        <a href="@member.LinkedInUrl" target="_blank" class="text-slate-500 hover:text-cyan transition-colors" title="LinkedIn">
+                                            <partial name="_SocialIcon" model="@("linkedin")" />
+                                        </a>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(member.Email))
+                                    {
+                                        <a href="mailto:@member.Email" class="text-slate-500 hover:text-cyan transition-colors" title="Email">
+                                            <i data-lucide="mail" class="w-4 h-4"></i>
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+}
+
+@* ═══════════════════════════════════════════════════════════
+   CTA BANNER
+   ═══════════════════════════════════════════════════════════ *@
+<section class="relative py-28 md:py-36 z-30 overflow-hidden">
+    <!-- Ambient glows -->
+    <div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+        <!-- Top-right corner bleeding gradient -->
+        <div class="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 w-[800px] h-[800px] bg-gradient-to-br from-cyan/25 to-azure/5 dark:from-cyan/20 dark:to-azure/5 rounded-full blur-[140px]"></div>
+        <!-- Bottom-left corner bleeding gradient -->
+        <div class="absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 w-[800px] h-[800px] bg-gradient-to-tr from-azure/25 to-cyan/5 dark:from-azure/20 dark:to-cyan/5 rounded-full blur-[140px]"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="container relative z-10 px-6 max-w-4xl mx-auto text-center">
+        <!-- Eyebrow badge -->
+        <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-8 animate-fade-in-up">
+            <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+            <span data-en="@ctaBadgeEn" data-ar="@ctaBadgeAr">@ctaBadgeEn</span>
+        </div>
+
+        <h2 class="text-4xl md:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6 animate-fade-in-up"
+            data-en="@ctaTitleEn" data-ar="@ctaTitleAr">@ctaTitleEn</h2>
+        <p class="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-3xl mx-auto animate-fade-in-up" style="animation-delay: 100ms;"
+           data-en="@ctaSubtitleEn"
+           data-ar="@ctaSubtitleAr">
+            @ctaSubtitleEn
+        </p>
+        <div class="flex flex-wrap justify-center gap-4 animate-fade-in-up" style="animation-delay: 200ms;">
+            <a asp-controller="Home" asp-action="Contact" class="inline-flex items-center justify-center rounded-[16px] px-8 py-4 text-base font-bold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300">
+                <span data-en="@ctaButtonEn" data-ar="@ctaButtonAr">@ctaButtonEn</span>
+            </a>
+        </div>
+        <!-- Contact info -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-slate-500 dark:text-slate-400 animate-fade-in-up mt-10"
+             style="animation-delay: 300ms;">
+            <a href="mailto:neurix@aidaleel.com" class="flex items-center gap-2 hover:text-cyan transition-colors">
+                <i data-lucide="mail" class="w-4 h-4 text-cyan flex-shrink-0"></i>
+                neurix@aidaleel.com
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+}

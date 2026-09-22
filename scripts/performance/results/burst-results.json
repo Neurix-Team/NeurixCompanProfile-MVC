@@ -1,0 +1,35 @@
+{
+  "desktop": {
+    "p95": 16.800000000000182,
+    "max": 17,
+    "over50": 0,
+    "longTasks": []
+  },
+  "scrolling": {
+    "p95": 16.899999999999636,
+    "max": 17.100000000000364,
+    "over50": 0,
+    "longTasks": []
+  },
+  "mobile": {
+    "p95": 16.90000000000009,
+    "max": 17.299999999999955,
+    "over50": 0,
+    "longTasks": []
+  },
+  "mobileScrolling": {
+    "p95": 16.90000000000009,
+    "max": 17.5,
+    "over50": 0,
+    "longTasks": []
+  },
+  "errors": [],
+  "checks": [
+    "worker",
+    "particles persist and move at bottom",
+    "light and dark",
+    "mobile overflow",
+    "reduced motion still",
+    "main-thread fallback"
+  ]
+}

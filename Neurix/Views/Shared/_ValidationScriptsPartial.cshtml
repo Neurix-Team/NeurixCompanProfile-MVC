@@ -1,0 +1,34 @@
+@* jQuery is loaded here rather than in the layouts: none of the three layouts
+   (_Layout, _CmsLayout, _CrmLayout) pull it in, and the public site uses vanilla
+   JS + GSAP/Three instead. Client-side validation is the only feature in this
+   project that needs jQuery, so keeping it with the plugins makes this partial
+   self-contained — and load order (jQuery -> validate -> unobtrusive) is enforced.
+   Files come from libman.json; run "libman restore" if they are missing. *@
+<script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
+<script>
+    // Validate on blur, not just on submit.
+    //
+    // jQuery Validation's stock onfocusout stays silent on a field the user has not
+    // submitted yet: for an empty required input, optional() returns the truthy
+    // "dependency-mismatch", so its guard
+    //     element.name in this.submitted || !this.optional(element)
+    // is false and no message is shown until the first save attempt. These forms are
+    // long, so the feedback is wanted as soon as the user leaves a blank field.
+    //
+    // Runs before unobtrusive's document-ready parse, so the default is picked up
+    // when it calls .validate() on each form.
+    (function () {
+        if (!window.jQuery || !jQuery.validator) {
+            return;
+        }
+        jQuery.validator.setDefaults({
+            onfocusout: function (element) {
+                if (!this.checkable(element)) {
+                    this.element(element);
+                }
+            }
+        });
+    })();
+</script>

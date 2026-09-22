@@ -1,0 +1,37 @@
+# .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# React / Node.js
+node_modules/
+dist/
+build/
+
+# Client-side libraries restored by libman land in wwwroot/lib/<pkg>/dist/, which
+# the bare "dist/" rule above silently swallowed — only the LICENSE files ever got
+# committed, so every deploy served 404s for jQuery and jQuery Validation.
+!Neurix/wwwroot/lib/**/dist/
+!Neurix/wwwroot/lib/**/dist/**
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+.perf-tools/
+.publish-worktree/
+TestResults/
+*.trx
+*.pubxml.user
+Neurix/wwwroot/uploads/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS Files
+.DS_Store
+Thumbs.db

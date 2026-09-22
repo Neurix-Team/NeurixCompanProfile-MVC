@@ -1,0 +1,10 @@
+@model Neurix.DAL.Enums.RecordStatus
+
+@if (Model == Neurix.DAL.Enums.RecordStatus.Active)
+{
+    <span class="inline-flex items-center rounded-full border border-cyan/30 bg-cyan/10 px-2.5 py-0.5 text-xs font-medium text-cyan">@L["Active"]</span>
+}
+else
+{
+    <span class="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">@L["Inactive"]</span>
+}

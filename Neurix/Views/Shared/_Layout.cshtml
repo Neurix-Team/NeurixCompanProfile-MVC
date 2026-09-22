@@ -1,0 +1,189 @@
+@using Neurix.BLL.Dtos.Cms
+@using Neurix.BLL.Services.Cms
+@using Neurix.Common
+@using Neurix.Localization
+@inject ICmsCompanyProfileService CmsCompanyProfileService
+@{
+    CmsCompanyProfileDetailDto? companyProfile = null;
+    try
+    {
+        companyProfile = await CmsCompanyProfileService.GetBySlugAsync("neurix");
+    }
+    catch
+    {
+        // Fail-soft
+    }
+
+    var currentLang = CmsLanguage.Current;
+    var isRtl = currentLang.IsRightToLeft;
+    var brandNameEn = companyProfile?.NameEn ?? "Neurix AI";
+    var brandNameAr = companyProfile?.NameAr ?? "نيوركس AI";
+    var brandName = isRtl ? brandNameAr : brandNameEn;
+    var faviconPath = !string.IsNullOrWhiteSpace(companyProfile?.FaviconPath) ? companyProfile.FaviconPath : "/images/favicon.svg";
+    var accentColor = !string.IsNullOrWhiteSpace(companyProfile?.AccentColor) ? companyProfile.AccentColor : null;
+
+    // The design system stores its palette as bare HSL triplets so Tailwind can add
+    // an alpha channel — hsl(var(--azure) / 0.25). Convert the CMS hex values into the
+    // same shape, otherwise they cannot drive the existing variables at all.
+    var accentHsl = BrandColorHelper.ToHslTriplet(accentColor);
+    var hasBrandOverride = accentHsl != null;
+    var pageTitle = string.IsNullOrEmpty(ViewData["Title"] as string) ? brandName : $"{ViewData["Title"]} — {brandName}";
+    var metaDesc = ViewData["MetaDescription"] as string ?? (isRtl ? companyProfile?.TaglineAr : companyProfile?.TaglineEn) ?? "Neurix AI — Technology in service of humanity. Human-centered ecosystems across research, infrastructure, and strategic engagement.";
+}
+<!DOCTYPE html>
+<html lang="@currentLang.Code" dir="@currentLang.Dir" class="@(isRtl ? "font-arabic" : null)">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+        try {
+            document.documentElement.classList.toggle('dark', localStorage.getItem('neurix-theme') === 'dark');
+        } catch (_) { }
+    </script>
+    <title>@pageTitle</title>
+    <meta name="description" content="@metaDesc" />
+    <meta name="author" content="@brandNameEn" />
+
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:description" content="@metaDesc" />
+    <meta property="og:type" content="website" />
+
+    <!-- Favicon / Site Logo -->
+    <link rel="icon" href="@faviconPath" />
+    <link rel="apple-touch-icon" href="@faviconPath" />
+    
+    <!-- Tailwind CSS (locally built, purged) -->
+    <link rel="stylesheet" href="~/css/tailwind.min.css" asp-append-version="true" />
+
+    <script src="~/lib/lucide/dist/umd/lucide.min.js" asp-append-version="true" defer></script>
+
+    <!-- Neurix AI Design System -->
+    <link rel="stylesheet" href="~/css/neurix.css" asp-append-version="true" />
+    <link rel="preload" as="image" href="~/images/neurix-sphere-preview.svg" asp-append-version="true" />
+
+    @* ── CMS Brand Colours ──────────────────────────────────────────────
+       Must come AFTER neurix.css: these rules have the same specificity as the
+       stylesheet's own :root / .dark blocks, so source order decides the winner.
+       Overriding the variables (rather than individual rules) means every
+       Tailwind token — text-cyan, from-azure, shadow glows, gradients — follows
+       the CMS value with no further changes. *@
+    @if (hasBrandOverride)
+    {
+        <style id="cms-brand-colors">
+            :root, .dark {
+                @if (accentHsl != null)
+                {
+                    <text>--accent: @accentHsl;</text>
+                }
+            }
+        </style>
+    }
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="bg-background text-foreground font-sans antialiased">
+
+    <partial name="_Navbar" />
+
+    <div id="neurix-gl" class="fixed inset-0 pointer-events-none" aria-hidden="true">
+        <div id="neurix-network"></div>
+        <img id="neurix-sphere-preview" src="~/images/neurix-sphere-preview.svg" asp-append-version="true" alt="" loading="eager" fetchpriority="high" />
+        <canvas id="neurix-sphere-canvas"></canvas>
+    </div>
+
+    <main id="public-main" class="relative z-10 min-h-screen overflow-x-clip">
+        @RenderBody()
+    </main>
+
+    <partial name="_Footer" />
+
+    <partial name="_AIChatWidget" />
+
+    <!-- Theme Toggle Script -->
+    <script>
+        // Theme toggle — persisted in localStorage
+        (function () {
+            const THEME_KEY = 'neurix-theme';
+            const root = document.documentElement;
+
+            function applyTheme(theme) {
+                root.classList.toggle('dark', theme === 'dark');
+                try { localStorage.setItem(THEME_KEY, theme); } catch (_) { }
+                updateIcons(theme);
+                // Notify sphere engine of theme change
+                window.dispatchEvent(new CustomEvent('neurix-theme-change', { detail: { theme: theme } }));
+            }
+
+            function updateIcons(theme) {
+                const sunIcon = document.getElementById('icon-sun');
+                const moonIcon = document.getElementById('icon-moon');
+                if (!sunIcon || !moonIcon) return;
+                if (theme === 'dark') {
+                    sunIcon.style.cssText = 'transform: rotate(90deg) scale(0); opacity: 0; position: absolute;';
+                    moonIcon.style.cssText = 'transform: rotate(0deg) scale(1); opacity: 1; position: absolute;';
+                } else {
+                    sunIcon.style.cssText = 'transform: rotate(0deg) scale(1); opacity: 1; position: absolute;';
+                    moonIcon.style.cssText = 'transform: rotate(-90deg) scale(0); opacity: 0; position: absolute;';
+                }
+            }
+
+            // Initialize
+            const saved = root.classList.contains('dark') ? 'dark' : 'light';
+            applyTheme(saved);
+
+            // Expose globally
+            window.toggleTheme = function () {
+                const current = root.classList.contains('dark') ? 'dark' : 'light';
+                applyTheme(current === 'dark' ? 'light' : 'dark');
+            };
+        })();
+
+        // Navbar scroll effect
+        (function () {
+            const header = document.getElementById('main-navbar');
+            if (!header) return;
+            let wasScrolled;
+            function onScroll() {
+                const scrolled = window.scrollY > 24;
+                if (scrolled === wasScrolled) return;
+                wasScrolled = scrolled;
+                if (scrolled) {
+                    header.classList.add('backdrop-blur-xl', 'bg-background/60', 'border-b', 'border-border/60');
+                    header.classList.remove('bg-transparent', 'border-transparent');
+                } else {
+                    header.classList.remove('backdrop-blur-xl', 'bg-background/60', 'border-b', 'border-border/60');
+                    header.classList.add('bg-transparent', 'border-transparent');
+                }
+            }
+            onScroll();
+            window.addEventListener('scroll', onScroll, { passive: true });
+        })();
+
+        // Floating label fields
+        document.querySelectorAll('.floating-field input, .floating-field textarea').forEach(function (el) {
+            function check() {
+                el.closest('.floating-field').classList.toggle('is-filled', el.value.length > 0);
+            }
+            el.addEventListener('input', check);
+            check();
+        });
+
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+
+    <script src="~/js/neurix-sphere.js" asp-append-version="true" defer></script>
+
+    <script src="~/lib/gsap/gsap.min.js" asp-append-version="true" defer></script>
+
+    <!-- DOM Animations (Concepts 2, 3, 4) -->
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+
+    <!-- AI Chat Controller -->
+    <script src="~/js/ai-chat.js" asp-append-version="true" defer></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

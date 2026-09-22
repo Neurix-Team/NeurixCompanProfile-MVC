@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "unpkg",
+      "library": "lucide@1.47.0",
+      "destination": "wwwroot/lib/lucide/",
+      "files": ["dist/umd/lucide.min.js"]
+    },
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery/dist/",
+      "files": [
+        "jquery.min.js",
+        "jquery.min.map",
+        "jquery.js"
+      ]
+    },
+    {
+      "library": "jquery-validate@1.21.0",
+      "destination": "wwwroot/lib/jquery-validation/dist/",
+      "files": [
+        "jquery.validate.min.js",
+        "additional-methods.min.js"
+      ]
+    },
+    {
+      "library": "jquery-validation-unobtrusive@4.0.0",
+      "destination": "wwwroot/lib/jquery-validation-unobtrusive/dist/",
+      "files": [
+        "jquery.validate.unobtrusive.min.js"
+      ]
+    },
+    {
+      "library": "gsap@3.12.5",
+      "destination": "wwwroot/lib/gsap/",
+      "files": [
+        "gsap.min.js",
+        "ScrollTrigger.min.js"
+      ]
+    }
+  ]
+}

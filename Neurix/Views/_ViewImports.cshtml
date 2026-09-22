@@ -1,0 +1,11 @@
+﻿@using Neurix
+@using Neurix.Models
+@using Neurix.Helpers
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@* RequiredLabelTagHelper: auto-appends the red asterisk to labels bound to required
+   properties. Registered globally so every current and future form picks it up. *@
+@addTagHelper *, Neurix
+@using Neurix.Localization
+@* Dashboard translation helper, available in every view as @L["English text"].
+   The English string is the key, so anything not yet in cms.ar.json renders as English. *@
+@inject ICmsLocalizer L

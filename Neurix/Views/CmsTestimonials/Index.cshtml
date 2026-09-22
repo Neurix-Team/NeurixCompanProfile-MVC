@@ -1,0 +1,122 @@
+@model Neurix.Models.CmsTestimonialListViewModel
+@{
+    ViewData["Title"] = "Testimonials";
+    Layout = "_CmsLayout";
+}
+
+<div class="space-y-6">
+
+    @* Header *@
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">@L["Client & Partner Testimonials"]</h1>
+            <p class="text-sm text-muted-foreground">@L["Manage social proof, stakeholder endorsements, and quotes displayed on the public site."]</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            @if (Model.Companies.Count > 1)
+            {
+                <form method="get" class="flex items-center gap-2">
+                    <select name="companyId" onchange="this.form.submit()"
+                            class="rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none">
+                        <option value="">@L["All Brands"]</option>
+                        @foreach (var c in Model.Companies)
+                        {
+                            <option value="@c.Id" selected="@(c.Id == Model.SelectedCompanyId)">@c.NameEn</option>
+                        }
+                    </select>
+                </form>
+            }
+
+            <a asp-action="Create" asp-route-companyId="@Model.SelectedCompanyId"
+               class="inline-flex items-center gap-2 rounded-xl bg-cyan px-4 py-2 text-xs font-semibold text-slate-950 hover:bg-cyan/90 transition-colors shadow-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                @L["Add Testimonial"]
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Testimonials.Count == 0)
+    {
+        <div class="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground space-y-3">
+            <i data-lucide="message-square" class="w-10 h-10 mx-auto text-muted-foreground/50"></i>
+            <p class="text-sm">@L["No testimonials added yet."]</p>
+            <a asp-action="Create" asp-route-companyId="@Model.SelectedCompanyId" class="inline-flex items-center gap-1.5 text-xs text-cyan hover:underline">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> @L["Add the first quote"]
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            @foreach (var t in Model.Testimonials)
+            {
+                <div class="rounded-2xl border border-border bg-card p-5 shadow-sm hover:border-cyan/40 transition-all flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-2.5">
+                                @if (!string.IsNullOrWhiteSpace(t.AuthorPhotoPath))
+                                {
+                                    <img src="@t.AuthorPhotoPath" alt="@t.AuthorNameEn" class="w-10 h-10 rounded-full object-cover border border-border" />
+                                }
+                                else
+                                {
+                                    <div class="w-10 h-10 rounded-full bg-cyan/10 border border-cyan/20 flex items-center justify-center text-cyan font-bold text-xs">
+                                        @t.AuthorNameEn.Substring(0, Math.Min(2, t.AuthorNameEn.Length)).ToUpper()
+                                    </div>
+                                }
+                                <div>
+                                    <h3 class="text-sm font-semibold text-foreground">@t.AuthorNameEn</h3>
+                                    <p class="text-[11px] text-muted-foreground">@(t.AuthorTitleEn ?? t.CompanyName)</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1">
+                                <partial name="_CmsStatusBadge" model="t.IsPublished" />
+                                @if (t.IsFeatured)
+                                {
+                                    <span class="text-[10px] font-medium text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">@L["Featured"]</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-0.5 text-amber-400">
+                            @for (int i = 0; i < t.Rating; i++)
+                            {
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                            }
+                        </div>
+
+                        <p class="text-xs text-foreground/80 leading-relaxed italic line-clamp-3">
+                            "@t.QuoteEn"
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 pt-3 mt-4 border-t border-border">
+                        <div class="flex items-center gap-2">
+                            <a asp-action="Edit" asp-route-id="@t.Id" class="text-xs font-medium text-muted-foreground hover:text-foreground">@L["Edit"]</a>
+                            <a asp-action="Details" asp-route-id="@t.Id" class="text-xs font-medium text-muted-foreground hover:text-foreground">@L["View"]</a>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <form asp-action="TogglePublish" asp-route-id="@t.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="isPublished" value="@(!t.IsPublished)" />
+                                <input type="hidden" name="companyId" value="@Model.SelectedCompanyId" />
+                                <button type="submit" class="text-muted-foreground hover:text-foreground">
+                                    <i data-lucide="@(t.IsPublished ? "eye-off" : "check-circle")" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </form>
+                            <form asp-action="Delete" asp-route-id="@t.Id" method="post" onsubmit="return confirm('@L["Delete this testimonial?"]');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="companyId" value="@Model.SelectedCompanyId" />
+                                <button type="submit" class="text-rose-500 hover:text-rose-400">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>

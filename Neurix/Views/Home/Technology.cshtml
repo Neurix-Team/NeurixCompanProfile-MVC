@@ -1,0 +1,209 @@
+@model Neurix.BLL.Dtos.Cms.CmsDivisionPageDetailDto?
+@using Neurix.BLL.Common
+@using Neurix.Common
+@{
+    var titleEn = !string.IsNullOrWhiteSpace(Model?.HeroTitleEn) ? Model.HeroTitleEn : "From Research to Intelligent Applications";
+    var titleAr = !string.IsNullOrWhiteSpace(Model?.HeroTitleAr) ? Model.HeroTitleAr : "من الأبحاث إلى التطبيقات الذكية";
+    var subtitleEn = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleEn) ? Model.HeroSubtitleEn : "Neurix AI Tech transforms Neurix AI Labs' research outputs into advanced applications and technology platforms, combining applied engineering with research-driven innovation to build scalable solutions for modern digital markets.";
+    var subtitleAr = !string.IsNullOrWhiteSpace(Model?.HeroSubtitleAr) ? Model.HeroSubtitleAr : "تقوم تكنولوجيا نيوركس AI بتحويل مخرجات مختبرات نيوركس AI البحثية إلى تطبيقات ومنصات تقنية متقدمة، تجمع بين الهندسة العملية والابتكار المدفوع بالبحث لتطوير حلول جاهزة للأسواق المستقبلية";
+
+    ViewData["Title"] = "Neurix AI Technology";
+
+    // ── CMS-managed bands (/cms/page-sections/technology) ──
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var heroBand = bands.Band(CmsPageKeys.Bands.Hero);
+    var overviewBand = bands.Band(CmsPageKeys.Bands.Overview);
+    var ctaBand = bands.Band(CmsPageKeys.Bands.Cta);
+
+    var heroChips = bands.ItemsOf(CmsPageKeys.Bands.Hero);
+    var buildItems = bands.ItemsOf(CmsPageKeys.Bands.Overview);
+
+    var cards = buildItems.Count > 0
+        ? buildItems.Select(c => new {
+            Icon = string.IsNullOrWhiteSpace(c.IconName) ? "sparkles" : c.IconName!,
+            TitleEn = c.TitleEn,
+            TitleAr = c.TitleAr,
+            DescEn = c.DescriptionEn ?? string.Empty,
+            DescAr = c.DescriptionAr ?? string.Empty
+        }).ToList()
+        : new[] {
+            new {
+                Icon = "database",
+                TitleEn = "Data & Decision Platforms",
+                TitleAr = "منصات البيانات واتخاذ القرار",
+                DescEn = "Unified platforms that transform complex data into real-time insights, enabling faster, smarter, and more accurate decision-making.",
+                DescAr = "منصات موحدة تحول البيانات المعقدة إلى رؤى لحظية تدعم اتخاذ قرارات أسرع وأكثر دقة"
+            },
+            new {
+                Icon = "app-window",
+                TitleEn = "Integrated Applications",
+                TitleAr = "تطبيقات متكاملة",
+                DescEn = "Connected applications designed for real-world environments, enabling intelligent operations, seamless user experiences, and scalable performance.",
+                DescAr = "تطبيقات مترابطة مصممة للاستخدام الواقعي، توفر عمليات ذكية وتجارب استخدام سلسة وقابلة للتوسع"
+            },
+            new {
+                Icon = "cpu",
+                TitleEn = "Artificial Intelligence Systems",
+                TitleAr = "أنظمة الذكاء الاصطناعي",
+                DescEn = "Intelligent systems capable of processing and understanding data to support automation, operational efficiency, and intelligent decision-making.",
+                DescAr = "أنظمة ذكية قادرة على معالجة البيانات وفهمها واتخاذ قرارات تدعم الأتمتة والعمليات التشغيلية الحديثة."
+            }
+        }.ToList();
+
+    var overviewImage = CmsBandText.Pick(overviewBand?.ImagePath, "/images/Artificial Intelligence Systems.png");
+}
+
+@if (heroBand?.IsPublished != false)
+{
+    <section class="relative flex flex-col items-center justify-center overflow-hidden pt-28 pb-14 md:pt-36 md:pb-18">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+
+        <div class="container relative z-30 px-6 text-center max-w-5xl">
+            @{
+                var heroBadgeEn = CmsBandText.Pick(heroBand?.BadgeEn, "Our Tech Division");
+                var heroBadgeAr = CmsBandText.Pick(heroBand?.BadgeAr, "قسم التكنولوجيا");
+            }
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-10 animate-fade-in">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@heroBadgeEn" data-ar="@heroBadgeAr">@heroBadgeEn</span>
+            </div>
+
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold leading-[1.1] text-slate-900 dark:text-white mb-6 animate-fade-in-up">
+                <span data-en="@titleEn" data-ar="@titleAr">@titleEn</span>
+            </h1>
+
+            <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed animate-fade-in-up"
+               data-en="@subtitleEn"
+               data-ar="@subtitleAr">
+                @subtitleEn
+            </p>
+
+            <div class="mt-14 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[10px] sm:text-xs uppercase tracking-[0.2em] text-slate-600/70 dark:text-slate-300/70">
+                @if (heroChips.Count > 0)
+                {
+                    @for (var i = 0; i < heroChips.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            <span class="h-px w-8 bg-border"></span>
+                        }
+                        <span data-en="@heroChips[i].TitleEn" data-ar="@heroChips[i].TitleAr">@heroChips[i].TitleEn</span>
+                    }
+                }
+                else
+                {
+                    <span data-en="Data Platforms" data-ar="منصات البيانات">Data Platforms</span>
+                    <span class="h-px w-8 bg-border"></span>
+                    <span data-en="Integrated Applications" data-ar="تطبيقات متكاملة">Integrated Applications</span>
+                    <span class="h-px w-8 bg-border"></span>
+                    <span data-en="AI Systems" data-ar="أنظمة الذكاء الاصطناعي">AI Systems</span>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (overviewBand?.IsPublished != false)
+{
+    <section class="relative py-24 md:py-32 z-30">
+        <div class="container px-6 max-w-7xl mx-auto">
+            @{
+                var buildTitleEn = CmsBandText.Pick(overviewBand?.TitlePrefixEn, "What Neurix AI Tech Builds");
+                var buildTitleAr = CmsBandText.Pick(overviewBand?.TitlePrefixAr, "ماذا تبني تكنولوجيا نيوركس AI؟");
+                var buildBodyEn = CmsBandText.Pick(overviewBand?.BodyEn, "Transforming research-backed concepts into practical software applications, decision platforms, and scalable AI solutions.");
+                var buildBodyAr = CmsBandText.Pick(overviewBand?.BodyAr, "تحويل المفاهيم القائمة على البحث إلى تطبيقات عملية، ومنصات اتخاذ قرار، وحلول ذكاء اصطناعي قابلة للتوسع.");
+            }
+            <!-- Title Block -->
+            <div class="max-w-3xl text-left rtl:text-right mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6"
+                    data-en="@buildTitleEn"
+                    data-ar="@buildTitleAr">@buildTitleEn</h2>
+                <p class="text-base md:text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed"
+                    data-en="@buildBodyEn"
+                    data-ar="@buildBodyAr">
+                    @buildBodyEn
+                </p>
+            </div>
+
+            <!-- 2-Column Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+                <!-- Left Side: 3 Stacked Cards (lg:col-span-5) -->
+                <div class="lg:col-span-5 flex flex-col gap-6 text-left rtl:text-right">
+                    @foreach (var c in cards)
+                    {
+                        <div class="group relative flex flex-col rounded-2xl border border-slate-300/80 dark:border-white/10 bg-slate-100/40 dark:bg-card/20 backdrop-blur-md p-6 transition-all duration-300 hover:border-cyan/50 hover:shadow-[0_15px_30px_-5px_hsl(var(--cyan)/0.15)] dark:hover:shadow-[0_15px_30px_-5px_hsl(var(--cyan)/0.2)]">
+                            <div class="w-10 h-10 rounded-xl bg-cyan/10 flex items-center justify-center text-cyan mb-4 transition-transform duration-300 group-hover:scale-110">
+                                <i data-lucide="@c.Icon" class="w-5 h-5"></i>
+                            </div>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-2 text-base" data-en="@c.TitleEn" data-ar="@c.TitleAr">@c.TitleEn</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed" data-en="@c.DescEn" data-ar="@c.DescAr">@c.DescEn</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Right Side: Big Image (lg:col-span-7) -->
+                <div class="lg:col-span-7">
+                    <div class="group rounded-[2rem] overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] aspect-[1.07] bg-slate-100 dark:bg-card transition-all duration-500 hover:scale-[1.02] hover:border-cyan/50 hover:shadow-[0_20px_45px_hsl(var(--cyan)/0.15)]">
+                        <img src="@overviewImage" alt="@buildTitleEn" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+}
+
+@if (ctaBand?.IsPublished != false)
+{
+    <section class="relative py-28 md:py-36 z-30 overflow-hidden">
+        <!-- Ambient glows -->
+        <div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+            <!-- Top-right corner bleeding gradient -->
+            <div class="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 w-[800px] h-[800px] bg-gradient-to-br from-cyan/25 to-azure/5 dark:from-cyan/20 dark:to-azure/5 rounded-full blur-[140px]"></div>
+            <!-- Bottom-left corner bleeding gradient -->
+            <div class="absolute bottom-0 left-0 -translate-x-1/3 translate-y-1/3 w-[800px] h-[800px] bg-gradient-to-tr from-azure/25 to-cyan/5 dark:from-azure/20 dark:to-cyan/5 rounded-full blur-[140px]"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="container relative z-10 px-6 max-w-4xl mx-auto text-center">
+            @{
+                var ctaBadgeEn = CmsBandText.Pick(ctaBand?.BadgeEn, "Get Started");
+                var ctaBadgeAr = CmsBandText.Pick(ctaBand?.BadgeAr, "ابدأ الآن");
+                var ctaTitleEn = CmsBandText.Pick(ctaBand?.TitlePrefixEn, "Build with Neurix AI Tech");
+                var ctaTitleAr = CmsBandText.Pick(ctaBand?.TitlePrefixAr, "ابدأ البناء مع تكنولوجيا نيوركس AI");
+                var ctaBodyEn = CmsBandText.Pick(ctaBand?.BodyEn, "Transform research-backed concepts into practical software applications and scalable technology opportunities.");
+                var ctaBodyAr = CmsBandText.Pick(ctaBand?.BodyAr, "حول المفاهيم القائمة على البحث إلى تطبيقات برمجية عملية وفرص تقنية قابلة للتوسع.");
+                var ctaButtonEn = CmsBandText.PickPair(ctaBand?.ButtonTextEn, ctaBand?.ButtonTextAr, "Discuss Your Project");
+                var ctaButtonAr = CmsBandText.PickPair(ctaBand?.ButtonTextAr, ctaBand?.ButtonTextEn, "ناقش مشروعك");
+                var ctaButtonUrl = CmsBandText.Pick(ctaBand?.ButtonUrl, "/Home/Contact");
+            }
+            <!-- Eyebrow badge -->
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-8 animate-fade-in-up">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@ctaBadgeEn" data-ar="@ctaBadgeAr">@ctaBadgeEn</span>
+            </div>
+
+            <h2 class="text-4xl md:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6 animate-fade-in-up" data-en="@ctaTitleEn" data-ar="@ctaTitleAr">@ctaTitleEn</h2>
+            <p class="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-3xl mx-auto animate-fade-in-up" style="animation-delay: 100ms;" data-en="@ctaBodyEn" data-ar="@ctaBodyAr">
+                @ctaBodyEn
+            </p>
+            @if (!string.IsNullOrWhiteSpace(ctaButtonEn))
+            {
+                <div class="flex flex-wrap justify-center gap-4 animate-fade-in-up" style="animation-delay: 200ms;">
+                    <a href="@ctaButtonUrl" class="inline-flex items-center justify-center rounded-[16px] px-8 py-4 text-base font-bold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300">
+                        <span data-en="@ctaButtonEn" data-ar="@ctaButtonAr">@ctaButtonEn</span>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@section Scripts {
+<script>
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+</script>
+}

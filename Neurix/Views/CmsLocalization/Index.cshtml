@@ -1,0 +1,82 @@
+@using Neurix.Localization
+@{
+    Layout = "_CmsLayout";
+    ViewData["Title"] = "Localization";
+    var probe = ViewData["Probe"] as Dictionary<string, string> ?? new();
+    var current = CmsLanguage.Current;
+}
+
+<div class="space-y-6">
+    <div>
+        <h1 class="text-xl font-bold text-foreground">@L["Localization infrastructure"]</h1>
+        <p class="text-sm text-muted-foreground mt-1">
+            @L["Self-test page for the dashboard localization plumbing: language resolution, direction and dictionary lookup."]
+        </p>
+    </div>
+
+    <div class="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <h2 class="text-sm font-semibold text-foreground">@L["Resolved for this request"]</h2>
+        <dl class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+            <dt class="text-muted-foreground">@L["UI language"]</dt>
+            <dd id="probe-lang" class="font-mono text-foreground">@current.Code (@current.NativeName)</dd>
+
+            <dt class="text-muted-foreground">@L["Direction"]</dt>
+            <dd id="probe-dir" class="font-mono text-foreground">@current.Dir</dd>
+
+            <dt class="text-muted-foreground">@L["Right-to-left"]</dt>
+            <dd id="probe-rtl" class="font-mono text-foreground">@current.IsRightToLeft.ToString().ToLowerInvariant()</dd>
+
+            <dt class="text-muted-foreground">@L["Formatting culture"]</dt>
+            <dd class="font-mono text-foreground">@System.Globalization.CultureInfo.CurrentCulture.Name (pinned)</dd>
+
+            <dt class="text-muted-foreground">@L["Culture cookie"]</dt>
+            <dd class="font-mono text-foreground break-all">
+                @(Context.Request.Cookies[CmsLanguageExtensions.CookieName] ?? "(not set)")
+            </dd>
+        </dl>
+    </div>
+
+    <div class="rounded-2xl border border-border bg-card p-5 space-y-3">
+@* Raw "&" in the key, not "&amp;": Razor HTML-encodes the localizer's output, so an
+   entity in the dictionary would be double-encoded to "&amp;amp;". *@
+        <h2 class="text-sm font-semibold text-foreground">@L["Dictionary lookup & fallback chain"]</h2>
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-muted-foreground">
+                    <th class="pb-2 font-medium">@L["Key"]</th>
+                    <th class="pb-2 font-medium">@L["Resolved value"]</th>
+                </tr>
+            </thead>
+            <tbody class="font-mono">
+                @foreach (var kv in probe)
+                {
+                    <tr class="border-t border-border/60">
+                        <td class="py-1.5 pe-4 text-muted-foreground">@kv.Key</td>
+                        <td class="py-1.5 text-foreground" data-probe-key="@kv.Key">@kv.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p class="text-xs text-muted-foreground">
+            @L["A key present only in the English file must fall back to its English value; a key present in neither file must render as the key itself."]
+        </p>
+    </div>
+
+    <div class="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <h2 class="text-sm font-semibold text-foreground">@L["Switch language"]</h2>
+        <div class="flex flex-wrap gap-2">
+            @foreach (var lang in CmsLanguage.All)
+            {
+                var isActive = lang.Code == current.Code;
+                <a asp-action="SetLanguage" asp-route-lang="@lang.Code"
+                   asp-route-returnUrl="@Context.Request.Path"
+                   class="rounded-xl border px-4 py-2 text-xs font-semibold transition-colors @(isActive ? "border-cyan/60 bg-cyan/10 text-cyan" : "border-border text-muted-foreground hover:text-foreground")">
+                    @lang.NativeName (@lang.Code)
+                </a>
+            }
+        </div>
+        <p class="text-xs text-muted-foreground">
+            @L["The ?lang=ar query also works on any dashboard URL and is persisted to the cookie, so it survives navigation."]
+        </p>
+    </div>
+</div>

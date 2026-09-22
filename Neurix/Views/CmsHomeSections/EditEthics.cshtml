@@ -1,0 +1,213 @@
+@model Neurix.Models.CmsEthicsSectionFormViewModel
+@{
+    ViewData["Title"] = L["Edit Vision & Implementation Framework"];
+    Layout = "_CmsLayout";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400">#ethics</span>
+                <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">@L["Vision & Implementation Framework"]</h1>
+            </div>
+            <p class="text-sm text-muted-foreground mt-1">@L["Manage operational strategy copy, narrative description, and dual overlapping tech images."]</p>
+        </div>
+        <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="inline-flex items-center gap-2 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4 dir-flip"></i> @L["Back to Sections"]
+        </a>
+    </div>
+
+    <!-- Form -->
+    <form asp-action="EditEthics" method="post" enctype="multipart/form-data" class="space-y-6">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyProfileId" />
+        <input type="hidden" asp-for="TopImagePath" />
+        <input type="hidden" asp-for="BottomImagePath" />
+        <input type="hidden" asp-for="BackgroundImagePath" />
+
+        <div asp-validation-summary="ModelOnly" class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-xs text-rose-500"></div>
+
+        <!-- 1. Eyebrow Badge -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
+                <i data-lucide="tag" class="w-4 h-4 text-emerald-400"></i>
+                @L["Eyebrow Badge"]
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="BadgeEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="BadgeEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-emerald-400 focus:outline-none" />
+                    <span asp-validation-for="BadgeEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="BadgeAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="BadgeAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-emerald-400 focus:outline-none" />
+                    <span asp-validation-for="BadgeAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Headline Breakdown -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-border pb-3">
+                <h3 class="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <i data-lucide="type" class="w-4 h-4 text-emerald-400"></i>
+                    @L["Section Headline"]
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="TitlePrefixEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <input asp-for="TitlePrefixEn" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="Our Vision & " />
+                </div>
+                <div>
+                    <label asp-for="TitleHighlightEn" class="block text-xs font-medium text-emerald-400 font-bold mb-1.5">@L["Title Highlight / Glowing (EN)"]</label>
+                    <input asp-for="TitleHighlightEn" class="w-full rounded-xl border border-emerald-500/40 bg-emerald-500/5 px-3.5 py-2.5 text-sm font-bold text-emerald-400 focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="Implementation Framework" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" dir="rtl">
+                <div>
+                    <label asp-for="TitlePrefixAr" class="block text-xs font-medium text-muted-foreground mb-1.5 font-arabic"></label>
+                    <input asp-for="TitlePrefixAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="رؤيتنا و " />
+                </div>
+                <div>
+                    <label asp-for="TitleHighlightAr" class="block text-xs font-medium text-emerald-400 font-bold mb-1.5 font-arabic">@L["Title Highlight / Glowing (AR)"]</label>
+                    <input asp-for="TitleHighlightAr" dir="rtl" class="w-full rounded-xl border border-emerald-500/40 bg-emerald-500/5 px-3.5 py-2.5 text-sm font-bold text-emerald-400 font-arabic focus:ring-2 focus:ring-emerald-400 focus:outline-none" placeholder="إطار عمل التنفيذ" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Narrative Description -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-4">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
+                <i data-lucide="align-left" class="w-4 h-4 text-emerald-400"></i>
+                @L["Narrative & Strategic Description"]
+            </h3>
+
+            <div class="space-y-4">
+                <div>
+                    <label asp-for="DescriptionEn" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="DescriptionEn" rows="3" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:ring-2 focus:ring-emerald-400 focus:outline-none"></textarea>
+                    <span asp-validation-for="DescriptionEn" class="text-xs text-rose-500"></span>
+                </div>
+                <div>
+                    <label asp-for="DescriptionAr" class="block text-xs font-medium text-muted-foreground mb-1.5"></label>
+                    <textarea asp-for="DescriptionAr" rows="3" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground font-arabic focus:ring-2 focus:ring-emerald-400 focus:outline-none"></textarea>
+                    <span asp-validation-for="DescriptionAr" class="text-xs text-rose-500"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Dual Overlapping Images (Software & Research Cards) -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 space-y-6">
+            <h3 class="text-sm font-semibold text-foreground flex items-center gap-2 border-b border-border pb-3">
+                <i data-lucide="image" class="w-4 h-4 text-emerald-400"></i>
+                @L["Dual Overlapping Image Cards"]
+            </h3>
+
+            <!-- Card 1: Top Image (Software Setup) -->
+            <div class="p-4 rounded-xl bg-background/50 border border-border space-y-4">
+                <h4 class="text-xs font-bold text-foreground flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan"></span>
+                    @L["Top Image Card (Software Desk Setup)"]
+                </h4>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-4">
+                        @if (!string.IsNullOrWhiteSpace(Model.TopImagePath))
+                        {
+                            <div class="relative rounded-xl overflow-hidden border border-border aspect-[4/3] bg-muted/40 group">
+                                <img src="@Url.Content(Model.TopImagePath)" alt="Preview" class="w-full h-full object-cover" />
+                                <div class="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center text-[11px] text-foreground font-mono truncate">
+                                    @Model.TopImagePath
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="md:col-span-8 space-y-3">
+                        <div>
+                            <label asp-for="TopImageFile" class="block text-xs font-medium text-muted-foreground mb-1.5">@L["Upload New Top Image (PNG, JPG, WebP)"]</label>
+                            <input asp-for="TopImageFile" type="file" accept="image/*" class="w-full text-xs text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-cyan/10 file:text-cyan hover:file:bg-cyan/20 cursor-pointer" />
+                            <span asp-validation-for="TopImageFile" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label asp-for="TopImageAltEn" class="block text-[11px] text-muted-foreground mb-1"></label>
+                                <input asp-for="TopImageAltEn" class="w-full rounded-xl border border-border bg-background px-3 py-1.5 text-xs text-foreground focus:ring-2 focus:ring-emerald-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label asp-for="TopImageAltAr" class="block text-[11px] text-muted-foreground mb-1"></label>
+                                <input asp-for="TopImageAltAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-arabic text-foreground focus:ring-2 focus:ring-emerald-400 focus:outline-none" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Bottom Image (Research Lab) -->
+            <div class="p-4 rounded-xl bg-background/50 border border-border space-y-4">
+                <h4 class="text-xs font-bold text-foreground flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-azure"></span>
+                    @L["Bottom Image Card (Research Lab Setup)"]
+                </h4>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    <div class="md:col-span-4">
+                        @if (!string.IsNullOrWhiteSpace(Model.BottomImagePath))
+                        {
+                            <div class="relative rounded-xl overflow-hidden border border-border aspect-[4/3] bg-muted/40 group">
+                                <img src="@Url.Content(Model.BottomImagePath)" alt="Preview" class="w-full h-full object-cover" />
+                                <div class="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center text-[11px] text-foreground font-mono truncate">
+                                    @Model.BottomImagePath
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="md:col-span-8 space-y-3">
+                        <div>
+                            <label asp-for="BottomImageFile" class="block text-xs font-medium text-muted-foreground mb-1.5">@L["Upload New Bottom Image (PNG, JPG, WebP)"]</label>
+                            <input asp-for="BottomImageFile" type="file" accept="image/*" class="w-full text-xs text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-azure/10 file:text-azure hover:file:bg-azure/20 cursor-pointer" />
+                            <span asp-validation-for="BottomImageFile" class="text-xs text-rose-500"></span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label asp-for="BottomImageAltEn" class="block text-[11px] text-muted-foreground mb-1"></label>
+                                <input asp-for="BottomImageAltEn" class="w-full rounded-xl border border-border bg-background px-3 py-1.5 text-xs text-foreground focus:ring-2 focus:ring-emerald-400 focus:outline-none" />
+                            </div>
+                            <div>
+                                <label asp-for="BottomImageAltAr" class="block text-[11px] text-muted-foreground mb-1"></label>
+                                <input asp-for="BottomImageAltAr" dir="rtl" class="w-full rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-arabic text-foreground focus:ring-2 focus:ring-emerald-400 focus:outline-none" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Publishing Status & Submit -->
+        <div class="rounded-2xl border border-border bg-card/80 backdrop-blur-xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <input asp-for="IsPublished" type="checkbox" class="h-4 w-4 rounded border-border text-emerald-400 focus:ring-emerald-400 bg-background" />
+                <div>
+                    <label asp-for="IsPublished" class="text-xs font-semibold text-foreground"></label>
+                    <p class="text-[11px] text-muted-foreground">@L["When checked, this section is rendered on the public website."]</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a asp-action="Index" asp-route-companyId="@Model.CompanyProfileId" class="px-4 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                    @L["Cancel"]
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-semibold text-primary-foreground bg-button-gradient hover:scale-[1.02] shadow-[0_0_15px_hsl(var(--cyan)/0.25)] transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    @L["Save Changes"]
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,141 @@
+@model IReadOnlyList<Neurix.BLL.Dtos.Cms.CmsProjectSummaryDto>
+@using Neurix.BLL.Common
+@using Neurix.BLL.Dtos.Cms
+@using Neurix.Common
+@{
+    ViewData["Title"] = "Projects & Case Studies";
+
+    // ── CMS-managed band (/cms/page-sections/portfolio) ──
+    var bands = CmsBandText.Bands(ViewData["PageBands"]);
+    var heroBand = bands.Band(CmsPageKeys.Bands.Hero);
+
+    var badgeEn = CmsBandText.Pick(heroBand?.BadgeEn, "Engineering Portfolio");
+    var badgeAr = CmsBandText.Pick(heroBand?.BadgeAr, "معرض الأعمال الهندسية");
+    var prefixEn = CmsBandText.Pick(heroBand?.TitlePrefixEn, "Featured ");
+    var prefixAr = CmsBandText.Pick(heroBand?.TitlePrefixAr, "المشاريع ");
+    var highlightEn = CmsBandText.Pick(heroBand?.TitleHighlightEn, "Projects");
+    var highlightAr = CmsBandText.Pick(heroBand?.TitleHighlightAr, "المميزة");
+    var bodyEn = CmsBandText.Pick(heroBand?.BodyEn, "Production-grade AI architectures, sovereign research engines, and high-throughput software systems deployed across sectors.");
+    var bodyAr = CmsBandText.Pick(heroBand?.BodyAr, "معماريات ذكاء اصطناعي إنتاجية، ومحركات بحثية سيادية، وأنظمة برمجية فائقة السرعة نُشرت عبر مختلف القطاعات.");
+    var emptyEn = CmsBandText.Pick(heroBand?.EmptyStateEn, "No projects available at this moment. Check back shortly.");
+    var emptyAr = CmsBandText.Pick(heroBand?.EmptyStateAr, "لا توجد مشروعات معروضة حالياً. يرجى المتابعة قريباً.");
+    var caseStudyEn = CmsBandText.Pick(heroBand?.ItemLinkTextEn, "View Case Study");
+    var caseStudyAr = CmsBandText.Pick(heroBand?.ItemLinkTextAr, "عرض دراسة الحالة");
+
+    // Per-card labels come from the homepage band's header row so the wording matches there.
+    var meta = ViewData["CardMeta"] as CmsListSectionHeaderDto;
+    var fallbackCategoryEn = CmsBandText.Pick(meta?.DefaultCategoryLabelEn, "AI System");
+    var fallbackCategoryAr = CmsBandText.Pick(meta?.DefaultCategoryLabelAr, "نظام ذكاء اصطناعي");
+}
+
+@if (heroBand?.IsPublished != false)
+{
+    <section class="relative min-h-[50vh] flex flex-col items-center justify-center pt-32 pb-16 overflow-hidden">
+        <div class="absolute inset-0 z-0 bg-hero-radial" aria-hidden="true"></div>
+        <div class="absolute inset-0 z-0 bg-grid-pattern pointer-events-none" aria-hidden="true"></div>
+
+        <div class="container relative z-30 text-center max-w-4xl px-5 sm:px-6">
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-sm px-4 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 mb-8 animate-fade-in">
+                <span class="h-1.5 w-1.5 rounded-full bg-cyan animate-pulse"></span>
+                <span data-en="@badgeEn" data-ar="@badgeAr">@badgeEn</span>
+            </div>
+
+            <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+                <span data-en="@prefixEn" data-ar="@prefixAr">@prefixEn</span>
+                <span class="text-gradient-brand" data-en="@highlightEn" data-ar="@highlightAr">@highlightEn</span>
+            </h1>
+
+            <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto"
+               data-en="@bodyEn"
+               data-ar="@bodyAr">
+                @bodyEn
+            </p>
+        </div>
+    </section>
+}
+
+<section class="relative py-16">
+    <div class="container px-5 sm:px-6 max-w-6xl">
+        @if (Model == null || Model.Count == 0)
+        {
+            <div class="rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 p-16 text-center text-slate-500">
+                <p data-en="@emptyEn"
+                   data-ar="@emptyAr">
+                    @emptyEn
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                @foreach (var project in Model)
+                {
+                    <article class="group relative flex flex-col justify-between rounded-3xl border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md overflow-hidden transition-all duration-300 hover:border-cyan/50 hover:-translate-y-1 hover:shadow-[0_0_35px_hsl(var(--cyan)/0.25)]">
+                        @if (!string.IsNullOrWhiteSpace(project.CoverImagePath))
+                        {
+                            <div class="relative aspect-video w-full overflow-hidden bg-muted/40">
+                                <img src="@project.CoverImagePath" alt="@project.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            </div>
+                        }
+
+                        <div class="p-7 space-y-4 flex-1 flex flex-col justify-between">
+                            <div class="space-y-3">
+                                @{
+                                    // A project's own category is a single non-bilingual column, so it
+                                    // stands for both languages; only the fallback differs.
+                                    var categoryEn = CmsBandText.Pick(project.Category, fallbackCategoryEn);
+                                    var categoryAr = CmsBandText.Pick(project.Category, fallbackCategoryAr);
+                                }
+                                <div class="flex items-center justify-between gap-2 text-xs">
+                                    @if (!string.IsNullOrWhiteSpace(categoryEn) || !string.IsNullOrWhiteSpace(categoryAr))
+                                    {
+                                        <span class="rounded-full bg-cyan/10 px-3 py-1 font-semibold text-cyan"
+                                              data-en="@categoryEn" data-ar="@categoryAr">
+                                            @categoryEn
+                                        </span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(project.ClientName))
+                                    {
+                                        <span class="text-slate-500 dark:text-slate-400">@project.ClientName</span>
+                                    }
+                                </div>
+
+                                <h2 class="font-display text-2xl font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-cyan transition-colors">
+                                    <span data-en="@project.TitleEn" data-ar="@project.TitleAr">@project.TitleEn</span>
+                                </h2>
+
+                                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
+                                   data-en="@project.SummaryEn" data-ar="@project.SummaryAr">
+                                    @project.SummaryEn
+                                </p>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(project.TechnologiesUsed))
+                            {
+                                <div class="pt-4 border-t border-slate-200 dark:border-white/10 flex flex-wrap gap-1.5">
+                                    @foreach (var tech in project.TechnologiesUsed.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <span class="text-[11px] rounded-lg border border-slate-300 dark:border-white/10 bg-slate-200/50 dark:bg-card/60 px-2.5 py-1 text-slate-700 dark:text-slate-300 font-mono">
+                                            @tech.Trim()
+                                        </span>
+                                    }
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(caseStudyEn))
+                            {
+                                <div class="pt-4 flex items-center justify-between">
+                                    <a asp-action="ProjectDetail" asp-route-slug="@project.Slug"
+                                       class="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan hover:underline">
+                                        <span data-en="@caseStudyEn" data-ar="@caseStudyAr">@caseStudyEn</span>
+                                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 rtl-flip"></i>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+</section>

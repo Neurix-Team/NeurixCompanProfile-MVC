@@ -1,0 +1,156 @@
+@model Neurix.Models.CmsDivisionPageListViewModel
+@{
+    ViewData["Title"] = "Divisional Pages";
+    Layout = "_CmsLayout";
+}
+
+<div class="space-y-6">
+
+    @* Header *@
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight text-foreground">@L["Divisional Pages"]</h1>
+            <p class="text-sm text-muted-foreground">@L["Manage dynamic hero headlines, mandates, and live content blocks for Labs, Tech, HQ, Plus, and Club."]</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <a asp-controller="CmsPageBands" asp-action="Index" asp-route-companyId="@Model.SelectedCompanyId"
+               class="inline-flex items-center gap-2 rounded-xl bg-card border border-border hover:bg-muted px-3.5 py-2 text-xs font-semibold text-foreground transition-all">
+                <i data-lucide="rows-3" class="w-3.5 h-3.5 text-cyan"></i>
+                @L["All Page Sections"]
+            </a>
+
+            @if (Model.Companies.Count > 1)
+            {
+                <form method="get" class="flex items-center gap-2">
+                    <select name="companyId" onchange="this.form.submit()"
+                            class="rounded-xl border border-border bg-card px-3 py-2 text-xs focus:ring-1 focus:ring-cyan focus:outline-none">
+                        <option value="">@L["All Brands"]</option>
+                        @foreach (var c in Model.Companies)
+                        {
+                            <option value="@c.Id" selected="@(c.Id == Model.SelectedCompanyId)">@c.NameEn</option>
+                        }
+                    </select>
+                </form>
+            }
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <partial name="_CmsAlert" />
+
+    <!-- Explanatory Banner -->
+    <div class="rounded-xl border border-cyan/20 bg-cyan/5 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-start gap-3">
+            <i data-lucide="info" class="w-4 h-4 text-cyan mt-0.5 flex-shrink-0"></i>
+            <p class="text-xs text-muted-foreground">
+                @L["Each division page includes both hero/mandate copy and live page blocks (e.g. Laboratory Capabilities and cards). You can edit the entire page right from here."]
+            </p>
+        </div>
+        <a asp-controller="CmsPageBands" asp-action="Index" asp-route-companyId="@Model.SelectedCompanyId"
+           class="inline-flex items-center gap-1 text-xs font-semibold text-cyan hover:underline whitespace-nowrap">
+            <i data-lucide="rows-3" class="w-3.5 h-3.5"></i> @L["View All Page Sections"] &rarr;
+        </a>
+    </div>
+
+    @if (Model.Pages.Count == 0)
+    {
+        <div class="rounded-2xl border border-dashed border-border p-12 text-center text-muted-foreground space-y-3">
+            <i data-lucide="layers" class="w-10 h-10 mx-auto text-muted-foreground/50"></i>
+            <p class="text-sm">@L["No division pages configured yet. Run database initialization or seeder."]</p>
+        </div>
+    }
+    else
+    {
+        var itemsList = Model.PageItems.Count > 0
+            ? Model.PageItems
+            : Model.Pages.Select(p => new Neurix.Models.CmsDivisionPageItemViewModel { Page = p, LiveBandsCount = 3, TotalItemsCount = 4 }).ToList();
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            @foreach (var item in itemsList)
+            {
+                var p = item.Page;
+                var isLabs = p.Slug.Equals("labs", StringComparison.OrdinalIgnoreCase);
+
+                <div class="rounded-2xl border @(isLabs ? "border-cyan/40 bg-card/90" : "border-border bg-card") p-6 shadow-sm hover:border-cyan/50 transition-all flex flex-col justify-between space-y-5">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-cyan/10 px-2.5 py-1 text-xs font-mono font-bold uppercase text-cyan">
+                                @p.Slug
+                            </span>
+                            <div class="flex items-center gap-2">
+                                @if (isLabs)
+                                {
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan/15 text-cyan border border-cyan/30">
+                                        @L["Labs & Capabilities"]
+                                    </span>
+                                }
+                                <partial name="_CmsStatusBadge" model="p.IsPublished" />
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(p.CoverImagePath))
+                        {
+                            <div class="w-full h-32 rounded-xl overflow-hidden bg-background border border-border">
+                                <img src="@p.CoverImagePath" alt="@p.HeroTitleEn" class="w-full h-full object-cover" />
+                            </div>
+                        }
+
+                        <div>
+                            <h3 class="text-base font-bold text-foreground">@p.HeroTitleEn</h3>
+                            <p class="text-xs text-muted-foreground font-arabic" dir="rtl">@p.HeroTitleAr</p>
+                        </div>
+
+                        <p class="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                            @(p.MissionEn ?? p.HeroSubtitleEn)
+                        </p>
+
+                        <!-- Live blocks indicator -->
+                        <div class="flex items-center gap-2 pt-1 text-[11px] text-muted-foreground">
+                            <span class="inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md font-medium">
+                                <i data-lucide="layers" class="w-3 h-3 text-cyan"></i>
+                                @item.LiveBandsCount @L["Live Blocks"]
+                            </span>
+                            @if (item.TotalItemsCount > 0)
+                            {
+                                <span class="inline-flex items-center gap-1 bg-cyan/10 text-cyan px-2 py-0.5 rounded-md font-medium">
+                                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                    @item.TotalItemsCount @(isLabs ? L["Capability Cards"] : L["Items & Cards"])
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-border">
+                        <div class="flex items-center flex-wrap gap-3">
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="inline-flex items-center gap-1 text-xs font-semibold text-cyan hover:underline">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> @L["Edit Content"]
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(item.CapabilitiesBandEditUrl))
+                            {
+                                <a href="@item.CapabilitiesBandEditUrl" class="inline-flex items-center gap-1 text-xs font-semibold text-azure hover:underline"
+                                   title='@L["Directly edit capability cards and section copy"]'>
+                                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                                    @(isLabs ? L["Lab Capabilities"] : L["Capabilities"])
+                                </a>
+                            }
+                            <a href="/Home/@(char.ToUpper(p.Slug[0]) + p.Slug.Substring(1))" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> @L["View"]
+                            </a>
+                        </div>
+
+                        <form asp-action="TogglePublish" asp-route-id="@p.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="isPublished" value="@(!p.IsPublished)" />
+                            <input type="hidden" name="companyId" value="@Model.SelectedCompanyId" />
+                            <button type="submit" class="text-muted-foreground hover:text-foreground" title='@L["Toggle Publish"]'>
+                                <i data-lucide="@(p.IsPublished ? "eye-off" : "check-circle")" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>

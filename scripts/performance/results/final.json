@@ -1,0 +1,225 @@
+{
+  "rows": [
+    {
+      "path": "/",
+      "renderer": "worker",
+      "dom": 78,
+      "fcp": 60,
+      "frameP95": 33,
+      "over50": 2,
+      "maxFrame": 83,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Labs",
+      "renderer": "worker",
+      "dom": 127,
+      "fcp": 144,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Technology",
+      "renderer": "worker",
+      "dom": 62,
+      "fcp": 96,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 34,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Club",
+      "renderer": "worker",
+      "dom": 64,
+      "fcp": 92,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Plus",
+      "renderer": "worker",
+      "dom": 59,
+      "fcp": 76,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 18,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/HQ",
+      "renderer": "worker",
+      "dom": 56,
+      "fcp": 76,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Portfolio",
+      "renderer": "worker",
+      "dom": 70,
+      "fcp": 80,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Insights",
+      "renderer": "worker",
+      "dom": 68,
+      "fcp": 92,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/About",
+      "renderer": "worker",
+      "dom": 88,
+      "fcp": 96,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 34,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Contact",
+      "renderer": "worker",
+      "dom": 127,
+      "fcp": 128,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Contact",
+      "renderer": "worker",
+      "dom": 47,
+      "fcp": 80,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/About",
+      "renderer": "worker",
+      "dom": 53,
+      "fcp": 60,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Insights",
+      "renderer": "worker",
+      "dom": 49,
+      "fcp": 76,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Portfolio",
+      "renderer": "worker",
+      "dom": 44,
+      "fcp": 64,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/HQ",
+      "renderer": "worker",
+      "dom": 43,
+      "fcp": 64,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 17,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Plus",
+      "renderer": "worker",
+      "dom": 57,
+      "fcp": 76,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 18,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Club",
+      "renderer": "worker",
+      "dom": 55,
+      "fcp": 60,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Technology",
+      "renderer": "worker",
+      "dom": 52,
+      "fcp": 60,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 33,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/Home/Labs",
+      "renderer": "worker",
+      "dom": 47,
+      "fcp": 76,
+      "frameP95": 17,
+      "over50": 1,
+      "maxFrame": 66,
+      "longTasks": [],
+      "gl": []
+    },
+    {
+      "path": "/",
+      "renderer": "worker",
+      "dom": 65,
+      "fcp": 80,
+      "frameP95": 17,
+      "over50": 0,
+      "maxFrame": 34,
+      "longTasks": [],
+      "gl": []
+    }
+  ],
+  "errors": []
+}

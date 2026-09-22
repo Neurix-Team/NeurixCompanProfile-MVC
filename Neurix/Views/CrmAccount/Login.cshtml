@@ -1,0 +1,58 @@
+@model Neurix.Models.CrmLoginViewModel
+
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="min-h-screen flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-md">
+
+        <div class="text-center mb-8">
+            <img src="~/images/favicon.svg" alt="" class="w-12 h-12 mx-auto mb-5" />
+            <h1 class="font-display text-2xl font-bold tracking-tight mb-2">
+                Neurix <span class="text-gradient-brand">CRM</span>
+            </h1>
+            <p class="text-sm text-muted-foreground">@L["Sign in to continue to the dashboard."]</p>
+        </div>
+
+        <form asp-controller="CrmAccount" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post"
+              class="bg-card/60 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-sm">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="mb-6 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-500 empty:hidden"></div>
+
+            <div class="mb-5">
+                <label asp-for="Email" class="block text-sm font-medium mb-2"></label>
+                <input asp-for="Email" type="email" autocomplete="username" autofocus placeholder="you@company.com"
+                       class="w-full rounded-xl bg-background/60 border border-border px-4 h-12 text-sm outline-none transition-all duration-300 focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+                <span asp-validation-for="Email" class="text-xs text-rose-500/80 mt-1.5 block font-medium"></span>
+            </div>
+
+            <div class="mb-5">
+                <label asp-for="Password" class="block text-sm font-medium mb-2"></label>
+                <input asp-for="Password" type="password" autocomplete="current-password" placeholder="••••••••"
+                       class="w-full rounded-xl bg-background/60 border border-border px-4 h-12 text-sm outline-none transition-all duration-300 focus:border-cyan/70 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
+                <span asp-validation-for="Password" class="text-xs text-rose-500/80 mt-1.5 block font-medium"></span>
+            </div>
+
+            <label class="flex items-center gap-2.5 mb-7 cursor-pointer select-none">
+                <input asp-for="RememberMe" class="w-4 h-4 rounded border-border accent-cyan" />
+                <span class="text-sm text-muted-foreground">@L["Keep me signed in"]</span>
+            </label>
+
+            <button type="submit"
+                    class="w-full inline-flex items-center justify-center gap-2 rounded-[16px] px-8 py-3.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_36px_hsl(var(--cyan)/0.55)] transition-all duration-300">
+                @L["Sign in"]
+                <i data-lucide="arrow-right" class="w-4 h-4 dir-flip"></i>
+            </button>
+        </form>
+
+        <p class="text-center text-xs text-muted-foreground mt-6">
+            <a href="/" class="hover:text-foreground transition-colors"><span class="dir-flip inline-block">←</span> @L["Back to neurix.ai"]</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
