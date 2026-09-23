@@ -84,7 +84,7 @@ services:
     ports:
       - "${NEURIX_WEB_PORT:-18473}:80"
     labels:
-      - "neurix.proxy.domain=${NEURIX_PROXY_DOMAIN:-neurix.uk}"
+      - "neurix.proxy.domain=${NEURIX_PROXY_HOSTNAME:-company.neurix.uk}"
       - "neurix.proxy.port=${NEURIX_WEB_PORT:-18473}"
     volumes:
       # CMS media uploads live outside the image, otherwise they are lost on redeploy.
