@@ -69,6 +69,7 @@ services:
       # Switch to Production together with a TLS-terminating proxy in front.
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ASPNETCORE_URLS: http://+:80
+      Neurix__TrustedProxyIp: ${NEURIX_TRUSTED_PROXY_IP:-}
       # EF Core / Microsoft.Data.SqlClient. TrustServerCertificate accepts the
       # self-signed certificate the SQL Server container generates.
       ConnectionStrings__CrmDb: "Server=sqlserver,1433;Database=${DATABASE_NAME:-Neurix};User Id=sa;Password=${MSSQL_SA_PASSWORD:-Neurix!Str0ngPassw0rd};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=True;Connect Timeout=30"
@@ -78,12 +79,13 @@ services:
       # Must satisfy Identity's policy: min 8 characters.
       Crm__SeedAdmin__Password: ${SEED_ADMIN_PASSWORD:-Neurix@2026}
       Crm__SeedAdmin__FullName: ${SEED_ADMIN_FULLNAME:-CRM Administrator}
-      # Explicit opt-in so the same stack still seeds its admin if the
-      # environment is switched to Production.
-      Crm__SeedAdmin__AllowInProduction: "true"
+      Crm__SeedAdmin__AllowInProduction: ${SEED_ADMIN_ALLOW_IN_PRODUCTION:-false}
       TZ: ${TZ:-Africa/Cairo}
     ports:
       - "${WEB_PORT:-8080}:80"
+    labels:
+      - "neurix.proxy.domain=${NEURIX_PROXY_DOMAIN:-neurix.uk}"
+      - "neurix.proxy.port=${WEB_PORT:-8080}"
     volumes:
       # CMS media uploads live outside the image, otherwise they are lost on redeploy.
       - app-uploads:/app/wwwroot/uploads

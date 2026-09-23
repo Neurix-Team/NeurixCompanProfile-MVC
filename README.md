@@ -65,16 +65,21 @@ Named volumes retain database data, CMS uploads and Data Protection keys across 
 | Local variable | Purpose |
 |---|---|
 | `WEB_PORT` | Host HTTP port; default 8080 |
+| `NEURIX_PROXY_DOMAIN` | Hostname in the web service's `neurix.proxy.domain` label; default `neurix.uk` |
+| `NEURIX_TRUSTED_PROXY_IP` | IP address of the TLS reverse proxy as seen by the web container; enables trusted forwarded HTTP scheme/IP headers |
 | `SQLSERVER_PORT` | Host SQL Server port; default 14330 |
 | `MSSQL_IMAGE_TAG`, `MSSQL_PID` | SQL Server image and edition; defaults are for development |
 | `MSSQL_SA_PASSWORD`, `DATABASE_NAME` | Local database credentials and database name |
 | `ASPNETCORE_ENVIRONMENT` | Compose defaults to Development |
 | `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`, `SEED_ADMIN_FULLNAME` | Initial administrator |
+| `SEED_ADMIN_ALLOW_IN_PRODUCTION` | Explicit opt-in for initial admin creation outside Development; default false |
 | `GEMINI_API_KEY` | Optional AI integration; leave empty to disable |
 
 Outside Compose, configure `ConnectionStrings__CrmDb`, `Gemini__ApiKey` and `Crm__SeedAdmin__*` through environment variables or a secret store. Tracked appsettings files contain no live credentials.
 
 The application uses ASP.NET Core Identity cookies. CMS routes require Admin; CRM routes generally allow Admin or CrmStaff. The public AI endpoints are anonymous when enabled and need production abuse controls.
+
+The `web` service advertises `neurix.proxy.domain=neurix.uk` and `neurix.proxy.port=8080` by default. The port label follows the published host port (`WEB_PORT`), matching the Neurix proxy convention; SQL Server has no proxy labels. For a different hostname, set `NEURIX_PROXY_DOMAIN` in `.env` to the exact DNS name without `https://` or a path. The proxy must be able to reach the published port, and DNS must point the name to that proxy. These labels provide routing metadata; the proxy performs certificate issuance and TLS termination. For HTTPS deployment, set `ASPNETCORE_ENVIRONMENT=Production` and `NEURIX_TRUSTED_PROXY_IP` to the proxy's source IP as seen by the web container, and have the proxy send `X-Forwarded-Proto`. Only the configured proxy IP is trusted for forwarded headers. Restrict direct access to the web and SQL Server host ports to the intended proxy and administrators. Production admin seeding is disabled by default; use a unique password and explicitly opt in only for initial account creation.
 
 ## Development and validation
 

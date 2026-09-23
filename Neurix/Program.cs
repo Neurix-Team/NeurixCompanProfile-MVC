@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.FileProviders;
 using Neurix.BLL.DependencyInjection;
 using Neurix.Common;
 using Neurix.Localization;
 using System.Threading.RateLimiting;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,21 @@ builder.Services.AddHttpClient();
 // (navbar + footer + the page itself all ask for the same company profile), so caching
 // them is what makes repeat page loads fast instead of doing it over on every request.
 builder.Services.AddMemoryCache();
+
+var trustedProxyIp = builder.Configuration["Neurix:TrustedProxyIp"];
+if (!string.IsNullOrWhiteSpace(trustedProxyIp))
+{
+    if (!IPAddress.TryParse(trustedProxyIp, out var proxyAddress))
+    {
+        throw new InvalidOperationException("Neurix:TrustedProxyIp must be a valid IP address.");
+    }
+
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.KnownProxies.Add(proxyAddress);
+    });
+}
 
 // The antiforgery token must never be readable from script and must never travel on a
 // cross-site request. SameSite=Strict is safe here because the token is only posted
@@ -98,6 +115,11 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+if (!string.IsNullOrWhiteSpace(trustedProxyIp))
+{
+    app.UseForwardedHeaders();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
