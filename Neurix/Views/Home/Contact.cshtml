@@ -1,8 +1,7 @@
 @model Neurix.Models.ContactViewModel
 
 @{
-    // CMS-managed hero (Group 3). The form itself — fields, validation, submission — stays
-    // hardcoded on purpose: it is functionality, not content.
+    // CMS copy can change; the form fields and submission behavior stay stable.
     var cms = ViewData["ContentPage"] as Neurix.BLL.Dtos.Cms.CmsContentPageDetailDto;
     string Pick(string? cmsValue, string fallback) => string.IsNullOrWhiteSpace(cmsValue) ? fallback : cmsValue!;
 
@@ -16,6 +15,9 @@
     var heroSubtitleAr = Pick(cms?.HeroSubtitleAr, "تواصل مع فريقنا من المهندسين والباحثين.");
     var contactHeadingEn = ViewData["ContactHeadingEn"] as string ?? "Let's Build the Future Together";
     var contactHeadingAr = ViewData["ContactHeadingAr"] as string ?? "لنبنِ المستقبل معاً";
+    var siteCopy = ViewData["PublicSiteCopy"] as Neurix.Models.CmsSiteCopy ?? new Neurix.Models.CmsSiteCopy(Array.Empty<Neurix.BLL.Dtos.Cms.CmsSiteSettingDto>());
+    string En(string key, string fallback) => siteCopy.English(key, fallback);
+    string Ar(string key, string fallback) => siteCopy.Arabic(key, fallback);
 
     ViewData["Title"] = Pick(cms?.TitleEn, "Contact Us");
     ViewData["TitleAr"] = Pick(cms?.TitleAr, "تواصل معنا");
@@ -84,9 +86,9 @@
                         <!-- Full Name -->
                         <div>
                             <div class="floating-field">
-                                <input asp-for="FullName" required placeholder="Full name *" data-en="Full name *" data-ar="الاسم الكامل *"
+                                <input asp-for="FullName" required placeholder="@En("contact.form.name", "Full name *")" data-en="@En("contact.form.name", "Full name *")" data-ar="@Ar("contact.form.name", "الاسم الكامل *")"
                                        class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
-                                <label asp-for="FullName" data-en="Full name *" data-ar="الاسم الكامل *">Full name *</label>
+                                <label asp-for="FullName" data-en="@En("contact.form.name", "Full name *")" data-ar="@Ar("contact.form.name", "الاسم الكامل *")">@En("contact.form.name", "Full name *")</label>
                             </div>
                             <span asp-validation-for="FullName" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
                         </div>
@@ -94,9 +96,9 @@
                         <!-- Email -->
                         <div>
                             <div class="floating-field">
-                                <input asp-for="Email" type="email" required placeholder="Work email *" data-en="Work email *" data-ar="البريد الإلكتروني للعمل *"
+                                <input asp-for="Email" type="email" required placeholder="@En("contact.form.email", "Work email *")" data-en="@En("contact.form.email", "Work email *")" data-ar="@Ar("contact.form.email", "البريد الإلكتروني للعمل *")"
                                        class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
-                                <label asp-for="Email" data-en="Work email *" data-ar="البريد الإلكتروني للعمل *">Work email *</label>
+                                <label asp-for="Email" data-en="@En("contact.form.email", "Work email *")" data-ar="@Ar("contact.form.email", "البريد الإلكتروني للعمل *")">@En("contact.form.email", "Work email *")</label>
                             </div>
                             <span asp-validation-for="Email" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
                         </div>
@@ -107,12 +109,12 @@
                                 <select asp-for="InquiryType" required
                                         class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 pl-4 pr-10 rtl:pr-4 rtl:pl-10 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)] appearance-none">
                                     <option value="" disabled selected hidden></option>
-                                    <option value="Demo" data-en="Demo" data-ar="عرض تجريبي">Demo</option>
-                                    <option value="Quote" data-en="Quote" data-ar="تسعيرة">Quote</option>
-                                    <option value="Partnership" data-en="Partnership" data-ar="شراكة">Partnership</option>
-                                    <option value="Support" data-en="Support" data-ar="دعم فني">Support</option>
+                                    <option value="Demo" data-en="@En("contact.form.demo", "Demo")" data-ar="@Ar("contact.form.demo", "عرض تجريبي")">@En("contact.form.demo", "Demo")</option>
+                                    <option value="Quote" data-en="@En("contact.form.quote", "Quote")" data-ar="@Ar("contact.form.quote", "تسعيرة")">@En("contact.form.quote", "Quote")</option>
+                                    <option value="Partnership" data-en="@En("contact.form.partnership", "Partnership")" data-ar="@Ar("contact.form.partnership", "شراكة")">@En("contact.form.partnership", "Partnership")</option>
+                                    <option value="Support" data-en="@En("contact.form.support", "Support")" data-ar="@Ar("contact.form.support", "دعم فني")">@En("contact.form.support", "Support")</option>
                                 </select>
-                                <label asp-for="InquiryType" data-en="Type of inquiry *" data-ar="نوع الاستفسار *">Type of inquiry *</label>
+                                <label asp-for="InquiryType" data-en="@En("contact.form.inquiry", "Type of inquiry *")" data-ar="@Ar("contact.form.inquiry", "نوع الاستفسار *")">@En("contact.form.inquiry", "Type of inquiry *")</label>
                                 <!-- Custom dropdown arrow -->
                                 <div class="absolute inset-y-0 right-4 rtl:right-auto rtl:left-4 flex items-center pointer-events-none text-slate-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
@@ -124,9 +126,9 @@
                         <!-- Company Name -->
                         <div>
                             <div class="floating-field">
-                                <input asp-for="CompanyName" placeholder="Company (Optional)" data-en="Company (Optional)" data-ar="الشركة (اختياري)"
+                                <input asp-for="CompanyName" placeholder="@En("contact.form.company", "Company (Optional)")" data-en="@En("contact.form.company", "Company (Optional)")" data-ar="@Ar("contact.form.company", "الشركة (اختياري)")"
                                        class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-4 pb-2 h-14 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 focus:border-cyan/70 focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]" />
-                                <label asp-for="CompanyName" data-en="Company (Optional)" data-ar="الشركة (اختياري)">Company (Optional)</label>
+                                <label asp-for="CompanyName" data-en="@En("contact.form.company", "Company (Optional)")" data-ar="@Ar("contact.form.company", "الشركة (اختياري)")">@En("contact.form.company", "Company (Optional)")</label>
                             </div>
                             <span asp-validation-for="CompanyName" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
                         </div>
@@ -135,20 +137,20 @@
                     <!-- Message -->
                     <div>
                         <div class="floating-field textarea">
-                            <textarea asp-for="Message" required rows="5" placeholder="How can we help? *" data-en="How can we help? *" data-ar="كيف يمكننا مساعدتك؟ *"
+                            <textarea asp-for="Message" required rows="5" placeholder="@En("contact.form.message", "How can we help? *")" data-en="@En("contact.form.message", "How can we help? *")" data-ar="@Ar("contact.form.message", "كيف يمكننا مساعدتك؟ *")"
                                       class="peer w-full rounded-xl bg-slate-50/40 dark:bg-background/40 border border-slate-300 dark:border-white/10 px-4 pt-6 pb-2 text-sm text-slate-900 dark:text-white placeholder-transparent backdrop-blur-md outline-none transition-all duration-300 resize-none focus:border-cyan/70 focus:bg-slate-100 dark:focus:bg-background/60 focus:shadow-[0_0_0_4px_hsl(var(--cyan)/0.12)]"></textarea>
-                            <label asp-for="Message" data-en="How can we help? *" data-ar="كيف يمكننا مساعدتك؟ *">How can we help? *</label>
+                            <label asp-for="Message" data-en="@En("contact.form.message", "How can we help? *")" data-ar="@Ar("contact.form.message", "كيف يمكننا مساعدتك؟ *")">@En("contact.form.message", "How can we help? *")</label>
                         </div>
                         <span asp-validation-for="Message" class="text-xs text-rose-500/80 mt-1.5 ml-1 block font-medium"></span>
                     </div>
 
                     <!-- Submit Button -->
                     <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <span class="text-sm text-slate-500 dark:text-slate-400 font-medium" data-en="We respond within 1 business day" data-ar="نرد خلال يوم عمل واحد">
-                            We respond within 1 business day
+                        <span class="text-sm text-slate-500 dark:text-slate-400 font-medium" data-en="@En("contact.form.response", "We respond within 1 business day")" data-ar="@Ar("contact.form.response", "نرد خلال يوم عمل واحد")">
+                            @En("contact.form.response", "We respond within 1 business day")
                         </span>
-                        <button type="submit" class="group inline-flex items-center gap-2 rounded-[16px] px-8 py-4 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_36px_hsl(var(--cyan)/0.55)] hover:scale-105 transition-all duration-300" data-en="Submit Request" data-ar="إرسال الطلب">
-                            Submit Request
+                        <button type="submit" class="group inline-flex items-center gap-2 rounded-[16px] px-8 py-4 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_36px_hsl(var(--cyan)/0.55)] hover:scale-105 transition-all duration-300" data-en="@En("contact.form.submit", "Submit Request")" data-ar="@Ar("contact.form.submit", "إرسال الطلب")">
+                            @En("contact.form.submit", "Submit Request")
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300 group-hover:translate-x-1 rtl-flip">
                                 <path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path>
                             </svg>

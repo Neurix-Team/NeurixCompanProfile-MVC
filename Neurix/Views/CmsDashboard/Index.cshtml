@@ -39,6 +39,28 @@
         </div>
     </div>
 
+    <div class="rounded-2xl border border-cyan/20 bg-cyan/5 p-5">
+        <h2 class="text-sm font-semibold text-foreground mb-3">@L["Where to edit the public website"]</h2>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-xs">
+            <a asp-controller="CmsHomeSections" asp-action="Index" class="rounded-xl border border-border bg-card/70 p-3 hover:border-cyan/50 transition-colors">
+                <span class="block font-semibold text-foreground">@L["Homepage"]</span>
+                <span class="text-muted-foreground">@L["Titles, descriptions, cards and calls to action"]</span>
+            </a>
+            <a asp-controller="CmsPageBands" asp-action="Index" class="rounded-xl border border-border bg-card/70 p-3 hover:border-cyan/50 transition-colors">
+                <span class="block font-semibold text-foreground">@L["Section headings"]</span>
+                <span class="text-muted-foreground">@L["Division, About, AI, Insights and Portfolio sections"]</span>
+            </a>
+            <a asp-controller="CmsContentPages" asp-action="Index" class="rounded-xl border border-border bg-card/70 p-3 hover:border-cyan/50 transition-colors">
+                <span class="block font-semibold text-foreground">@L["Content pages"]</span>
+                <span class="text-muted-foreground">@L["About, Contact and legal page heroes"]</span>
+            </a>
+            <a asp-controller="CmsSiteSettings" asp-action="Index" class="rounded-xl border border-border bg-card/70 p-3 hover:border-cyan/50 transition-colors">
+                <span class="block font-semibold text-foreground">@L["Shared website text"]</span>
+                <span class="text-muted-foreground">@L["Navigation button, footer, office addresses and utility pages"]</span>
+            </a>
+        </div>
+    </div>
+
     <!-- Stat KPI Cards -->
     <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
         <!-- Brand Profiles -->

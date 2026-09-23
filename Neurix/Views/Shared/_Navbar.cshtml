@@ -2,6 +2,7 @@
 @using Neurix.BLL.Services.Cms
 @using Neurix.DAL.Models
 @using Neurix.Localization
+@using Neurix.Models
 @inject ICmsCompanyProfileService CmsCompanyProfileService
 @inject ICmsMenuItemService CmsMenuItemService
 @{
@@ -23,6 +24,9 @@
     var brandNameAr = companyProfile?.NameAr ?? "نيوركس AI";
     var initialBrandName = isRtl ? brandNameAr : brandNameEn;
     var logoPath = !string.IsNullOrWhiteSpace(companyProfile?.LogoPath) ? companyProfile.LogoPath : "/images/neurix-logo.png";
+    var siteCopy = ViewData["PublicSiteCopy"] as CmsSiteCopy ?? new CmsSiteCopy(Array.Empty<CmsSiteSettingDto>());
+    var navCtaEn = siteCopy.English("navbar.cta", "Start a Project");
+    var navCtaAr = siteCopy.Arabic("navbar.cta", "ابدأ مشروعك");
 
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
     var navAction = currentAction switch
@@ -134,8 +138,8 @@
             @* Contact CTA *@
             <a asp-controller="Home" asp-action="Contact"
                class="neurix-nav-cta"
-               data-en="Start a Project" data-ar="ابدأ مشروعك">
-                @(isRtl ? "ابدأ مشروعك" : "Start a Project")
+               data-en="@navCtaEn" data-ar="@navCtaAr">
+                @(isRtl ? navCtaAr : navCtaEn)
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg>
             </a>
 
@@ -199,8 +203,8 @@
             }
 
             <a asp-controller="Home" asp-action="Contact" class="neurix-mobile-cta"
-               data-en="Start a Project" data-ar="ابدأ مشروعك">
-                @(isRtl ? "ابدأ مشروعك" : "Start a Project")
+               data-en="@navCtaEn" data-ar="@navCtaAr">
+                @(isRtl ? navCtaAr : navCtaEn)
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg>
             </a>
         </div>

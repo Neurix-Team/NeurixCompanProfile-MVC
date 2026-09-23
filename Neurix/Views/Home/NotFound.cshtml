@@ -1,6 +1,15 @@
+@using Neurix.BLL.Services.Cms
+@using Neurix.BLL.Dtos.Cms
+@using Neurix.Models
+@inject ICmsSiteSettingService CmsSiteSettingService
 @{
-    ViewData["Title"] = "Page Not Found";
-    ViewData["MetaDescription"] = "The page you were looking for could not be found.";
+    IReadOnlyList<CmsSiteSettingDto> settings = Array.Empty<CmsSiteSettingDto>();
+    try { settings = await CmsSiteSettingService.GetSettingsByCompanySlugAsync("neurix"); } catch { }
+    var copy = new CmsSiteCopy(settings);
+    ViewData["Title"] = copy.English("notfound.title", "Page Not Found");
+    ViewData["TitleAr"] = copy.Arabic("notfound.title", "الصفحة غير موجودة");
+    ViewData["MetaDescription"] = copy.English("notfound.body", "The page you were looking for could not be found.");
+    ViewData["MetaDescriptionAr"] = copy.Arabic("notfound.body", "الصفحة التي تبحث عنها غير موجودة.");
 }
 
 <section class="relative min-h-[80vh] flex items-center justify-center overflow-hidden pt-24 pb-12">
@@ -17,16 +26,16 @@
 
             <p class="font-display text-6xl md:text-7xl font-bold text-gradient-brand mb-4">404</p>
 
-            <h1 class="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6" data-en="Page Not Found" data-ar="الصفحة غير موجودة">
-                Page Not Found
+            <h1 class="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6" data-en="@copy.English("notfound.title", "Page Not Found")" data-ar="@copy.Arabic("notfound.title", "الصفحة غير موجودة")">
+                @copy.English("notfound.title", "Page Not Found")
             </h1>
 
-            <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-10 max-w-xl mx-auto" data-en="The page you were looking for may have been moved, removed, or never existed. The link you followed might also be outdated." data-ar="الصفحة التي تبحث عنها ربما تم نقلها أو حذفها أو لم تكن موجودة أصلاً. قد يكون الرابط الذي اتبعته قديماً أيضاً.">
-                The page you were looking for may have been moved, removed, or never existed. The link you followed might also be outdated.
+            <p class="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-10 max-w-xl mx-auto" data-en="@copy.English("notfound.body", "The page you were looking for may have been moved, removed, or never existed. The link you followed might also be outdated.")" data-ar="@copy.Arabic("notfound.body", "الصفحة التي تبحث عنها ربما تم نقلها أو حذفها أو لم تكن موجودة أصلاً. قد يكون الرابط الذي اتبعته قديماً أيضاً.")">
+                @copy.English("notfound.body", "The page you were looking for may have been moved, removed, or never existed. The link you followed might also be outdated.")
             </p>
 
-            <a asp-controller="Home" asp-action="Index" class="inline-flex items-center justify-center rounded-[16px] px-8 py-3.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300" data-en="Return to Home" data-ar="العودة للرئيسية">
-                Return to Home
+            <a asp-controller="Home" asp-action="Index" class="inline-flex items-center justify-center rounded-[16px] px-8 py-3.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300" data-en="@copy.English("page.returnhome", "Return to Home")" data-ar="@copy.Arabic("page.returnhome", "العودة للرئيسية")">
+                @copy.English("page.returnhome", "Return to Home")
             </a>
         </div>
     </div>

@@ -69,6 +69,27 @@ namespace Neurix.Tests
         }
 
         [Fact]
+        public async Task SeedAsync_AddsMissingSharedCopyWithoutOverwritingEditedValues()
+        {
+            await _seeder.SeedAsync();
+            var setting = await _db.SiteSettings.SingleAsync(s => s.Key == "navbar.cta");
+            setting.ValueEn = "Talk to us";
+            await _db.SaveChangesAsync();
+
+            var removed = await _db.SiteSettings.SingleAsync(s => s.Key == "footer.newsletter.title");
+            _db.SiteSettings.Remove(removed);
+            var deleted = await _db.SiteSettings.SingleAsync(s => s.Key == "footer.office.usa.title");
+            deleted.IsDeleted = true;
+            await _db.SaveChangesAsync();
+            await _seeder.SeedAsync();
+
+            Assert.Equal("Talk to us", (await _db.SiteSettings.SingleAsync(s => s.Key == "navbar.cta")).ValueEn);
+            Assert.Equal("Newsletter", (await _db.SiteSettings.SingleAsync(s => s.Key == "footer.newsletter.title")).ValueEn);
+            Assert.DoesNotContain(await _db.SiteSettings.ToListAsync(), s => s.Key == "footer.office.usa.title");
+            Assert.Single(await _db.SiteSettings.IgnoreQueryFilters().Where(s => s.Key == "footer.office.usa.title").ToListAsync());
+        }
+
+        [Fact]
         public async Task SeedAsync_ReplacesLegacyContactEmailWithoutChangingCustomEmail()
         {
             await _seeder.SeedAsync();

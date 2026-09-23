@@ -193,6 +193,60 @@ public sealed class CmsPublicPropagationIntegrationTests : IDisposable
     }
 
     [Fact]
+    public async Task SharedCopyEdits_AppearInNavigationFooterAndUtilityPages()
+    {
+        Assert.Equal(HttpStatusCode.OK, (await _client.GetAsync("/")).StatusCode);
+        await LoginAsAdminAsync();
+        var token = await GetTokenAsync($"/cms/settings/create?companyId={_profileId}");
+        var saved = await _client.PostAsync("/cms/settings/create", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["CompanyProfileId"] = _profileId.ToString(),
+            ["Key"] = "navbar.cta",
+            ["Label"] = "Navigation contact button",
+            ["SettingType"] = "text",
+            ["GroupName"] = "General",
+            ["ValueEn"] = "Plan with Neurix",
+            ["ValueAr"] = "خطط مع نيوركس",
+            ["__RequestVerificationToken"] = token
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, saved.StatusCode);
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var settings = scope.ServiceProvider.GetRequiredService<ICmsSiteSettingService>();
+            Assert.True((await settings.UpsertAsync(new CmsSiteSettingUpsertDto
+            {
+                CompanyProfileId = _profileId, Key = "footer.company.title", Label = "Footer company heading",
+                GroupName = "Footer", ValueEn = "Our Company", ValueAr = "شركتنا"
+            })).Success);
+            Assert.True((await settings.UpsertAsync(new CmsSiteSettingUpsertDto
+            {
+                CompanyProfileId = _profileId, Key = "comingsoon.title", Label = "Coming soon heading",
+                GroupName = "General", ValueEn = "Launching Shortly", ValueAr = "الانطلاق قريباً"
+            })).Success);
+            Assert.True((await settings.UpsertAsync(new CmsSiteSettingUpsertDto
+            {
+                CompanyProfileId = _profileId, Key = "contact.form.submit", Label = "Contact submit button",
+                GroupName = "Contact", ValueEn = "Send enquiry", ValueAr = "أرسل استفسارك"
+            })).Success);
+        }
+
+        var home = WebUtility.HtmlDecode(await (await _client.GetAsync("/")).Content.ReadAsStringAsync());
+        Assert.Contains("Plan with Neurix", home);
+        Assert.Contains("خطط مع نيوركس", home);
+        Assert.Contains("Our Company", home);
+        Assert.Contains("شركتنا", home);
+
+        var soon = WebUtility.HtmlDecode(await (await _client.GetAsync("/Home/ComingSoon")).Content.ReadAsStringAsync());
+        Assert.Contains("Launching Shortly", soon);
+        Assert.Contains("الانطلاق قريباً", soon);
+
+        var contact = WebUtility.HtmlDecode(await (await _client.GetAsync("/Home/Contact")).Content.ReadAsStringAsync());
+        Assert.Contains("Send enquiry", contact);
+        Assert.Contains("أرسل استفسارك", contact);
+    }
+
+    [Fact]
     public async Task UnpublishedHomepageSection_DisappearsInsteadOfShowingFallbackCopy()
     {
         Assert.Contains("id=\"divisions\"", await (await _client.GetAsync("/")).Content.ReadAsStringAsync());

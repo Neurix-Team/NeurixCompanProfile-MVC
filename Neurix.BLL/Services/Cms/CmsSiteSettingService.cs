@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Neurix.BLL.Common;
 using Neurix.BLL.Dtos.Cms;
 using Neurix.DAL.Data;
@@ -14,6 +15,8 @@ namespace Neurix.BLL.Services.Cms
     public class CmsSiteSettingService : ICmsSiteSettingService
     {
         private readonly CmsDbContext _db;
+        private readonly IMemoryCache? _cache;
+        private readonly CmsContentRevision? _contentRevision;
 
         private static readonly Regex KeyPattern = new(@"^[a-z0-9]+(\.[a-z0-9]+)*$", RegexOptions.Compiled);
         private static readonly HashSet<string> AllowedSettingTypes = new(StringComparer.OrdinalIgnoreCase)
@@ -21,9 +24,11 @@ namespace Neurix.BLL.Services.Cms
         private static readonly HashSet<string> AllowedGroupNames = new(StringComparer.OrdinalIgnoreCase)
             { "General", "SEO", "Contact", "Footer" };
 
-        public CmsSiteSettingService(CmsDbContext db)
+        public CmsSiteSettingService(CmsDbContext db, IMemoryCache? cache = null, CmsContentRevision? contentRevision = null)
         {
             _db = db;
+            _cache = cache;
+            _contentRevision = contentRevision;
         }
 
         private static ServiceResult<string> NormalizeAndValidateKey(string? key)
@@ -78,8 +83,11 @@ namespace Neurix.BLL.Services.Cms
                 return Array.Empty<CmsSiteSettingDto>();
 
             var normalized = companySlug.Trim().ToLowerInvariant();
+            var cacheKey = $"cms:settings:{normalized}:{_contentRevision?.Current ?? 0}";
+            if (_cache?.TryGetValue(cacheKey, out IReadOnlyList<CmsSiteSettingDto>? cached) == true && cached != null)
+                return cached;
 
-            return await _db.SiteSettings
+            var settings = await _db.SiteSettings
                 .Include(s => s.CompanyProfile)
                 .AsNoTracking()
                 .Where(s => s.CompanyProfile != null && s.CompanyProfile.Slug == normalized && s.CompanyProfile.IsPublished)
@@ -99,6 +107,8 @@ namespace Neurix.BLL.Services.Cms
                     UpdatedAtUtc = s.UpdatedAtUtc ?? s.CreatedAtUtc
                 })
                 .ToListAsync();
+            _cache?.Set(cacheKey, settings, TimeSpan.FromSeconds(30));
+            return settings;
         }
 
         public async Task<CmsSiteSettingDto?> GetSettingAsync(string companySlug, string key)

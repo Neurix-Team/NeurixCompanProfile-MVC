@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Neurix.BLL.Dtos.Cms;
 using Neurix.BLL.Services.Cms;
 using Neurix.DAL.Data;
@@ -71,6 +72,40 @@ namespace Neurix.Tests
             Assert.Equal("General", persisted.GroupName);
             Assert.Equal("Site Title", persisted.Label);
             Assert.Equal(_companyAId, persisted.CompanyProfileId);
+        }
+
+        [Fact]
+        public async Task GetSettingsByCompanySlugAsync_ReflectsEditsAfterRevisionAdvances()
+        {
+            var revision = new CmsContentRevision();
+            var options = new DbContextOptionsBuilder<CmsDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
+            using var db = new CmsDbContext(options, revision);
+            using var cache = new MemoryCache(new MemoryCacheOptions());
+            var service = new CmsSiteSettingService(db, cache, revision);
+            db.CompanyProfiles.Add(new CmsCompanyProfile
+            {
+                Id = Guid.NewGuid(), Slug = "neurix", NameEn = "Neurix", NameAr = "نيوركس", IsPublished = true
+            });
+            await db.SaveChangesAsync();
+            var companyId = (await db.CompanyProfiles.SingleAsync()).Id;
+            await service.CreateAsync(new CmsSiteSettingUpsertDto
+            {
+                CompanyProfileId = companyId, Key = "navbar.cta", ValueEn = "Start a Project",
+                ValueAr = "ابدأ مشروعك", GroupName = "General", Label = "Navigation button"
+            });
+
+            var first = await service.GetSettingsByCompanySlugAsync("neurix");
+            Assert.Equal("Start a Project", Assert.Single(first).ValueEn);
+            await service.UpsertAsync(new CmsSiteSettingUpsertDto
+            {
+                CompanyProfileId = companyId, Key = "navbar.cta", ValueEn = "Contact our team",
+                ValueAr = "تواصل مع الفريق", GroupName = "General", Label = "Navigation button"
+            });
+
+            var updated = await service.GetSettingsByCompanySlugAsync("neurix");
+            Assert.Equal("Contact our team", Assert.Single(updated).ValueEn);
         }
 
         [Fact]

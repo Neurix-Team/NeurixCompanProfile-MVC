@@ -2,17 +2,23 @@
 @using Neurix.BLL.Services.Cms
 @using Neurix.Common
 @using Neurix.Localization
+@using Neurix.Models
 @inject ICmsCompanyProfileService CmsCompanyProfileService
+@inject ICmsSiteSettingService CmsSiteSettingService
 @{
     CmsCompanyProfileDetailDto? companyProfile = null;
+    IReadOnlyList<CmsSiteSettingDto> siteSettings = Array.Empty<CmsSiteSettingDto>();
     try
     {
         companyProfile = await CmsCompanyProfileService.GetBySlugAsync("neurix");
+        siteSettings = await CmsSiteSettingService.GetSettingsByCompanySlugAsync("neurix");
     }
+
     catch
     {
         // Fail-soft
     }
+    ViewData["PublicSiteCopy"] = new CmsSiteCopy(siteSettings);
 
     var currentLang = CmsLanguage.Current;
     var isRtl = currentLang.IsRightToLeft;

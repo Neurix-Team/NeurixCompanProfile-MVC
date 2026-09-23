@@ -257,6 +257,63 @@ namespace Neurix.BLL.Services.Cms
                 );
             }
 
+            var sharedCopy = new (string Key, string Group, string Label, string En, string Ar)[]
+            {
+                ("navbar.cta", "General", "Navigation: Contact Button", "Start a Project", "ابدأ مشروعك"),
+                ("contact.form.name", "Contact", "Contact Form: Full Name Label", "Full name *", "الاسم الكامل *"),
+                ("contact.form.email", "Contact", "Contact Form: Email Label", "Work email *", "البريد الإلكتروني للعمل *"),
+                ("contact.form.inquiry", "Contact", "Contact Form: Inquiry Label", "Type of inquiry *", "نوع الاستفسار *"),
+                ("contact.form.company", "Contact", "Contact Form: Company Label", "Company (Optional)", "الشركة (اختياري)"),
+                ("contact.form.message", "Contact", "Contact Form: Message Label", "How can we help? *", "كيف يمكننا مساعدتك؟ *"),
+                ("contact.form.demo", "Contact", "Contact Form: Demo Option", "Demo", "عرض تجريبي"),
+                ("contact.form.quote", "Contact", "Contact Form: Quote Option", "Quote", "تسعيرة"),
+                ("contact.form.partnership", "Contact", "Contact Form: Partnership Option", "Partnership", "شراكة"),
+                ("contact.form.support", "Contact", "Contact Form: Support Option", "Support", "دعم فني"),
+                ("contact.form.response", "Contact", "Contact Form: Response Time", "We respond within 1 business day", "نرد خلال يوم عمل واحد"),
+                ("contact.form.submit", "Contact", "Contact Form: Submit Button", "Submit Request", "إرسال الطلب"),
+                ("footer.divisions.title", "Footer", "Footer: Divisions Heading", "Divisions", "الأقسام"),
+                ("footer.division.labs", "Footer", "Footer: Labs Link", "Neurix AI Labs", "مختبرات نيوركس AI"),
+                ("footer.division.technology", "Footer", "Footer: Technology Link", "Neurix AI Technology", "تقنية نيوركس AI"),
+                ("footer.division.club", "Footer", "Footer: Club Link", "Neurix AI Club", "نادي نيوركس AI"),
+                ("footer.division.plus", "Footer", "Footer: Plus Link", "Neurix AI Plus", "نيوركس AI بلس"),
+                ("footer.division.hq", "Footer", "Footer: HQ Link", "Neurix AI HQ", "مقر نيوركس AI"),
+                ("footer.company.title", "Footer", "Footer: Company Heading", "Company", "الشركة"),
+                ("footer.contact.title", "Footer", "Footer: Contact Heading", "Contact", "تواصل معنا"),
+                ("footer.office.primary.title", "Footer", "Footer: Primary Office Heading", "Office (Primary)", "المكتب (الرئيسي)"),
+                ("footer.offices.more", "Footer", "Footer: Other Offices Toggle", "Read More Addresses", "قراءة المزيد من العناوين"),
+                ("footer.office.uae.title", "Footer", "Footer: UAE Office Heading", "UAE Office", "مكتب الإمارات العربية المتحدة"),
+                ("footer.office.uae.address", "Footer", "Footer: UAE Office Address", "2003-040 Aspin Commercial-2003, trade center first, Dubai, UAE", "مكتب 2003-040، برج أسبين التجاري، المركز التجاري الأول، دبي، الإمارات العربية المتحدة"),
+                ("footer.office.nevis.title", "Footer", "Footer: Nevis Office Heading", "Saint Kitts & Nevis Office", "مكتب سانت كيتس ونيفيس"),
+                ("footer.office.nevis.address", "Footer", "Footer: Nevis Office Address", "The Provident House, Central Government Road, Charlestown, Nevis, Saint Kitts and Nevis", "بروفيدنت هاوس، طريق الحكومة المركزية، تشارلز تاون، نيفيس، سانت كيتس ونيفيس"),
+                ("footer.office.usa.title", "Footer", "Footer: USA Office Heading", "USA Office", "مكتب الولايات المتحدة الأمريكية"),
+                ("footer.office.usa.address", "Footer", "Footer: USA Office Address", "262 Chapman Rd, Ste 240, Newark, New Castle County, Delaware, USA", "262 طريق تشابمان، جناح 240، نيوارك، مقاطعة نيو كاسل، ديلاوير، الولايات المتحدة الأمريكية"),
+                ("footer.newsletter.title", "Footer", "Footer: Newsletter Heading", "Newsletter", "النشرة الإخبارية"),
+                ("comingsoon.title", "General", "Coming Soon: Heading", "Coming Soon", "قريباً"),
+                ("comingsoon.body", "General", "Coming Soon: Description", "We are engineering something extraordinary. This feature will be available in a future update.", "نحن نهندس شيئاً استثنائياً. ستكون هذه الميزة متاحة في تحديث مستقبلي."),
+                ("notfound.title", "General", "404 Page: Heading", "Page Not Found", "الصفحة غير موجودة"),
+                ("notfound.body", "General", "404 Page: Description", "The page you were looking for may have been moved, removed, or never existed. The link you followed might also be outdated.", "الصفحة التي تبحث عنها ربما تم نقلها أو حذفها أو لم تكن موجودة أصلاً. قد يكون الرابط الذي اتبعته قديماً أيضاً."),
+                ("page.returnhome", "General", "Utility Pages: Return Home Button", "Return to Home", "العودة للرئيسية")
+            };
+            var existingCopyKeys = (await _db.SiteSettings.IgnoreQueryFilters()
+                .Where(s => s.CompanyProfileId == neurixProfileId)
+                .Select(s => s.Key)
+                .ToListAsync()).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in sharedCopy)
+            {
+                if (!existingCopyKeys.Add(item.Key)) continue;
+                _db.SiteSettings.Add(new CmsSiteSetting
+                {
+                    Id = Guid.NewGuid(),
+                    CompanyProfileId = neurixProfileId,
+                    Key = item.Key,
+                    GroupName = item.Group,
+                    Label = item.Label,
+                    SettingType = item.Key.EndsWith(".body") || item.Key.EndsWith(".address") ? "textarea" : "text",
+                    ValueEn = item.En,
+                    ValueAr = item.Ar
+                });
+            }
+
             // ── Seed additional SEO Open Graph settings (idempotent per-key check) ──
             if (!await _db.SiteSettings.AnyAsync(s => s.CompanyProfileId == neurixProfileId && s.Key == "seo.og.title"))
             {

@@ -179,9 +179,10 @@ namespace Neurix.Controllers
             try
             {
                 ViewData["CompanyProfile"] = await _cmsCompanyProfileService.GetBySlugAsync("neurix");
-                var contactHeading = await _cmsSiteSettingService.GetSettingAsync("neurix", "contact.heading");
-                ViewData["ContactHeadingEn"] = contactHeading?.ValueEn;
-                ViewData["ContactHeadingAr"] = contactHeading?.ValueAr;
+                var contactCopy = new CmsSiteCopy(await _cmsSiteSettingService.GetSettingsByCompanySlugAsync("neurix"));
+                ViewData["PublicSiteCopy"] = contactCopy;
+                ViewData["ContactHeadingEn"] = contactCopy.English("contact.heading", "Let's Build the Future Together");
+                ViewData["ContactHeadingAr"] = contactCopy.Arabic("contact.heading", "لنبنِ المستقبل معاً");
                 ViewData["ContentPage"] = await GetContentPageAsync("contact");
             }
             catch (Exception ex)

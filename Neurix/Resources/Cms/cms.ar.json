@@ -1337,5 +1337,15 @@
   "Confirmation is required.": "التأكيد مطلوب.",
   "The new password and its confirmation do not match.": "كلمة المرور الجديدة وتأكيدها غير متطابقين.",
   "Enter a full name of 1–200 characters.": "أدخل اسمًا كاملًا من 1 إلى 200 حرف.",
-  "Too many sign-in attempts. Please wait a minute and try again.": "محاولات تسجيل دخول كثيرة جدًا. انتظر دقيقة ثم أعد المحاولة."
+  "Too many sign-in attempts. Please wait a minute and try again.": "محاولات تسجيل دخول كثيرة جدًا. انتظر دقيقة ثم أعد المحاولة.",
+  "Where to edit the public website": "من أين تعدل محتوى الموقع العام",
+  "Homepage": "الصفحة الرئيسية",
+  "Titles, descriptions, cards and calls to action": "العناوين والوصف والبطاقات وأزرار الدعوة للإجراء",
+  "Section headings": "عناوين الأقسام",
+  "Division, About, AI, Insights and Portfolio sections": "أقسام الصفحات الفرعية ومن نحن والذكاء الاصطناعي والمقالات والمشاريع",
+  "Content pages": "صفحات المحتوى",
+  "About, Contact and legal page heroes": "مقدمات صفحات من نحن والتواصل والصفحات القانونية",
+  "Shared website text": "النصوص المشتركة بالموقع",
+  "Navigation button, footer, office addresses and utility pages": "زر التنقل والفوتر وعناوين المكاتب والصفحات المساعدة",
+  "Edit Website Sections": "تعديل أقسام الموقع"
 }

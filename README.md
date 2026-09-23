@@ -26,6 +26,23 @@ The web layer calls BLL services, and the BLL uses EF Core through the DAL. CRM 
 - Blue particle sphere with scroll scaling, dispersion and persistent background particles. Rendering uses OffscreenCanvas in a Worker where supported, with a main-thread fallback and reduced-motion support.
 - Card reveal and hover animation, responsive navigation, local fonts and libraries, and optimized WebP images.
 
+## Editing public content
+
+Sign in as an Admin at `/crm`, then use **Edit Website Sections** or **Switch to CMS**. Changes to published content appear on the public site after saving; English and Arabic are edited separately.
+
+| Public content | CMS location |
+| --- | --- |
+| Homepage headings, descriptions, cards and calls to action | Homepage Sections |
+| Division page hero titles, subtitles and mission | Divisional Pages |
+| Other division sections; AI, Insights, Portfolio and About section headings/cards | Page Sections |
+| About, Contact and legal page heroes/body | Content Pages |
+| Navbar links and footer company links | Menu Items |
+| Navbar contact button, footer headings and division links, office addresses, copyright, Contact form labels, Coming Soon and 404 copy | Global Site Settings |
+| Brand name, logo, tagline and primary contact details | Brand Profiles & Colors |
+| Service/project/article/team/testimonial card content | The corresponding CMS collection |
+
+The CMS dashboard also has direct links to these editors. Shared text settings are seeded by key on startup without replacing values already edited by an administrator. Public reads of shared settings use a short cache keyed by the CMS revision, so a saved edit takes effect on the next request without an extra database query on every page view. Validation errors and system-generated status messages remain application UI strings.
+
 ## Run locally with Docker
 
 Prerequisites: Git and Docker with Compose support.
@@ -99,7 +116,7 @@ $env:DOTNET_PROCESSOR_COUNT = '2'
 dotnet test Neurix.Tests/Neurix.Tests.csproj -c Release --no-restore --disable-build-servers -m:1 /p:UseSharedCompilation=false /p:BuildInParallel=false /p:ConcurrentBuild=false
 ```
 
-Validated on 23 September 2026: **258 tests passed**, zero failed or skipped. HTTP-level tests cover dashboard roles, CMS edits appearing on public pages after the cache is warmed, contact enquiries reaching CRM leads, and profile changes. These tests use isolated in-memory databases; they do not replace a staging check against SQL Server. NuGet's vulnerability listing and the npm package-lock audit reported no known vulnerable dependencies in their respective scopes on 22 September 2026. These checks are not a complete security audit or a production load test.
+Validated on 23 September 2026: **265 tests passed**, zero failed or skipped. HTTP-level tests cover dashboard roles, CMS edits appearing on public pages after the cache is warmed, contact enquiries reaching CRM leads, and profile changes. These tests use isolated in-memory databases; they do not replace a staging check against SQL Server. NuGet's vulnerability listing and the npm package-lock audit reported no known vulnerable dependencies in their respective scopes on 22 September 2026. These checks are not a complete security audit or a production load test.
 
 GitHub Actions now runs the build, tests and browser checks on pull requests and pushes to `main`. The browser checks cover Arabic/English layouts, mobile navigation, card motion, and an emulated mobile performance sample. A manual run can inspect an existing staging URL. See [browser quality checks](scripts/quality/README.md) for scope, commands and limitations.
 
