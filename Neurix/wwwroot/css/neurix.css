@@ -983,6 +983,23 @@ a:hover>.nav-underline {
 
 /* ── Footer Link Underline ─────────────────────────────────── */
 
+.neurix-site-footer {
+    position: relative;
+    z-index: 1;
+    margin: clamp(64px, 8vw, 128px) clamp(10px, 2vw, 28px) 16px;
+    border: 1px solid rgb(127 158 199 / 0.38);
+    border-radius: clamp(24px, 2.8vw, 38px);
+    overflow: hidden;
+    background: rgb(245 250 255 / 0.76);
+    box-shadow: 0 28px 80px -56px rgb(25 67 119 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.75);
+}
+
+.dark .neurix-site-footer {
+    border-color: rgb(103 151 204 / 0.3);
+    background: rgb(9 23 44 / 0.76);
+    box-shadow: 0 28px 80px -56px rgb(0 0 0 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.07);
+}
+
 .footer-link {
     position: relative;
     display: inline-block;
