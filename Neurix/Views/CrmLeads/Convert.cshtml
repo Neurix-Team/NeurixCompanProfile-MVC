@@ -51,7 +51,7 @@
                 @if (Model.HasCompanyName)
                 {
                     @* Format() keeps the company name out of the translation key. *@
-                    <text>@L.Format("A company matching “{0}” is pre-selected when one exists. Pick a different one if this belongs elsewhere.", Model.CompanyName)</text>
+                    <text>@L.Format("A company matching “{0}” is pre-selected when one exists. Pick a different one if this belongs elsewhere.", Model.CompanyName!)</text>
                 }
                 else
                 {
