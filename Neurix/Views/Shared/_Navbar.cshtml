@@ -295,7 +295,7 @@
         // be reconciled to the effective language every time — even when the saved choice
         // already equals the server-rendered lang, because "equal" does not mean the DOM
         // text was actually re-rendered in that language by the server.
-        document.addEventListener('DOMContentLoaded', function() {
+        window.neurixInitializeLanguage = function() {
             const serverLang = root.getAttribute('lang') || 'en';
             const queryLang = new URLSearchParams(window.location.search).get('lang');
             const storedLang = readStoredLang();
@@ -317,7 +317,7 @@
                     setLang(currentLang === 'en' ? 'ar' : 'en');
                 });
             }
-        });
+        };
     })();
 
     // Mobile Menu Toggle

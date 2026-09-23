@@ -94,7 +94,9 @@ $env:DOTNET_PROCESSOR_COUNT = '2'
 dotnet test Neurix.Tests/Neurix.Tests.csproj -c Release --no-restore --disable-build-servers -m:1 /p:UseSharedCompilation=false /p:BuildInParallel=false /p:ConcurrentBuild=false
 ```
 
-Validated on 22 September 2026: **252 tests passed**, zero failed or skipped. NuGet's vulnerability listing and the npm package-lock audit reported no known vulnerable dependencies in their respective scopes at that time. These checks are not a complete security audit or a production load test.
+Validated on 23 September 2026: **255 tests passed**, zero failed or skipped. The three dashboard access tests exercise anonymous, CrmStaff and Admin requests through the HTTP pipeline with isolated in-memory databases. NuGet's vulnerability listing and the npm package-lock audit reported no known vulnerable dependencies in their respective scopes on 22 September 2026. These checks are not a complete security audit or a production load test.
+
+GitHub Actions now runs the build, tests and browser checks on pull requests and pushes to `main`. The browser checks cover Arabic/English layouts, mobile navigation, card motion, and an emulated mobile performance sample. A manual run can inspect an existing staging URL. See [browser quality checks](scripts/quality/README.md) for scope, commands and limitations.
 
 Image optimization requires Pillow: `python scripts/optimize-site-images.py`. Sphere preview regeneration uses the Python standard library: `python scripts/generate-sphere-preview.py`.
 
@@ -103,10 +105,11 @@ Image optimization requires Pillow: `python scripts/optimize-site-images.py`. Sp
 - [Production readiness assessment and required deployment work — Arabic](PRODUCTION_READINESS_AR.md)
 - [QA implementation guide — Arabic](NEURIX_QA_IMPLEMENTATION_GUIDE_AR.md)
 - [Browser performance methodology, results and screenshots](scripts/performance/README.md)
+- [Automated browser and staging quality checks](scripts/quality/README.md)
 
 ## Production deployment
 
-The repository does not currently include an automated deployment workflow. Pushing to GitHub does not deploy the website.
+The repository includes automated quality checks, but not an automated deployment workflow. Pushing to GitHub does not deploy the website; the manual staging check needs an already deployed staging URL.
 
 Before production: configure HTTPS and trusted proxy headers, use a licensed SQL Server edition, isolate the database, use least-privilege credentials, rotate previously exposed keys, disable unintended administrator seeding, add readiness checks, and test backups, restoration, authorization and expected traffic on staging. The complete acceptance list and observed limitations are in [PRODUCTION_READINESS_AR.md](PRODUCTION_READINESS_AR.md).
 

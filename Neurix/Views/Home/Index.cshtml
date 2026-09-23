@@ -316,7 +316,6 @@
                 <span class="text-slate-800 dark:text-white font-medium drop-shadow-md mt-1" data-en="@stat3LabelEn" data-ar="@stat3LabelAr">@stat3LabelEn</span>
             </div>
         </div>
-        </div>
     </div>
 
     <!-- Scroll Affordance: bottom-centre of hero -->
@@ -377,7 +376,7 @@
             <div class="relative card-glow-border rounded-[2.5rem] bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 overflow-hidden h-[500px] animate-fade-in-up" data-animate="stagger">
                 <div class="absolute inset-0 bg-hero-radial opacity-30 rounded-[2.5rem] pointer-events-none"></div>
                 <div class="relative z-10 w-full h-full">
-                    <img src="@Url.Content(visionImg)" alt="@visionImgAltEn" class="w-full h-full object-cover rounded-[2.5rem]" />
+                    <img loading="lazy" decoding="async" src="@Url.Content(visionImg)" alt="@visionImgAltEn" class="w-full h-full object-cover rounded-[2.5rem]" />
                 </div>
             </div>
         </div>
@@ -395,7 +394,7 @@
             <div class="relative card-glow-border rounded-[2.5rem] bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 overflow-hidden h-[450px] animate-fade-in-up" data-animate="stagger">
                 <div class="absolute inset-0 bg-hero-radial opacity-30 rounded-[2.5rem] pointer-events-none"></div>
                 <div class="relative z-10 w-full h-full p-2">
-                    <img src="@Url.Content(pioneersImg)" alt="@pioneersImgAltEn" class="w-full h-full object-cover rounded-[2.2rem]" />
+                    <img loading="lazy" decoding="async" src="@Url.Content(pioneersImg)" alt="@pioneersImgAltEn" class="w-full h-full object-cover rounded-[2.2rem]" />
                 </div>
             </div>
 
@@ -634,7 +633,7 @@
 <section id="ethics" class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/50 dark:bg-background/20">
     @* Half Background ("infrastructure") - faded bright modern server room *@
     <div class="absolute inset-y-0 right-0 w-full lg:w-1/2 opacity-25 dark:opacity-[0.06] mix-blend-overlay pointer-events-none z-0">
-        <img src="@ethicsBgImg" alt="Infrastructure Background" class="w-full h-full object-cover object-right" />
+        <img loading="lazy" decoding="async" src="@ethicsBgImg" alt="Infrastructure Background" class="w-full h-full object-cover object-right" />
         @* Smooth gradient transition to transparent *@
         <div class="absolute inset-0 bg-gradient-to-r from-slate-50 dark:from-background via-slate-50/40 dark:via-background/40 to-transparent"></div>
     </div>
@@ -721,11 +720,11 @@
                 
                 @* Top Image ("software") *@
                 <div class="absolute top-0 left-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
-                    <img src="@ethicsTopImg" alt="@ethicsTopImgAltEn" class="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src="@ethicsTopImg" alt="@ethicsTopImgAltEn" class="w-full h-full object-cover" />
                 </div>
                 @* Bottom Image ("research") *@
                 <div class="absolute bottom-0 right-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
-                    <img src="@ethicsBottomImg" alt="@ethicsBottomImgAltEn" class="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src="@ethicsBottomImg" alt="@ethicsBottomImgAltEn" class="w-full h-full object-cover" />
                 </div>
             </div>
         </div>
@@ -791,7 +790,7 @@
                         @if (!string.IsNullOrWhiteSpace(p.CoverImagePath))
                         {
                             <div class="relative aspect-video w-full overflow-hidden bg-muted/40">
-                                <img src="@p.CoverImagePath" alt="@p.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                <img loading="lazy" decoding="async" src="@p.CoverImagePath" alt="@p.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             </div>
                         }
 
@@ -880,7 +879,7 @@
                             @if (!string.IsNullOrWhiteSpace(post.CoverImagePath))
                             {
                                 <div class="relative aspect-video rounded-2xl overflow-hidden bg-muted/40 mb-4">
-                                    <img src="@post.CoverImagePath" alt="@post.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <img loading="lazy" decoding="async" src="@post.CoverImagePath" alt="@post.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                 </div>
                             }
 
@@ -1003,7 +1002,7 @@
                         <div class="flex items-center gap-3.5 pt-6 mt-6 border-t border-slate-200 dark:border-white/10">
                             @if (!string.IsNullOrWhiteSpace(t.AuthorPhotoPath))
                             {
-                                <img src="@t.AuthorPhotoPath" alt="@t.AuthorNameEn" class="w-11 h-11 rounded-full object-cover border border-slate-300 dark:border-white/10" />
+                                <img loading="lazy" decoding="async" src="@t.AuthorPhotoPath" alt="@t.AuthorNameEn" class="w-11 h-11 rounded-full object-cover border border-slate-300 dark:border-white/10" />
                             }
                             else
                             {
@@ -1039,7 +1038,7 @@
 <section id="cta" class="relative py-28 md:py-36 z-30 overflow-hidden">
 
     <!-- Background image, full-width -->
-    <img src="@ctaBgImg" alt="" aria-hidden="true"
+    <img loading="lazy" decoding="async" src="@ctaBgImg" alt="" aria-hidden="true"
          class="absolute inset-0 w-full h-full object-cover opacity-[0.07] dark:opacity-[0.12] z-0 pointer-events-none" />
 
     <!-- Ambient glows -->

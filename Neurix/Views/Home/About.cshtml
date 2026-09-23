@@ -161,7 +161,7 @@
             <!-- Right Side: Image (lg:col-span-6) -->
             <div class="lg:col-span-6">
                 <div class="group rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] aspect-[16/10] bg-slate-100 dark:bg-card transition-all duration-500 hover:scale-[1.02] hover:border-cyan/50 hover:shadow-[0_20px_45px_hsl(var(--cyan)/0.15)]">
-                    <img src="~/images/Mission & Vision.png" alt="Our Mission" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
+                    <img loading="lazy" decoding="async" src="~/images/Mission & Vision.png" alt="Our Mission" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
                 </div>
             </div>
         </div>
@@ -171,7 +171,7 @@
             <!-- Left Side: Image (lg:col-span-6) - Order adjusted for mobile to show text first -->
             <div class="lg:col-span-6 order-last lg:order-first">
                 <div class="group rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] aspect-[16/10] bg-slate-100 dark:bg-card transition-all duration-500 hover:scale-[1.02] hover:border-cyan/50 hover:shadow-[0_20px_45px_hsl(var(--cyan)/0.15)]">
-                    <img src="~/images/The Integrated Future.png" alt="Our Vision" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
+                    <img loading="lazy" decoding="async" src="~/images/The Integrated Future.png" alt="Our Vision" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-103" />
                 </div>
             </div>
 
@@ -381,7 +381,7 @@
                             <div class="mb-5 relative">
                                 @if (!string.IsNullOrWhiteSpace(member.PhotoPath))
                                 {
-                                    <img src="@member.PhotoPath" alt="@member.NameEn" class="w-24 h-24 rounded-2xl object-cover border border-slate-300 dark:border-white/10 shadow-lg shadow-cyan/10" />
+                                    <img loading="lazy" decoding="async" src="@member.PhotoPath" alt="@member.NameEn" class="w-24 h-24 rounded-2xl object-cover border border-slate-300 dark:border-white/10 shadow-lg shadow-cyan/10" />
                                 }
                                 else
                                 {

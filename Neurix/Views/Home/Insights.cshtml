@@ -79,7 +79,7 @@
                             @if (!string.IsNullOrWhiteSpace(post.CoverImagePath))
                             {
                                 <div class="relative aspect-video rounded-2xl overflow-hidden bg-muted/40 mb-4">
-                                    <img src="@post.CoverImagePath" alt="@post.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <img loading="lazy" decoding="async" src="@post.CoverImagePath" alt="@post.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                 </div>
                             }
 

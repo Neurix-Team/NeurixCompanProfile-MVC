@@ -1,0 +1,81 @@
+name: Build and browser quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      staging_url:
+        description: Existing staging URL to inspect after the build
+        required: false
+        type: string
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: Neurix/package-lock.json
+      - name: Build styles
+        run: |
+          npm ci --prefix Neurix
+          npm run build:css --prefix Neurix
+      - name: Build and test
+        run: |
+          dotnet restore Neurix.slnx
+          dotnet test Neurix.Tests/Neurix.Tests.csproj -c Release --no-restore
+          dotnet publish Neurix/Neurix.csproj -c Release --no-restore -o .quality-publish
+      - name: Install browser tooling
+        run: |
+          npm install --prefix scripts/quality --no-audit --no-fund
+          (cd scripts/quality && npx playwright install --with-deps chromium)
+      - name: Check local public pages and viewport layouts
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ASPNETCORE_URLS: http://127.0.0.1:5099
+          SITE_URL: http://127.0.0.1:5099
+        run: |
+          (cd .quality-publish && exec dotnet Neurix.dll) > .quality-app.log 2>&1 &
+          app_pid=$!
+          trap 'kill "$app_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..40}; do
+            if curl --fail --silent --output /dev/null "$SITE_URL/"; then break; fi
+            sleep 2
+          done
+          curl --fail --silent --output /dev/null "$SITE_URL/"
+          npm run check --prefix scripts/quality
+          npm run performance --prefix scripts/quality
+      - name: Check existing staging URL
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.staging_url != '' }}
+        env:
+          SITE_URL: ${{ inputs.staging_url }}
+          QUALITY_SCOPE: full
+        run: |
+          npm run check --prefix scripts/quality
+          npm run performance --prefix scripts/quality
+      - name: Save browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-results
+          path: |
+            .quality-results/
+          if-no-files-found: ignore
+      - name: Save app log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-app-log
+          path: .quality-app.log
+          if-no-files-found: ignore

@@ -74,7 +74,7 @@
                         @if (!string.IsNullOrWhiteSpace(project.CoverImagePath))
                         {
                             <div class="relative aspect-video w-full overflow-hidden bg-muted/40">
-                                <img src="@project.CoverImagePath" alt="@project.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                <img loading="lazy" decoding="async" src="@project.CoverImagePath" alt="@project.TitleEn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             </div>
                         }
 

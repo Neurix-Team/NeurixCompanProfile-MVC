@@ -125,7 +125,7 @@
     <section class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/50 dark:bg-background/20">
         @* Half Background ("infrastructure") - faded bright modern server room *@
         <div class="absolute inset-y-0 right-0 w-full lg:w-1/2 opacity-25 dark:opacity-[0.06] mix-blend-overlay pointer-events-none z-0">
-            <img src="@overviewBackground" alt="Infrastructure Background" class="w-full h-full object-cover object-right" />
+            <img loading="lazy" decoding="async" src="@overviewBackground" alt="Infrastructure Background" class="w-full h-full object-cover object-right" />
             @* Smooth gradient transition to transparent *@
             <div class="absolute inset-0 bg-gradient-to-r from-slate-50 dark:from-background via-slate-50/40 dark:via-background/40 to-transparent"></div>
         </div>
@@ -199,12 +199,12 @@
 
                     @* Top Image ("software") *@
                     <div class="absolute top-0 left-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
-                        <img src="~/images/Software.png" alt="Software Office Desk Setup" class="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src="~/images/Software.png" alt="Software Office Desk Setup" class="w-full h-full object-cover" />
                     </div>
 
                     @* Bottom Image ("research") *@
                     <div class="absolute bottom-0 right-0 w-[82%] aspect-[4/3] rounded-3xl overflow-hidden border border-slate-300 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-500 hover:scale-[1.03] hover:z-20 z-10 bg-slate-100 dark:bg-card">
-                        <img src="~/images/Research.png" alt="Pristine Laboratory Setup" class="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src="~/images/Research.png" alt="Pristine Laboratory Setup" class="w-full h-full object-cover" />
                     </div>
 
                 </div>

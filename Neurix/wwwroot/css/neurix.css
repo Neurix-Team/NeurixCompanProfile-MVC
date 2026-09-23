@@ -553,7 +553,7 @@ html.font-arabic h4 {
 }
 
 .animate-fade-in-up {
-    animation: fade-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: fade-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .animate-fade-in {
@@ -698,6 +698,11 @@ a:hover>.nav-underline {
     .neurix-nav-links { display: none; }
     #mobile-menu-btn { display: inline-flex; }
     #mobile-menu { display: block; }
+}
+
+@media (max-width: 340px) {
+    .neurix-brand-text { display: none; }
+    #main-navbar > nav { padding-inline: 1rem; }
 }
 
 #mobile-menu {

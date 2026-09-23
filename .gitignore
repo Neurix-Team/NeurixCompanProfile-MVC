@@ -23,6 +23,8 @@ build/
 .env.*
 !.env.example
 .perf-tools/
+.quality-results/
+.quality-publish/
 .publish-worktree/
 TestResults/
 *.trx

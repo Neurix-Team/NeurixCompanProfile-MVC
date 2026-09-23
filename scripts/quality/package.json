@@ -1,0 +1,11 @@
+{
+  "name": "neurix-browser-quality",
+  "private": true,
+  "scripts": {
+    "check": "node browser-check.cjs",
+    "performance": "node performance-check.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
