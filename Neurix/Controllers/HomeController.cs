@@ -85,23 +85,24 @@ namespace Neurix.Controllers
             {
                 model.Services = await _cmsServiceService.GetPublishedServicesByCompanySlugAsync("neurix");
                 model.CompanyProfile = await _cmsCompanyProfileService.GetBySlugAsync("neurix");
+                var hasPublishedProfile = model.CompanyProfile != null;
                 model.Testimonials = await _cmsTestimonialService.GetFeaturedTestimonialsByCompanySlugAsync("neurix");
                 model.FeaturedProjects = await _cmsProjectService.GetFeaturedProjectsByCompanySlugAsync("neurix", 4);
                 model.FeaturedPosts = await _cmsBlogPostService.GetFeaturedPostsByCompanySlugAsync("neurix", 3);
-                model.HeroSection = await _cmsHomeSectionService.GetHeroSectionByCompanySlugAsync("neurix");
-                model.HumanVisionSection = await _cmsHomeSectionService.GetHumanVisionSectionByCompanySlugAsync("neurix");
-                model.PioneersSection = await _cmsHomeSectionService.GetPioneersSectionByCompanySlugAsync("neurix");
-                model.PillarsSection = await _cmsHomeSectionService.GetPillarsSectionByCompanySlugAsync("neurix");
+                model.HeroSection = await _cmsHomeSectionService.GetHeroSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
+                model.HumanVisionSection = await _cmsHomeSectionService.GetHumanVisionSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
+                model.PioneersSection = await _cmsHomeSectionService.GetPioneersSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
+                model.PillarsSection = await _cmsHomeSectionService.GetPillarsSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
                 model.Pillars = await _cmsHomeSectionService.GetPillarItemsByCompanySlugAsync("neurix");
-                model.DivisionsSection = await _cmsHomeSectionService.GetDivisionsSectionByCompanySlugAsync("neurix");
+                model.DivisionsSection = await _cmsHomeSectionService.GetDivisionsSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
                 model.DivisionItems = await _cmsHomeSectionService.GetDivisionItemsByCompanySlugAsync("neurix");
-                model.AiEngineeringSection = await _cmsHomeSectionService.GetAiEngineeringSectionByCompanySlugAsync("neurix");
+                model.AiEngineeringSection = await _cmsHomeSectionService.GetAiEngineeringSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
                 model.AiEngineeringItems = await _cmsHomeSectionService.GetAiEngineeringItemsByCompanySlugAsync("neurix");
-                model.EthicsSection = await _cmsHomeSectionService.GetEthicsSectionByCompanySlugAsync("neurix");
-                model.CtaSection = await _cmsHomeSectionService.GetCtaSectionByCompanySlugAsync("neurix");
-                model.PortfolioHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Portfolio);
-                model.InsightsHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Insights);
-                model.TestimonialsHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Testimonials);
+                model.EthicsSection = await _cmsHomeSectionService.GetEthicsSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
+                model.CtaSection = await _cmsHomeSectionService.GetCtaSectionByCompanySlugAsync("neurix", includeUnpublished: hasPublishedProfile);
+                model.PortfolioHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Portfolio, includeUnpublished: hasPublishedProfile);
+                model.InsightsHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Insights, includeUnpublished: hasPublishedProfile);
+                model.TestimonialsHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Testimonials, includeUnpublished: hasPublishedProfile);
 
                 _cache.Set(cacheKey, model, HomeViewModelCacheDuration);
             }
@@ -178,7 +179,9 @@ namespace Neurix.Controllers
             try
             {
                 ViewData["CompanyProfile"] = await _cmsCompanyProfileService.GetBySlugAsync("neurix");
-                ViewData["ContactHeading"] = await _cmsSiteSettingService.GetSettingValueEnAsync("neurix", "contact.heading", "Let's Build the Future Together");
+                var contactHeading = await _cmsSiteSettingService.GetSettingAsync("neurix", "contact.heading");
+                ViewData["ContactHeadingEn"] = contactHeading?.ValueEn;
+                ViewData["ContactHeadingAr"] = contactHeading?.ValueAr;
                 ViewData["ContentPage"] = await GetContentPageAsync("contact");
             }
             catch (Exception ex)

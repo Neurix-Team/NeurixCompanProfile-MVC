@@ -800,10 +800,18 @@ a:hover>.nav-underline {
 }
 
 #neurix-gl {
-    z-index: 20;
+    z-index: 0;
     opacity: 0.96;
     contain: strict;
     overflow: hidden;
+}
+
+#public-main img:not([aria-hidden="true"]) {
+    background-color: #f1f5f9;
+}
+
+.dark #public-main img:not([aria-hidden="true"]) {
+    background-color: hsl(var(--card));
 }
 
 .dark #neurix-gl {

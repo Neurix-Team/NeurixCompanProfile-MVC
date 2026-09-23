@@ -14,8 +14,13 @@
     var heroHighlightAr = Pick(cms?.HeroTitleHighlightAr, "المستقبل معاً.");
     var heroSubtitleEn = Pick(cms?.HeroSubtitleEn, "Get in touch with our team of engineers and researchers.");
     var heroSubtitleAr = Pick(cms?.HeroSubtitleAr, "تواصل مع فريقنا من المهندسين والباحثين.");
+    var contactHeadingEn = ViewData["ContactHeadingEn"] as string ?? "Let's Build the Future Together";
+    var contactHeadingAr = ViewData["ContactHeadingAr"] as string ?? "لنبنِ المستقبل معاً";
 
     ViewData["Title"] = Pick(cms?.TitleEn, "Contact Us");
+    ViewData["TitleAr"] = Pick(cms?.TitleAr, "تواصل معنا");
+    ViewData["MetaDescription"] = Pick(cms?.MetaDescriptionEn, heroSubtitleEn);
+    ViewData["MetaDescriptionAr"] = Pick(cms?.MetaDescriptionAr, heroSubtitleAr);
 }
 
 <div class="relative pt-28 pb-14 md:pt-36 md:pb-18 flex items-center justify-center overflow-hidden">
@@ -63,7 +68,7 @@
             
             <!-- Left Column: Envelope Graphic (lg:col-span-6) -->
             <div class="lg:col-span-6 flex justify-center items-center">
-                <div class="group relative w-full max-w-lg lg:max-w-full overflow-hidden rounded-2xl aspect-video border border-slate-300 dark:border-white/10 shadow-lg bg-slate-100/50 dark:bg-card/30 backdrop-blur-md">
+                <div class="group relative w-full max-w-lg lg:max-w-full overflow-hidden rounded-2xl aspect-video border border-slate-300 dark:border-white/10 shadow-lg bg-slate-100 dark:bg-card">
                     @* Ambient backglow *@
                     <div class="absolute inset-0 bg-gradient-to-tr from-cyan/15 to-azure/5 blur-2xl opacity-75"></div>
                     <img src="~/images/Contact us.png" alt="Contact Us Illustration" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-[1.03]" />
@@ -72,6 +77,7 @@
 
             <!-- Right Column: Form (lg:col-span-6) -->
             <div class="lg:col-span-6">
+                <h2 class="mb-6 font-display text-2xl font-bold text-slate-900 dark:text-white" data-en="@contactHeadingEn" data-ar="@contactHeadingAr">@contactHeadingEn</h2>
                 <form asp-controller="Home" asp-action="Contact" method="POST" class="card-glow-border bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-3xl p-8 lg:p-12 relative overflow-hidden">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

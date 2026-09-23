@@ -65,8 +65,13 @@
     var ctaSubtitleAr = Pick(cms?.CtaSubtitleAr, "نتحقق منه، نبنيه، ونسلمه — في الوقت المحدد، وفق المواصفات، وجاهز للإنتاج.");
     var ctaButtonEn = Pick(cms?.CtaButtonTextEn, "Start a Conversation");
     var ctaButtonAr = Pick(cms?.CtaButtonTextAr, "ابدأ محادثة");
+    var ctaButtonUrl = Pick(cms?.CtaButtonUrl, "/Home/Contact");
+    contactEmail = Pick(cms?.ContactEmail, contactEmail);
 
     ViewData["Title"] = Pick(cms?.TitleEn, $"About {brandNameEn}");
+    ViewData["TitleAr"] = Pick(cms?.TitleAr, $"عن {brandNameAr}");
+    ViewData["MetaDescription"] = Pick(cms?.MetaDescriptionEn, descEn);
+    ViewData["MetaDescriptionAr"] = Pick(cms?.MetaDescriptionAr, descAr);
 
     // ── Master Card Classes ──
     var mc = "magnetic-card card-glow-border group relative bg-slate-100/60 dark:bg-card/40 backdrop-blur-xl border border-slate-300 dark:border-white/10 rounded-2xl p-7 md:p-8 transition-all duration-500 ease-out hover:border-cyan/70 hover:-translate-y-1 hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.4),0_0_40px_-5px_hsl(var(--cyan)/0.45)] dark:hover:shadow-[0_0_0_1px_hsl(var(--cyan)/0.6),0_0_50px_-5px_hsl(var(--cyan)/0.55)] shadow-card-light dark:shadow-none";
@@ -463,7 +468,7 @@
             @ctaSubtitleEn
         </p>
         <div class="flex flex-wrap justify-center gap-4 animate-fade-in-up" style="animation-delay: 200ms;">
-            <a asp-controller="Home" asp-action="Contact" class="inline-flex items-center justify-center rounded-[16px] px-8 py-4 text-base font-bold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300">
+            <a href="@ctaButtonUrl" class="inline-flex items-center justify-center rounded-[16px] px-8 py-4 text-base font-bold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300">
                 <span data-en="@ctaButtonEn" data-ar="@ctaButtonAr">@ctaButtonEn</span>
             </a>
         </div>

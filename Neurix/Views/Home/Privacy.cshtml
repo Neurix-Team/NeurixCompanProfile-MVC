@@ -12,6 +12,9 @@
     var hasBody = !string.IsNullOrWhiteSpace(Model?.BodyEn) || !string.IsNullOrWhiteSpace(Model?.BodyAr);
 
     ViewData["Title"] = titleEn;
+    ViewData["TitleAr"] = titleAr;
+    ViewData["MetaDescription"] = Model?.MetaDescriptionEn;
+    ViewData["MetaDescriptionAr"] = Model?.MetaDescriptionAr;
 }
 
 @if (hasBody)

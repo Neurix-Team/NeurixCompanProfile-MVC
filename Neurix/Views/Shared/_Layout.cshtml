@@ -27,8 +27,12 @@
     // same shape, otherwise they cannot drive the existing variables at all.
     var accentHsl = BrandColorHelper.ToHslTriplet(accentColor);
     var hasBrandOverride = accentHsl != null;
-    var pageTitle = string.IsNullOrEmpty(ViewData["Title"] as string) ? brandName : $"{ViewData["Title"]} — {brandName}";
-    var metaDesc = ViewData["MetaDescription"] as string ?? (isRtl ? companyProfile?.TaglineAr : companyProfile?.TaglineEn) ?? "Neurix AI — Technology in service of humanity. Human-centered ecosystems across research, infrastructure, and strategic engagement.";
+    var localizedTitle = (isRtl ? ViewData["TitleAr"] : ViewData["Title"]) as string ?? ViewData["Title"] as string;
+    var pageTitle = string.IsNullOrEmpty(localizedTitle) ? brandName : $"{localizedTitle} — {brandName}";
+    var metaDesc = (isRtl ? ViewData["MetaDescriptionAr"] : ViewData["MetaDescription"]) as string
+        ?? ViewData["MetaDescription"] as string
+        ?? (isRtl ? companyProfile?.TaglineAr : companyProfile?.TaglineEn)
+        ?? "Neurix AI — Technology in service of humanity. Human-centered ecosystems across research, infrastructure, and strategic engagement.";
 }
 <!DOCTYPE html>
 <html lang="@currentLang.Code" dir="@currentLang.Dir" class="@(isRtl ? "font-arabic" : null)">

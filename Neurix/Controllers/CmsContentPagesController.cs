@@ -145,6 +145,8 @@ namespace Neurix.Controllers
                 CtaSubtitleAr = page.CtaSubtitleAr,
                 CtaButtonTextEn = page.CtaButtonTextEn,
                 CtaButtonTextAr = page.CtaButtonTextAr,
+                CtaButtonUrl = page.CtaButtonUrl,
+                ContactEmail = page.ContactEmail,
                 IsPublished = page.IsPublished
             };
 
@@ -199,6 +201,8 @@ namespace Neurix.Controllers
                 CtaSubtitleAr = model.CtaSubtitleAr,
                 CtaButtonTextEn = model.CtaButtonTextEn,
                 CtaButtonTextAr = model.CtaButtonTextAr,
+                CtaButtonUrl = model.CtaButtonUrl,
+                ContactEmail = model.ContactEmail,
                 IsPublished = model.IsPublished
             };
 

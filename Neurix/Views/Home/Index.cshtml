@@ -3,10 +3,7 @@
     ViewData["Title"] = "Neurix AI Holding";
 }
 @{
-    // #divisions cards come from the CMS (/cms/home-sections/divisions). The literal set
-    // below is the fail-soft fallback that renders only while the table is still empty,
-    // matching how the pillars grid behaves.
-    var divisions = Model.DivisionItems != null && Model.DivisionItems.Any()
+    var divisions = Model.DivisionsSection != null || Model.DivisionItems.Any()
         ? Model.DivisionItems.Select(d => new
           {
               Icon = string.IsNullOrWhiteSpace(d.IconName) ? "layers" : d.IconName,
@@ -91,7 +88,7 @@
     var pillarsTitleAr = !string.IsNullOrWhiteSpace(pillarsSection?.TitleAr) ? pillarsSection.TitleAr : "الركائز الاساسية";
     var pillarsSubtitleEn = !string.IsNullOrWhiteSpace(pillarsSection?.SubtitleEn) ? pillarsSection.SubtitleEn : "The foundational pillars driving our intelligent digital ecosystems and enterprise solutions.";
     var pillarsSubtitleAr = !string.IsNullOrWhiteSpace(pillarsSection?.SubtitleAr) ? pillarsSection.SubtitleAr : "الركائز الأساسية التي تقود منظوماتنا الرقمية الذكيّة وحلول المؤسسات.";
-    var pillarItems = Model.Pillars != null && Model.Pillars.Any() ? Model.Pillars : null;
+    var pillarItems = Model.PillarsSection != null || Model.Pillars.Any() ? Model.Pillars : null;
 
     var ethics = Model.EthicsSection;
     var ethicsBadgeEn = !string.IsNullOrWhiteSpace(ethics?.BadgeEn) ? ethics.BadgeEn : "Operational Strategy";
@@ -140,7 +137,7 @@
     var aiTitleAr = !string.IsNullOrWhiteSpace(aiSection?.TitleAr) ? aiSection.TitleAr : "الذكاء الاصطناعي والهندسة";
 
     // #services cards, CMS-first with the original four as the fail-soft fallback.
-    var aiItems = Model.AiEngineeringItems != null && Model.AiEngineeringItems.Any()
+    var aiItems = Model.AiEngineeringSection != null || Model.AiEngineeringItems.Any()
         ? Model.AiEngineeringItems.Select(a => new
           {
               Icon = string.IsNullOrWhiteSpace(a.IconName) ? "code" : a.IconName,
@@ -221,6 +218,8 @@
 @* ═══════════════════════════════════════════════════════════
    HERO SECTION
    ═══════════════════════════════════════════════════════════ *@
+@if (hero?.IsPublished != false)
+{
 <section id="hero" class="relative min-h-screen flex items-center justify-center pt-24 md:pt-32 pb-28 md:pb-36">
 
     @* Layer 0: base radial gradient *@
@@ -344,10 +343,13 @@
     </svg>
 </a>
 </section>
+}
 
 @* ═══════════════════════════════════════════════════════════
    NEURIX AI HUMAN VISION SECTION
    ═══════════════════════════════════════════════════════════ *@
+@if (vision?.IsPublished != false)
+{
 <section id="human-vision" class="relative py-28 md:py-36 z-30 overflow-hidden px-4 md:px-6 mission-section">
     <div class="container px-6 max-w-7xl mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -382,10 +384,13 @@
         </div>
     </div>
 </section>
+}
 
 @* ═══════════════════════════════════════════════════════════
    A MESSAGE TO THE PIONEERS OF INNOVATION
    ═══════════════════════════════════════════════════════════ *@
+@if (pioneers?.IsPublished != false)
+{
 <section id="pioneers" class="relative py-24 md:py-32 z-30 overflow-hidden bg-slate-50/50 dark:bg-background/20 pioneers-section">
     <div class="container px-6 max-w-7xl mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -425,10 +430,11 @@
         </div>
     </div>
 </section>
+}
     @* ═══════════════════════════════════════════════════════════
    CORE CAPABILITIES (Module 1.3)
    ═══════════════════════════════════════════════════════════ *@
-@if (pillarsSection?.IsPublished != false)
+@if (pillarsSection?.IsPublished != false && (pillarItems == null || pillarItems.Count > 0))
 {
     <section id="pillars" class="relative py-24 md:py-32 z-30">
         <div class="container px-6 max-w-7xl mx-auto">
@@ -441,7 +447,7 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                @if (pillarItems != null && pillarItems.Any())
+                @if (pillarItems != null)
                 {
                     var pillarColors = new[] {
                         new { Bg = "bg-cyan/10", Text = "text-cyan", Shadow = "shadow-[0_0_15px_hsl(var(--cyan)/0.2)]" },
@@ -530,7 +536,7 @@
 @* ═══════════════════════════════════════════════════════════
    DIVISIONS SECTION (Module 1.4)
    ═══════════════════════════════════════════════════════════ *@
-@if (divisionsSection?.IsPublished != false)
+@if (divisionsSection?.IsPublished != false && divisions.Count > 0)
 {
 <section id="divisions" class="relative py-24 md:py-32 z-30 bg-slate-50/50 dark:bg-background/20">
     <div class="container px-6 max-w-7xl mx-auto">
@@ -734,7 +740,7 @@
 @* ═══════════════════════════════════════════════════════════
    AI & ENGINEERING SECTION
    ═══════════════════════════════════════════════════════════ *@
-@if (aiSection?.IsPublished != false)
+@if (aiSection?.IsPublished != false && aiItems.Count > 0)
 {
 <section id="services" class="relative py-24 md:py-32 z-30 bg-slate-50/50 dark:bg-background/20">
     <div class="container px-6 max-w-7xl mx-auto">
@@ -768,7 +774,7 @@
 @* ═══════════════════════════════════════════════════════════
    FEATURED PORTFOLIO PROJECTS (Dynamic CMS)
    ═══════════════════════════════════════════════════════════ *@
-@if (Model?.FeaturedProjects != null && Model.FeaturedProjects.Any())
+@if (portfolioHeader?.IsPublished != false && Model?.FeaturedProjects != null && Model.FeaturedProjects.Any())
 {
     <section id="portfolio" class="relative py-24 md:py-32 z-30 overflow-hidden">
         <div class="container px-6 max-w-7xl mx-auto">
@@ -856,7 +862,7 @@
 @* ═══════════════════════════════════════════════════════════
    LATEST INSIGHTS & PUBLICATIONS (Dynamic CMS)
    ═══════════════════════════════════════════════════════════ *@
-@if (Model?.FeaturedPosts != null && Model.FeaturedPosts.Any())
+@if (insightsHeader?.IsPublished != false && Model?.FeaturedPosts != null && Model.FeaturedPosts.Any())
 {
     <section id="insights" class="relative py-24 md:py-32 z-30 bg-slate-50/50 dark:bg-background/20">
         <div class="container px-6 max-w-7xl mx-auto">
@@ -957,7 +963,7 @@
 @* ═══════════════════════════════════════════════════════════
    CLIENT TESTIMONIALS & ENDORSEMENTS (Dynamic CMS)
    ═══════════════════════════════════════════════════════════ *@
-@if (Model?.Testimonials != null && Model.Testimonials.Any())
+@if (testimonialsHeader?.IsPublished != false && Model?.Testimonials != null && Model.Testimonials.Any())
 {
     <section id="testimonials" class="relative py-24 md:py-32 z-30">
         <div class="container px-6 max-w-7xl mx-auto">

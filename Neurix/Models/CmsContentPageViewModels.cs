@@ -171,6 +171,16 @@ namespace Neurix.Models
         [StringLength(150)]
         public string? CtaButtonTextAr { get; set; }
 
+        [Display(Name = "CTA Button Link")]
+        [StringLength(500)]
+        [RegularExpression(@"^(?:/(?!/)[^\s]*|https://[^\s]+)$", ErrorMessage = "Use a site path starting with / or an HTTPS URL.")]
+        public string? CtaButtonUrl { get; set; }
+
+        [Display(Name = "CTA Contact Email")]
+        [StringLength(256)]
+        [EmailAddress]
+        public string? ContactEmail { get; set; }
+
         [Display(Name = "Published (visible on public site)")]
         public bool IsPublished { get; set; } = true;
 

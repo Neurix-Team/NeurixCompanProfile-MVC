@@ -123,6 +123,114 @@ public sealed class CmsPublicPropagationIntegrationTests : IDisposable
         Assert.Contains("https://example.test/new-social", home);
     }
 
+    [Fact]
+    public async Task ContentPageAndContactSettingEdits_ReachPublicCopyMetadataAndLinks()
+    {
+        Guid pageId;
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var pages = scope.ServiceProvider.GetRequiredService<ICmsContentPageService>();
+            var created = await pages.UpsertAsync(new CmsContentPageUpsertDto
+            {
+                CompanyProfileId = _profileId,
+                Slug = "about",
+                TitleEn = "About Original",
+                TitleAr = "عن الشركة",
+                IsPublished = true
+            });
+            Assert.True(created.Success);
+            pageId = created.Value;
+        }
+
+        await LoginAsAdminAsync();
+        var pageToken = await GetTokenAsync($"/cms/content-pages/{pageId}/edit");
+        var pageSave = await _client.PostAsync($"/cms/content-pages/{pageId}/edit", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Id"] = pageId.ToString(),
+            ["CompanyProfileId"] = _profileId.ToString(),
+            ["Slug"] = "about",
+            ["TitleEn"] = "About Updated",
+            ["TitleAr"] = "عن نيوركس الجديدة",
+            ["MetaDescriptionEn"] = "Updated English description",
+            ["MetaDescriptionAr"] = "وصف عربي جديد",
+            ["CtaButtonTextEn"] = "Meet our team",
+            ["CtaButtonTextAr"] = "تعرف على فريقنا",
+            ["CtaButtonUrl"] = "/Home/Contact",
+            ["ContactEmail"] = "about@example.test",
+            ["IsPublished"] = "true",
+            ["__RequestVerificationToken"] = pageToken
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, pageSave.StatusCode);
+
+        var about = WebUtility.HtmlDecode(await (await _client.GetAsync("/Home/About")).Content.ReadAsStringAsync());
+        Assert.Contains("<title>About Updated", about);
+        Assert.Contains("Updated English description", about);
+        Assert.Contains("Meet our team", about);
+        Assert.Contains("href=\"/Home/Contact\"", about);
+        Assert.Contains("mailto:about@example.test", about);
+
+        var aboutAr = WebUtility.HtmlDecode(await (await _client.GetAsync("/Home/About?lang=ar")).Content.ReadAsStringAsync());
+        Assert.Contains("<title>عن نيوركس الجديدة", aboutAr);
+        Assert.Contains("وصف عربي جديد", aboutAr);
+
+        var settingToken = await GetTokenAsync($"/cms/settings/create?companyId={_profileId}");
+        var settingSave = await _client.PostAsync("/cms/settings/create", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["CompanyProfileId"] = _profileId.ToString(),
+            ["Key"] = "contact.heading",
+            ["Label"] = "Contact heading",
+            ["SettingType"] = "text",
+            ["GroupName"] = "Contact",
+            ["ValueEn"] = "Send a project brief",
+            ["ValueAr"] = "أرسل تفاصيل مشروعك",
+            ["__RequestVerificationToken"] = settingToken
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, settingSave.StatusCode);
+
+        var contact = WebUtility.HtmlDecode(await (await _client.GetAsync("/Home/Contact")).Content.ReadAsStringAsync());
+        Assert.Contains("Send a project brief", contact);
+        Assert.Contains("أرسل تفاصيل مشروعك", contact);
+    }
+
+    [Fact]
+    public async Task UnpublishedHomepageSection_DisappearsInsteadOfShowingFallbackCopy()
+    {
+        Assert.Contains("id=\"divisions\"", await (await _client.GetAsync("/")).Content.ReadAsStringAsync());
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var sections = scope.ServiceProvider.GetRequiredService<ICmsHomeSectionService>();
+            Assert.True((await sections.UpsertDivisionsSectionAsync(new CmsDivisionsSectionUpsertDto
+            {
+                CompanyProfileId = _profileId,
+                BadgeEn = "Hidden ecosystem",
+                IsPublished = false
+            })).Success);
+        }
+
+        var home = await (await _client.GetAsync("/")).Content.ReadAsStringAsync();
+        Assert.DoesNotContain("id=\"divisions\"", home);
+        Assert.DoesNotContain("Hidden ecosystem", home);
+        Assert.Contains("id=\"hero\"", home);
+    }
+
+    [Fact]
+    public async Task PublishedSectionWithNoPublishedCards_DoesNotResurrectDefaultCards()
+    {
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var sections = scope.ServiceProvider.GetRequiredService<ICmsHomeSectionService>();
+            Assert.True((await sections.UpsertDivisionsSectionAsync(new CmsDivisionsSectionUpsertDto
+            {
+                CompanyProfileId = _profileId,
+                IsPublished = true
+            })).Success);
+        }
+
+        var home = await (await _client.GetAsync("/")).Content.ReadAsStringAsync();
+        Assert.DoesNotContain("id=\"divisions\"", home);
+    }
+
     private async Task LoginAsAdminAsync()
     {
         const string email = "cms-admin@example.test";
