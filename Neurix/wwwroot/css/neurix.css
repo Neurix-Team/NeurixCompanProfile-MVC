@@ -635,27 +635,28 @@ a:hover>.nav-underline {
 
 .neurix-site-header {
     position: fixed;
-    inset: 0 0 auto;
+    inset: 10px clamp(10px, 1.4vw, 24px) auto;
     z-index: 50;
-    background: rgb(249 251 255 / 0.97);
-    border-bottom: 1px solid rgb(153 174 202 / 0.28);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 0.8);
-    transition: background-color 220ms ease, box-shadow 220ms ease;
+    border: 1px solid rgb(123 158 205 / 0.38);
+    border-radius: 20px;
+    background: linear-gradient(120deg, rgb(250 253 255 / 0.86), rgb(235 245 255 / 0.76));
+    box-shadow: 0 14px 36px -28px rgb(24 72 130 / 0.46), inset 0 1px 0 rgb(255 255 255 / 0.75);
+    transition: box-shadow 220ms ease;
     animation: neurix-header-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .dark .neurix-site-header {
-    background: rgb(12 25 46 / 0.97);
-    border-bottom-color: rgb(121 159 211 / 0.16);
-    box-shadow: 0 1px 0 rgb(255 255 255 / 0.03);
+    border-color: rgb(113 155 211 / 0.25);
+    background: linear-gradient(120deg, rgb(13 29 54 / 0.84), rgb(10 25 47 / 0.76));
+    box-shadow: 0 14px 36px -24px rgb(0 0 0 / 0.58), inset 0 1px 0 rgb(255 255 255 / 0.09);
 }
 
 .neurix-site-header.is-scrolled {
-    box-shadow: 0 14px 36px -24px rgb(21 69 137 / 0.42);
+    box-shadow: 0 16px 42px -24px rgb(21 69 137 / 0.48), inset 0 1px 0 rgb(255 255 255 / 0.75);
 }
 
 .dark .neurix-site-header.is-scrolled {
-    box-shadow: 0 14px 36px -20px rgb(0 0 0 / 0.65);
+    box-shadow: 0 16px 42px -20px rgb(0 0 0 / 0.65), inset 0 1px 0 rgb(255 255 255 / 0.09);
 }
 
 .neurix-navbar {
@@ -986,18 +987,14 @@ a:hover>.nav-underline {
 .neurix-site-footer {
     position: relative;
     z-index: 1;
-    margin: clamp(64px, 8vw, 128px) clamp(10px, 2vw, 28px) 16px;
-    border: 1px solid rgb(127 158 199 / 0.38);
-    border-radius: clamp(24px, 2.8vw, 38px);
-    overflow: hidden;
+    margin-top: clamp(64px, 8vw, 128px);
+    border-top: 1px solid rgb(127 158 199 / 0.38);
     background: rgb(245 250 255 / 0.76);
-    box-shadow: 0 28px 80px -56px rgb(25 67 119 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.75);
 }
 
 .dark .neurix-site-footer {
-    border-color: rgb(103 151 204 / 0.3);
+    border-top-color: rgb(103 151 204 / 0.3);
     background: rgb(9 23 44 / 0.76);
-    box-shadow: 0 28px 80px -56px rgb(0 0 0 / 0.9), inset 0 1px 0 rgb(255 255 255 / 0.07);
 }
 
 .footer-link {
