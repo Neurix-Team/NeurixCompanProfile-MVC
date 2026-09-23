@@ -25,40 +25,45 @@
     var logoPath = !string.IsNullOrWhiteSpace(companyProfile?.LogoPath) ? companyProfile.LogoPath : "/images/neurix-logo.png";
 
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "Index";
-    string GetActiveColor(string actionName) => currentAction == actionName ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
-    string GetMobileActiveColor(string actionName) => currentAction == actionName ? "text-cyan-600 dark:text-cyan-400 font-bold border-cyan/50" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-300 dark:border-white/10";
+    var navAction = currentAction switch
+    {
+        "ProjectDetail" => "Portfolio",
+        "InsightDetail" => "Insights",
+        _ => currentAction
+    };
+    string GetActiveClass(string actionName) => navAction == actionName ? "is-active" : string.Empty;
 }
 
 <header id="main-navbar"
-        class="fixed top-0 left-0 right-0 w-full inset-x-0 z-50 transition-all duration-300 bg-transparent border-b border-transparent">
-    <nav class="container mx-auto flex items-center justify-between h-20 md:h-24 px-4 md:px-6 lg:px-8">
+        class="neurix-site-header">
+    <nav class="neurix-navbar" aria-label="@(isRtl ? "التنقل الرئيسي" : "Main navigation")">
 
         @* Logo *@
-        <a href="/" class="flex items-center gap-2.5 group neurix-brand shrink-0" aria-label="@initialBrandName">
+        <a href="/" class="neurix-brand" aria-label="@initialBrandName">
+            <span class="neurix-brand-mark">
             <img src="@logoPath"
                  alt="@brandNameEn Icon"
-                 class="h-8 w-8 object-cover object-left transition-transform duration-300 group-hover:scale-105" />
-            <span class="text-slate-900 dark:text-white font-bold text-xl tracking-tight transition-colors duration-300 neurix-brand-text" data-en="@brandNameEn" data-ar="@brandNameAr">@initialBrandName</span>
+                 class="neurix-brand-image" />
+            </span>
+            <span class="neurix-brand-text" data-en="@brandNameEn" data-ar="@brandNameAr">@initialBrandName</span>
         </a>
 
         @* Center Links — Dynamic from CMS Menu Items, with hardcoded fallback *@
-        <ul class="neurix-nav-links hidden lg:flex items-center">
+        <ul class="neurix-nav-links">
             @if (headerMenuItems.Count > 0)
             {
                 @foreach (var item in headerMenuItems)
                 {
-                    var isCurrent = (item.Url == "/" && currentAction == "Index") ||
-                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.TrimStart('/').Equals(currentAction, StringComparison.OrdinalIgnoreCase)) ||
-                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.Contains("/Home/" + currentAction, StringComparison.OrdinalIgnoreCase));
-                    var activeColor = isCurrent ? "text-cyan-600 dark:text-cyan-400 font-semibold" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
+                    var isCurrent = (item.Url == "/" && navAction == "Index") ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.TrimStart('/').Equals(navAction, StringComparison.OrdinalIgnoreCase)) ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.Contains("/Home/" + navAction, StringComparison.OrdinalIgnoreCase));
                     var targetAttr = item.OpenInNewTab ? "_blank" : "_self";
                     var initialLabel = isRtl && !string.IsNullOrWhiteSpace(item.LabelAr) ? item.LabelAr : item.LabelEn;
 
                     <li>
-                        <a href="@item.Url" target="@targetAttr" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @activeColor"
-                           data-en="@item.LabelEn" data-ar="@item.LabelAr">
+                        <a href="@item.Url" target="@targetAttr" class="neurix-nav-link @(isCurrent ? "is-active" : "")"
+                           aria-current="@(isCurrent ? "page" : null)" data-en="@item.LabelEn" data-ar="@item.LabelAr">
                             @initialLabel
-                            <span class="nav-link-underline @(isCurrent ? "is-active" : "")"></span>
                         </a>
                     </li>
                 }
@@ -67,50 +72,47 @@
             {
                 @* Hardcoded fallback if no CMS items loaded *@
                 <li>
-                    <a asp-controller="Home" asp-action="Index" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("Index")"
-                       data-en="Home" data-ar="الرئيسية">
+                    <a asp-controller="Home" asp-action="Index" class="neurix-nav-link @GetActiveClass("Index")"
+                       aria-current="@(navAction == "Index" ? "page" : null)" data-en="Home" data-ar="الرئيسية">
                         @(isRtl ? "الرئيسية" : "Home")
-                        <span class="nav-link-underline @(currentAction == "Index" ? "is-active" : "")"></span>
                     </a>
                 </li>
                 <li>
-                    <a asp-controller="Home" asp-action="Labs" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("Labs")"
-                       data-en="Labs" data-ar="المختبرات">
+                    <a asp-controller="Home" asp-action="Labs" class="neurix-nav-link @GetActiveClass("Labs")"
+                       aria-current="@(navAction == "Labs" ? "page" : null)" data-en="Labs" data-ar="المختبرات">
                         @(isRtl ? "المختبرات" : "Labs")
-                        <span class="nav-link-underline @(currentAction == "Labs" ? "is-active" : "")"></span>
                     </a>
                 </li>
                 <li>
-                    <a asp-controller="Home" asp-action="Technology" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("Technology")"
-                       data-en="Technology" data-ar="التقنية">
+                    <a asp-controller="Home" asp-action="Technology" class="neurix-nav-link @GetActiveClass("Technology")"
+                       aria-current="@(navAction == "Technology" ? "page" : null)" data-en="Technology" data-ar="التقنية">
                         @(isRtl ? "التقنية" : "Technology")
-                        <span class="nav-link-underline @(currentAction == "Technology" ? "is-active" : "")"></span>
                     </a>
                 </li>
                 <li>
-                    <a asp-controller="Home" asp-action="About" class="relative text-sm font-medium whitespace-nowrap transition-colors duration-300 group py-2 @GetActiveColor("About")"
-                       data-en="About" data-ar="من نحن">
+                    <a asp-controller="Home" asp-action="About" class="neurix-nav-link @GetActiveClass("About")"
+                       aria-current="@(navAction == "About" ? "page" : null)" data-en="About" data-ar="من نحن">
                         @(isRtl ? "من نحن" : "About")
-                        <span class="nav-link-underline @(currentAction == "About" ? "is-active" : "")"></span>
                     </a>
                 </li>
             }
         </ul>
 
         @* Right Side — Controls (in RTL automatically aligns to the left) *@
-        <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        <div class="neurix-nav-actions">
             
             @* Language Toggle *@
             <button id="lang-toggle-btn" type="button"
                aria-label="Switch language"
-               class="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md text-sm font-medium text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+               class="neurix-nav-tool neurix-lang-tool">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9Z"/></svg>
                 <span id="lang-toggle-text">@(isRtl ? "EN" : "AR")</span>
             </button>
 
             @* Theme Toggle Button *@
-            <button onclick="window.toggleTheme()"
+            <button type="button" onclick="window.toggleTheme()"
                     aria-label="Toggle dark/light mode"
-                    class="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+                    class="neurix-nav-tool neurix-theme-tool">
                 @* Sun Icon *@
                 <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -131,15 +133,19 @@
 
             @* Contact CTA *@
             <a asp-controller="Home" asp-action="Contact"
-               class="hidden sm:inline-flex items-center justify-center rounded-[16px] px-5 py-2.5 text-sm font-semibold whitespace-nowrap text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)] hover:shadow-[0_0_30px_hsl(var(--azure)/0.6)] hover:scale-105 transition-all duration-300"
-               data-en="Contact Us" data-ar="تواصل معنا">
-                @(isRtl ? "تواصل معنا" : "Contact Us")
+               class="neurix-nav-cta"
+               data-en="Start a Project" data-ar="ابدأ مشروعك">
+                @(isRtl ? "ابدأ مشروعك" : "Start a Project")
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg>
             </a>
 
             @* Hamburger Mobile Menu Button *@
             <button id="mobile-menu-btn"
+                    type="button"
                     aria-label="Toggle menu"
-                    class="lg:hidden relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 dark:border-white/10 bg-slate-100/60 dark:bg-card/40 backdrop-blur-md text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan/60 hover:shadow-[0_0_18px_hsl(var(--cyan)/0.35)] transition-all duration-300">
+                    aria-controls="mobile-menu"
+                    aria-expanded="false"
+                    class="neurix-nav-tool neurix-menu-tool">
                 <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                      class="transition-all duration-300 absolute">
@@ -160,38 +166,42 @@
 
     @* Mobile Dropdown Menu *@
     <div id="mobile-menu"
-         class="lg:hidden absolute left-0 right-0 w-full inset-x-0 top-full bg-background/95 backdrop-blur-2xl border-b border-white/10 transition-all duration-300 origin-top transform scale-y-0 opacity-0 invisible shadow-2xl">
-        <div class="container py-6 flex flex-col gap-2">
+         data-open="false" class="neurix-mobile-menu" inert>
+        <div class="neurix-mobile-links">
             @if (headerMenuItems.Count > 0)
             {
                 @foreach (var item in headerMenuItems)
                 {
-                    var isCurrent = (item.Url == "/" && currentAction == "Index") ||
-                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.TrimStart('/').Equals(currentAction, StringComparison.OrdinalIgnoreCase)) ||
-                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.Contains("/Home/" + currentAction, StringComparison.OrdinalIgnoreCase));
-                    var mobileColor = isCurrent ? "text-cyan-600 dark:text-cyan-400 font-bold border-cyan/50" : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-300 dark:border-white/10";
+                    var isCurrent = (item.Url == "/" && navAction == "Index") ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.TrimStart('/').Equals(navAction, StringComparison.OrdinalIgnoreCase)) ||
+                                    (!string.IsNullOrWhiteSpace(item.Url) && item.Url.Contains("/Home/" + navAction, StringComparison.OrdinalIgnoreCase));
                     var targetAttr = item.OpenInNewTab ? "_blank" : "_self";
                     var initialLabel = isRtl && !string.IsNullOrWhiteSpace(item.LabelAr) ? item.LabelAr : item.LabelEn;
 
-                    <a href="@item.Url" target="@targetAttr" class="text-base py-3 border-b @mobileColor"
-                       data-en="@item.LabelEn" data-ar="@item.LabelAr">@initialLabel</a>
+                    <a href="@item.Url" target="@targetAttr" class="neurix-mobile-link @(isCurrent ? "is-active" : "")"
+                       aria-current="@(isCurrent ? "page" : null)" data-en="@item.LabelEn" data-ar="@item.LabelAr">@initialLabel</a>
                 }
             }
             else
             {
-                <a asp-controller="Home" asp-action="Index" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("Index")"
+                <a asp-controller="Home" asp-action="Index" class="neurix-mobile-link @GetActiveClass("Index")"
+                   aria-current="@(navAction == "Index" ? "page" : null)"
                    data-en="Home" data-ar="الرئيسية">@(isRtl ? "الرئيسية" : "Home")</a>
-                <a asp-controller="Home" asp-action="Labs" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("Labs")"
+                <a asp-controller="Home" asp-action="Labs" class="neurix-mobile-link @GetActiveClass("Labs")"
+                   aria-current="@(navAction == "Labs" ? "page" : null)"
                    data-en="Labs" data-ar="المختبرات">@(isRtl ? "المختبرات" : "Labs")</a>
-                <a asp-controller="Home" asp-action="Technology" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("Technology")"
+                <a asp-controller="Home" asp-action="Technology" class="neurix-mobile-link @GetActiveClass("Technology")"
+                   aria-current="@(navAction == "Technology" ? "page" : null)"
                    data-en="Technology" data-ar="التقنية">@(isRtl ? "التقنية" : "Technology")</a>
-                <a asp-controller="Home" asp-action="About" class="text-base py-3 border-b border-white/10 @GetMobileActiveColor("About")"
+                <a asp-controller="Home" asp-action="About" class="neurix-mobile-link @GetActiveClass("About")"
+                   aria-current="@(navAction == "About" ? "page" : null)"
                    data-en="About Us" data-ar="من نحن">@(isRtl ? "من نحن" : "About Us")</a>
             }
 
-            <a asp-controller="Home" asp-action="Contact" class="mt-6 w-full inline-flex items-center justify-center rounded-[16px] px-5 py-3.5 text-sm font-semibold text-primary-foreground bg-button-gradient shadow-[0_0_20px_hsl(var(--azure)/0.35)]"
-               data-en="Contact Us" data-ar="تواصل معنا">
-                @(isRtl ? "تواصل معنا" : "Contact Us")
+            <a asp-controller="Home" asp-action="Contact" class="neurix-mobile-cta"
+               data-en="Start a Project" data-ar="ابدأ مشروعك">
+                @(isRtl ? "ابدأ مشروعك" : "Start a Project")
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg>
             </a>
         </div>
     </div>
@@ -320,45 +330,43 @@
         };
     })();
 
-    // Mobile Menu Toggle
     (function () {
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
         const iconMenu = document.getElementById('icon-menu');
         const iconClose = document.getElementById('icon-close');
-        let isOpen = false;
+        const header = document.getElementById('main-navbar');
+        if (!btn || !menu) return;
 
-        if (btn && menu) {
-            btn.addEventListener('click', function () {
-                isOpen = !isOpen;
-                if (isOpen) {
-                    menu.classList.remove('scale-y-0', 'opacity-0', 'invisible');
-                    menu.classList.add('scale-y-100', 'opacity-100', 'visible');
-                    
-                    if(iconMenu) iconMenu.classList.add('scale-0', 'opacity-0');
-                    if(iconClose) {
-                        iconClose.classList.remove('scale-0', 'opacity-0');
-                        iconClose.classList.add('scale-100', 'opacity-100');
-                    }
-                } else {
-                    menu.classList.add('scale-y-0', 'opacity-0', 'invisible');
-                    menu.classList.remove('scale-y-100', 'opacity-100', 'visible');
-                    
-                    if(iconMenu) iconMenu.classList.remove('scale-0', 'opacity-0');
-                    if(iconClose) {
-                        iconClose.classList.add('scale-0', 'opacity-0');
-                        iconClose.classList.remove('scale-100', 'opacity-100');
-                    }
-                }
-            });
-
-            // Close on link click
-            const links = menu.querySelectorAll('a');
-            links.forEach(function(link) {
-                link.addEventListener('click', function() {
-                    if (isOpen) btn.click();
-                });
-            });
+        function setOpen(open) {
+            menu.dataset.open = open ? 'true' : 'false';
+            menu.inert = !open;
+            btn.setAttribute('aria-expanded', String(open));
+            iconMenu?.classList.toggle('scale-0', open);
+            iconMenu?.classList.toggle('opacity-0', open);
+            iconClose?.classList.toggle('scale-0', !open);
+            iconClose?.classList.toggle('opacity-0', !open);
+            iconClose?.classList.toggle('scale-100', open);
+            iconClose?.classList.toggle('opacity-100', open);
         }
+
+        btn.addEventListener('click', function () {
+            setOpen(menu.dataset.open !== 'true');
+        });
+        menu.addEventListener('click', function (event) {
+            if (event.target.closest('a')) setOpen(false);
+        });
+        document.addEventListener('pointerdown', function (event) {
+            if (menu.dataset.open === 'true' && !header?.contains(event.target)) setOpen(false);
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && menu.dataset.open === 'true') {
+                setOpen(false);
+                btn.focus();
+            }
+        });
+        window.addEventListener('resize', function () {
+            if (window.innerWidth >= 1480 && menu.dataset.open === 'true') setOpen(false);
+        }, { passive: true });
     })();
 </script>
