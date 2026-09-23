@@ -147,15 +147,29 @@
         (function () {
             const header = document.getElementById('main-navbar');
             if (!header) return;
-            let wasScrolled;
-            function onScroll() {
-                const scrolled = window.scrollY > 24;
-                if (scrolled === wasScrolled) return;
-                wasScrolled = scrolled;
-                header.classList.toggle('is-scrolled', scrolled);
+            const menu = document.getElementById('mobile-menu');
+            let lastY = Math.max(window.scrollY, 0);
+            let frame = 0;
+            function updateNav() {
+                const y = Math.max(window.scrollY, 0);
+                header.classList.toggle('is-scrolled', y > 24);
+                if (y < 96 || menu?.dataset.open === 'true' || header.contains(document.activeElement)) {
+                    header.classList.remove('is-hidden');
+                    lastY = y;
+                } else if (y - lastY > 6) {
+                    header.classList.add('is-hidden');
+                    lastY = y;
+                } else if (lastY - y > 6) {
+                    header.classList.remove('is-hidden');
+                    lastY = y;
+                }
+                frame = 0;
             }
-            onScroll();
-            window.addEventListener('scroll', onScroll, { passive: true });
+            updateNav();
+            header.addEventListener('focusin', () => header.classList.remove('is-hidden'));
+            window.addEventListener('scroll', function () {
+                if (!frame) frame = requestAnimationFrame(updateNav);
+            }, { passive: true });
         })();
 
         // Floating label fields
