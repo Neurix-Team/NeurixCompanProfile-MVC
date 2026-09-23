@@ -32,7 +32,7 @@
 ### 2. HTTPS وإعدادات البيئة والبروكسي
 
 - التشغيل الحالي `ASPNETCORE_ENVIRONMENT=Development`. يلزم نشر منفصل بإعداد `Production` واسم نطاق وشهادة TLS صالحة.
-- تضيف خدمة `web` الـlabels `neurix.proxy.domain` و`neurix.proxy.port`، وقيمتهما الافتراضية `neurix.uk` و`8080`. ضبط `NEURIX_TRUSTED_PROXY_IP` يفعّل قراءة Forwarded Headers من عنوان البروكسي المحدد فقط قبل إعادة توجيه HTTPS والمصادقة وتحديد المعدل حسب IP. لا تثق تلقائيًا في هيدرات قادمة من الإنترنت.
+- تضيف خدمة `web` الـlabels `neurix.proxy.domain` و`neurix.proxy.port`، وقيمتهما الافتراضية `neurix.uk` و`18473`. متغير `NEURIX_WEB_PORT` يحدد المنفذ المنشور وقيمة label معًا؛ متغير `WEB_PORT` القديم لا يُستخدم. ضبط `NEURIX_TRUSTED_PROXY_IP` يفعّل قراءة Forwarded Headers من عنوان البروكسي المحدد فقط قبل إعادة توجيه HTTPS والمصادقة وتحديد المعدل حسب IP. لا تثق تلقائيًا في هيدرات قادمة من الإنترنت.
 - اختبر تسجيل الدخول والخروج والكوكيز الآمنة ورفع الملفات فعليًا خلف البروكسي؛ تغيير اسم البيئة وحده غير كافٍ. راجع [توثيق Microsoft لإعداد البروكسي](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0).
 
 ### 3. قاعدة البيانات وعزل الشبكة

@@ -12,8 +12,8 @@
 #
 #  Quick start
 #    docker compose up -d --build
-#    public site : http://localhost:8080
-#    CRM / CMS   : http://localhost:8080/crm/account/login
+#    public site : http://localhost:18473
+#    CRM / CMS   : http://localhost:18473/crm/account/login
 #
 #  Every value below can be overridden from a `.env` file next to this file
 #  (git-ignored) or from the shell; the defaults make the stack run as-is.
@@ -82,10 +82,10 @@ services:
       Crm__SeedAdmin__AllowInProduction: ${SEED_ADMIN_ALLOW_IN_PRODUCTION:-false}
       TZ: ${TZ:-Africa/Cairo}
     ports:
-      - "${WEB_PORT:-8080}:80"
+      - "${NEURIX_WEB_PORT:-18473}:80"
     labels:
       - "neurix.proxy.domain=${NEURIX_PROXY_DOMAIN:-neurix.uk}"
-      - "neurix.proxy.port=${WEB_PORT:-8080}"
+      - "neurix.proxy.port=${NEURIX_WEB_PORT:-18473}"
     volumes:
       # CMS media uploads live outside the image, otherwise they are lost on redeploy.
       - app-uploads:/app/wwwroot/uploads
