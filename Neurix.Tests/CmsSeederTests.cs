@@ -69,6 +69,24 @@ namespace Neurix.Tests
         }
 
         [Fact]
+        public async Task SeedAsync_ReplacesLegacyContactEmailWithoutChangingCustomEmail()
+        {
+            await _seeder.SeedAsync();
+            var cta = await _db.CtaSections.SingleAsync();
+            Assert.Equal("contact@neurix.ai", cta.ContactEmail);
+
+            cta.ContactEmail = "neurix@aidaleel.com";
+            await _db.SaveChangesAsync();
+            await _seeder.SeedAsync();
+            Assert.Equal("contact@neurix.ai", cta.ContactEmail);
+
+            cta.ContactEmail = "custom@example.test";
+            await _db.SaveChangesAsync();
+            await _seeder.SeedAsync();
+            Assert.Equal("custom@example.test", cta.ContactEmail);
+        }
+
+        [Fact]
         public async Task SeedAsync_SeedsTheHomepageBlocksThatUsedToBeHardcoded()
         {
             await _seeder.SeedAsync();

@@ -9,9 +9,26 @@ namespace Neurix.DAL.Data
     /// </summary>
     public class CmsDbContext : DbContext
     {
-        public CmsDbContext(DbContextOptions<CmsDbContext> options)
+        private readonly CmsContentRevision? _contentRevision;
+
+        public CmsDbContext(DbContextOptions<CmsDbContext> options, CmsContentRevision? contentRevision = null)
             : base(options)
         {
+            _contentRevision = contentRevision;
+        }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            var saved = base.SaveChanges(acceptAllChangesOnSuccess);
+            if (saved > 0) _contentRevision?.Advance();
+            return saved;
+        }
+
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            var saved = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            if (saved > 0) _contentRevision?.Advance();
+            return saved;
         }
 
         public DbSet<CmsCompanyProfile> CompanyProfiles => Set<CmsCompanyProfile>();

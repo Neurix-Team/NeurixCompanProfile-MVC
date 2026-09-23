@@ -1474,7 +1474,7 @@ namespace Neurix.Controllers
                 ButtonTextEn = section?.ButtonTextEn ?? "Contact Us",
                 ButtonTextAr = section?.ButtonTextAr ?? "تواصل معنا",
                 ButtonUrl = section?.ButtonUrl ?? "/Home/Contact",
-                ContactEmail = section?.ContactEmail ?? "neurix@aidaleel.com",
+                ContactEmail = section?.ContactEmail ?? "contact@neurix.ai",
                 BackgroundImagePath = section?.BackgroundImagePath ?? "/images/Contact Us (Home) 2.png",
                 IsPublished = section?.IsPublished ?? true
             };

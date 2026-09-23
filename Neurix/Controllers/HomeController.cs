@@ -25,6 +25,7 @@ namespace Neurix.Controllers
         private readonly ICmsContentPageService _cmsContentPageService;
         private readonly ICmsPageBandService _cmsPageBandService;
         private readonly IMemoryCache _cache;
+        private readonly Neurix.DAL.Data.CmsContentRevision? _contentRevision;
         private readonly ILogger<HomeController> _logger;
 
         private const string HomeViewModelCacheKey = "home:neurix";
@@ -44,7 +45,8 @@ namespace Neurix.Controllers
             ICmsContentPageService cmsContentPageService,
             ICmsPageBandService cmsPageBandService,
             IMemoryCache cache,
-            ILogger<HomeController> logger)
+            ILogger<HomeController> logger,
+            Neurix.DAL.Data.CmsContentRevision? contentRevision = null)
         {
             _leadService = leadService;
             _cmsServiceService = cmsServiceService;
@@ -60,11 +62,13 @@ namespace Neurix.Controllers
             _cmsPageBandService = cmsPageBandService;
             _cache = cache;
             _logger = logger;
+            _contentRevision = contentRevision;
         }
 
         public async Task<IActionResult> Index()
         {
-            if (_cache.TryGetValue(HomeViewModelCacheKey, out HomePageViewModel? cachedModel) && cachedModel is not null)
+            var cacheKey = $"{HomeViewModelCacheKey}:{_contentRevision?.Current ?? 0}";
+            if (_cache.TryGetValue(cacheKey, out HomePageViewModel? cachedModel) && cachedModel is not null)
             {
                 return View(cachedModel);
             }
@@ -99,7 +103,7 @@ namespace Neurix.Controllers
                 model.InsightsHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Insights);
                 model.TestimonialsHeader = await _cmsHomeSectionService.GetListSectionHeaderByCompanySlugAsync("neurix", CmsListSectionKeys.Testimonials);
 
-                _cache.Set(HomeViewModelCacheKey, model, HomeViewModelCacheDuration);
+                _cache.Set(cacheKey, model, HomeViewModelCacheDuration);
             }
             catch (Exception ex)
             {

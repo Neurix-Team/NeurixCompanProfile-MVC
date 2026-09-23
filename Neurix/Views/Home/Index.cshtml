@@ -120,7 +120,7 @@
     var ctaButtonTextEn = !string.IsNullOrWhiteSpace(cta?.ButtonTextEn) ? cta.ButtonTextEn : "Contact Us";
     var ctaButtonTextAr = !string.IsNullOrWhiteSpace(cta?.ButtonTextAr) ? cta.ButtonTextAr : "تواصل معنا";
     var ctaButtonUrl = !string.IsNullOrWhiteSpace(cta?.ButtonUrl) ? cta.ButtonUrl : "/Home/Contact";
-    var ctaContactEmail = !string.IsNullOrWhiteSpace(cta?.ContactEmail) ? cta.ContactEmail : "neurix@aidaleel.com";
+    var ctaContactEmail = !string.IsNullOrWhiteSpace(cta?.ContactEmail) ? cta.ContactEmail : (!string.IsNullOrWhiteSpace(Model.CompanyProfile?.Email) ? Model.CompanyProfile.Email : "contact@neurix.ai");
     var ctaBgImg = !string.IsNullOrWhiteSpace(cta?.BackgroundImagePath) ? cta.BackgroundImagePath : "/images/Contact Us (Home) 2.png";
 
     var divisionsSection = Model.DivisionsSection;

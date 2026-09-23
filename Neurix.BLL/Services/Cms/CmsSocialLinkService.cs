@@ -18,11 +18,13 @@ namespace Neurix.BLL.Services.Cms
 
         private readonly CmsDbContext _db;
         private readonly IMemoryCache _cache;
+        private readonly CmsContentRevision? _contentRevision;
 
-        public CmsSocialLinkService(CmsDbContext db, IMemoryCache cache)
+        public CmsSocialLinkService(CmsDbContext db, IMemoryCache cache, CmsContentRevision? contentRevision = null)
         {
             _db = db;
             _cache = cache;
+            _contentRevision = contentRevision;
         }
 
         public async Task<IReadOnlyList<CmsSocialLinkSummaryDto>> GetLinksByCompanyAsync(Guid? companyProfileId = null, bool includeUnpublished = false, CancellationToken cancellationToken = default)
@@ -65,7 +67,7 @@ namespace Neurix.BLL.Services.Cms
         public async Task<IReadOnlyList<CmsSocialLinkSummaryDto>> GetPublishedLinksByCompanySlugAsync(string companySlug, CancellationToken cancellationToken = default)
         {
             var normalizedCompanySlug = (companySlug ?? string.Empty).Trim().ToLowerInvariant();
-            var cacheKey = $"cms:social-links:{normalizedCompanySlug}";
+            var cacheKey = $"cms:social-links:{normalizedCompanySlug}:{_contentRevision?.Current ?? 0}";
 
             if (_cache.TryGetValue(cacheKey, out IReadOnlyList<CmsSocialLinkSummaryDto>? cached) && cached is not null)
             {

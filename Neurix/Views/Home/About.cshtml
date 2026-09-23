@@ -4,6 +4,7 @@
 @{
     var brandNameEn = !string.IsNullOrWhiteSpace(Model?.NameEn) ? Model.NameEn : "Neurix AI";
     var brandNameAr = !string.IsNullOrWhiteSpace(Model?.NameAr) ? Model.NameAr : "نيوركس AI";
+    var contactEmail = !string.IsNullOrWhiteSpace(Model?.Email) ? Model.Email : "contact@neurix.ai";
     // ── CMS-managed page content (Group 3) ──
     // Every read goes through Pick(): the CMS value wins when present, otherwise the
     // original hardcoded copy renders. A missing, empty or unpublished page therefore
@@ -469,9 +470,9 @@
         <!-- Contact info -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-slate-500 dark:text-slate-400 animate-fade-in-up mt-10"
              style="animation-delay: 300ms;">
-            <a href="mailto:neurix@aidaleel.com" class="flex items-center gap-2 hover:text-cyan transition-colors">
+            <a href="mailto:@contactEmail" class="flex items-center gap-2 hover:text-cyan transition-colors">
                 <i data-lucide="mail" class="w-4 h-4 text-cyan flex-shrink-0"></i>
-                neurix@aidaleel.com
+                @contactEmail
             </a>
         </div>
     </div>

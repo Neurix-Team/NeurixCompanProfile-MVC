@@ -1967,7 +1967,8 @@ namespace Neurix.BLL.Services.Cms
                 });
             }
 
-            if (!await _db.CtaSections.AnyAsync(c => c.CompanyProfileId == neurixProfileId))
+            var existingCta = await _db.CtaSections.FirstOrDefaultAsync(c => c.CompanyProfileId == neurixProfileId);
+            if (existingCta == null)
             {
                 _db.CtaSections.Add(new CmsCtaSection
                 {
@@ -1982,11 +1983,15 @@ namespace Neurix.BLL.Services.Cms
                     ButtonTextEn = "Contact Us",
                     ButtonTextAr = "تواصل معنا",
                     ButtonUrl = "/Home/Contact",
-                    ContactEmail = "neurix@aidaleel.com",
+                    ContactEmail = "contact@neurix.ai",
                     BackgroundImagePath = "/images/Contact Us (Home) 2.png",
                     IsPublished = true,
                     CreatedAtUtc = DateTime.UtcNow
                 });
+            }
+            else if (existingCta.ContactEmail == "neurix@aidaleel.com")
+            {
+                existingCta.ContactEmail = "contact@neurix.ai";
             }
 
             if (!await _db.MenuItems.AnyAsync(m => m.CompanyProfileId == neurixProfileId))

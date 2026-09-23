@@ -34,7 +34,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(h => h.IsPublished);
+                query = query.Where(h => h.IsPublished && h.CompanyProfile != null && h.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -138,7 +138,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(v => v.IsPublished);
+                query = query.Where(v => v.IsPublished && v.CompanyProfile != null && v.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -233,7 +233,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(p => p.IsPublished);
+                query = query.Where(p => p.IsPublished && p.CompanyProfile != null && p.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -410,7 +410,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(p => p.IsPublished);
+                query = query.Where(p => p.IsPublished && p.CompanyProfile != null && p.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -476,7 +476,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(p => p.IsPublished);
+                query = query.Where(p => p.IsPublished && p.CompanyProfile != null && p.CompanyProfile.IsPublished);
             }
 
             var items = await query.OrderBy(p => p.DisplayOrder).ThenBy(p => p.CreatedAtUtc).ToListAsync();
@@ -602,7 +602,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(d => d.IsPublished);
+                query = query.Where(d => d.IsPublished && d.CompanyProfile != null && d.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -672,7 +672,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(d => d.IsPublished);
+                query = query.Where(d => d.IsPublished && d.CompanyProfile != null && d.CompanyProfile.IsPublished);
             }
 
             var items = await query.OrderBy(d => d.DisplayOrder).ThenBy(d => d.CreatedAtUtc).ToListAsync();
@@ -787,7 +787,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(a => a.IsPublished);
+                query = query.Where(a => a.IsPublished && a.CompanyProfile != null && a.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -853,7 +853,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(a => a.IsPublished);
+                query = query.Where(a => a.IsPublished && a.CompanyProfile != null && a.CompanyProfile.IsPublished);
             }
 
             var items = await query.OrderBy(a => a.DisplayOrder).ThenBy(a => a.CreatedAtUtc).ToListAsync();
@@ -970,7 +970,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(h => h.IsPublished);
+                query = query.Where(h => h.IsPublished && h.CompanyProfile != null && h.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -1194,7 +1194,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(p => p.IsPublished);
+                query = query.Where(p => p.IsPublished && p.CompanyProfile != null && p.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();
@@ -1287,7 +1287,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(c => c.IsPublished);
+                query = query.Where(c => c.IsPublished && c.CompanyProfile != null && c.CompanyProfile.IsPublished);
             }
 
             var entity = await query.FirstOrDefaultAsync();

@@ -24,6 +24,7 @@ namespace Neurix.BLL.DependencyInjection
                 connectionString = configuration.GetConnectionString("CrmDb");
             }
 
+            services.AddSingleton<CmsContentRevision>();
             services.AddDbContext<CmsDbContext>(options =>
             {
                 if (!string.IsNullOrWhiteSpace(connectionString))

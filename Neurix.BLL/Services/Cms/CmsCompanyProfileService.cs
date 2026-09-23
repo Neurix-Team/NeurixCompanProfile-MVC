@@ -79,7 +79,7 @@ namespace Neurix.BLL.Services.Cms
 
             var entity = await _db.CompanyProfiles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Slug == normalizedSlug, cancellationToken);
+                .FirstOrDefaultAsync(p => p.Slug == normalizedSlug && p.IsPublished, cancellationToken);
 
             var dto = entity == null ? null : MapToDetail(entity);
             _cache.Set(cacheKey, dto, CacheDuration);
@@ -256,4 +256,3 @@ namespace Neurix.BLL.Services.Cms
         }
     }
 }
-

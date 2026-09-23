@@ -94,7 +94,7 @@ $env:DOTNET_PROCESSOR_COUNT = '2'
 dotnet test Neurix.Tests/Neurix.Tests.csproj -c Release --no-restore --disable-build-servers -m:1 /p:UseSharedCompilation=false /p:BuildInParallel=false /p:ConcurrentBuild=false
 ```
 
-Validated on 23 September 2026: **255 tests passed**, zero failed or skipped. The three dashboard access tests exercise anonymous, CrmStaff and Admin requests through the HTTP pipeline with isolated in-memory databases. NuGet's vulnerability listing and the npm package-lock audit reported no known vulnerable dependencies in their respective scopes on 22 September 2026. These checks are not a complete security audit or a production load test.
+Validated on 23 September 2026: **258 tests passed**, zero failed or skipped. HTTP-level tests cover dashboard roles, CMS edits appearing on public pages after the cache is warmed, contact enquiries reaching CRM leads, and profile changes. These tests use isolated in-memory databases; they do not replace a staging check against SQL Server. NuGet's vulnerability listing and the npm package-lock audit reported no known vulnerable dependencies in their respective scopes on 22 September 2026. These checks are not a complete security audit or a production load test.
 
 GitHub Actions now runs the build, tests and browser checks on pull requests and pushes to `main`. The browser checks cover Arabic/English layouts, mobile navigation, card motion, and an emulated mobile performance sample. A manual run can inspect an existing staging URL. See [browser quality checks](scripts/quality/README.md) for scope, commands and limitations.
 

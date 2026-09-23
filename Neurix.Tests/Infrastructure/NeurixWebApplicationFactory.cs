@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Neurix.DAL.Data;
 
 namespace Neurix.Tests.Infrastructure
@@ -22,6 +23,7 @@ namespace Neurix.Tests.Infrastructure
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureLogging(logging => logging.ClearProviders());
             builder.ConfigureAppConfiguration((_, config) =>
             {
                 // Defense in depth: even though the DbContext registrations below are

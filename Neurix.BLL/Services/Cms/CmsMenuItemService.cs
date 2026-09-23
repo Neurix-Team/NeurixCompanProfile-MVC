@@ -23,12 +23,14 @@ namespace Neurix.BLL.Services.Cms
         private readonly CmsDbContext _db;
         private readonly ILogger<CmsMenuItemService> _logger;
         private readonly IMemoryCache _cache;
+        private readonly CmsContentRevision? _contentRevision;
 
-        public CmsMenuItemService(CmsDbContext db, ILogger<CmsMenuItemService> logger, IMemoryCache cache)
+        public CmsMenuItemService(CmsDbContext db, ILogger<CmsMenuItemService> logger, IMemoryCache cache, CmsContentRevision? contentRevision = null)
         {
             _db = db;
             _logger = logger;
             _cache = cache;
+            _contentRevision = contentRevision;
         }
 
         public async Task<IReadOnlyList<CmsMenuItemSummaryDto>> GetMenuItemsByCompanySlugAsync(
@@ -36,7 +38,7 @@ namespace Neurix.BLL.Services.Cms
             CmsMenuItemPlacement? placement = null,
             bool includeUnpublished = false)
         {
-            var cacheKey = $"cms:menu-items:{slug}:{placement}:{includeUnpublished}";
+            var cacheKey = $"cms:menu-items:{slug}:{placement}:{includeUnpublished}:{_contentRevision?.Current ?? 0}";
             if (_cache.TryGetValue(cacheKey, out IReadOnlyList<CmsMenuItemSummaryDto>? cached) && cached is not null)
             {
                 return cached;
@@ -49,7 +51,7 @@ namespace Neurix.BLL.Services.Cms
 
             if (!includeUnpublished)
             {
-                query = query.Where(m => m.IsPublished);
+                query = query.Where(m => m.IsPublished && m.CompanyProfile != null && m.CompanyProfile.IsPublished);
             }
 
             if (placement.HasValue)
