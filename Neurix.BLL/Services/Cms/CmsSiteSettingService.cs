@@ -22,7 +22,7 @@ namespace Neurix.BLL.Services.Cms
         private static readonly HashSet<string> AllowedSettingTypes = new(StringComparer.OrdinalIgnoreCase)
             { "text", "textarea", "html", "url", "boolean" };
         private static readonly HashSet<string> AllowedGroupNames = new(StringComparer.OrdinalIgnoreCase)
-            { "General", "SEO", "Contact", "Footer" };
+            { "General", "SEO", "Contact", "Footer", "Theme" };
 
         public CmsSiteSettingService(CmsDbContext db, IMemoryCache? cache = null, CmsContentRevision? contentRevision = null)
         {
@@ -156,7 +156,7 @@ namespace Neurix.BLL.Services.Cms
                 return ServiceResult<string>.Fail($"Invalid setting type '{dto.SettingType}'. Allowed: text, textarea, html, url, boolean.");
 
             if (!AllowedGroupNames.Contains(dto.GroupName))
-                return ServiceResult<string>.Fail($"Invalid group name '{dto.GroupName}'. Allowed: General, SEO, Contact, Footer.");
+                return ServiceResult<string>.Fail($"Invalid group name '{dto.GroupName}'. Allowed: General, SEO, Contact, Footer, Theme.");
 
             // Carries the normalized key forward to the caller.
             return keyResult;

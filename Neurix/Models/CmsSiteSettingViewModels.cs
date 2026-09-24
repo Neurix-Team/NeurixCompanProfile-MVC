@@ -68,4 +68,12 @@ namespace Neurix.Models
 
         public IEnumerable<SelectListItem> GroupOptions { get; set; } = Array.Empty<SelectListItem>();
     }
+
+    /// <summary>Preset keys chosen on the CMS Theme page (see Neurix.Common.SiteTheme).</summary>
+    public class CmsThemeViewModel
+    {
+        public string Palette { get; set; } = string.Empty;
+        public string Light { get; set; } = string.Empty;
+        public string Dark { get; set; } = string.Empty;
+    }
 }

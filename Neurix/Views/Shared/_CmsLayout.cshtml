@@ -33,6 +33,7 @@
 
     <!-- Neurix AI Design System -->
     <link rel="stylesheet" href="~/css/neurix.css" asp-append-version="true" />
+    <partial name="_ThemeStyles" />
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -77,6 +78,11 @@
                     <a asp-controller="CmsSiteSettings" asp-action="Index" class="@NavClass("CmsSiteSettings")">
                         <i data-lucide="sliders" class="w-4 h-4 shrink-0"></i>
                         @L["Global Site Settings"]
+                    </a>
+
+                    <a asp-controller="CmsTheme" asp-action="Index" class="@NavClass("CmsTheme")">
+                        <i data-lucide="palette" class="w-4 h-4 shrink-0"></i>
+                        @L["Site Theme & Colors"]
                     </a>
 
                     <a asp-controller="CmsHomeSections" asp-action="Index" class="@NavClass("CmsHomeSections")">

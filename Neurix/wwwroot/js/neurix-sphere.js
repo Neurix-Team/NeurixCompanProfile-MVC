@@ -234,7 +234,13 @@
                 var themeChanged = !state || next.dark !== state.dark;
                 state = next;
                 if (themeChanged) {
-                    if (state.dark) {
+                    // CMS theme palette: [lightDeep, lightBright, darkDeep, darkBright] as 0-1 RGB.
+                    var themed = state.colors;
+                    if (themed) {
+                        var deep = themed[state.dark ? 2 : 0], bright = themed[state.dark ? 3 : 1];
+                        gl.uniform3f(uniforms.deepBlue, deep[0], deep[1], deep[2]);
+                        gl.uniform3f(uniforms.brightBlue, bright[0], bright[1], bright[2]);
+                    } else if (state.dark) {
                         gl.uniform3f(uniforms.deepBlue, 0.02, 0.36, 0.95);
                         gl.uniform3f(uniforms.brightBlue, 0.24, 0.66, 1);
                     } else {
@@ -303,7 +309,7 @@
             var opacity = (Math.max(0, Math.min(1, (progress - 0.65) / 0.27)) * (dark ? 0.28 : 0.13)).toFixed(3);
             if (network.style.opacity !== opacity) network.style.opacity = opacity;
         }
-        return { progress: progress, width: innerWidth, height: innerHeight, pixelRatio: devicePixelRatio || 1, dark: dark, reduced: motion.matches, visible: pageActive && !document.hidden };
+        return { progress: progress, width: innerWidth, height: innerHeight, pixelRatio: devicePixelRatio || 1, dark: dark, colors: window.neurixSphereColors || null, reduced: motion.matches, visible: pageActive && !document.hidden };
     }
 
     function update() {

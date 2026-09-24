@@ -1,0 +1,282 @@
+@model Neurix.Models.CmsThemeViewModel
+@using System.Text.Json
+@using Neurix.Common
+@using Neurix.Localization
+@{
+    ViewData["Title"] = "Site Theme & Colors";
+    Layout = "_CmsLayout";
+
+    var isRtl = CmsLanguage.Current.IsRightToLeft;
+    string Name(string en, string ar) => isRtl ? ar : en;
+
+    // Every preset's values, for the live preview. Hex so the browser needs no conversion.
+    var presetJson = JsonSerializer.Serialize(new
+    {
+        palettes = SiteTheme.Palettes.ToDictionary(p => p.Key, p => new
+        {
+            deep = SiteTheme.ToHex(p.DeepBlue), azure = SiteTheme.ToHex(p.Azure),
+            cyan = SiteTheme.ToHex(p.Cyan), navy = SiteTheme.ToHex(p.Navy)
+        }),
+        light = SiteTheme.LightShades.ToDictionary(s => s.Key, s => Shade(s)),
+        dark = SiteTheme.DarkShades.ToDictionary(s => s.Key, s => Shade(s)),
+        defaults = new { palette = SiteTheme.DefaultPaletteKey, light = SiteTheme.DefaultLightKey, dark = SiteTheme.DefaultDarkKey }
+    });
+
+    object Shade(ThemeShade s) => new
+    {
+        bg = SiteTheme.ToHex(s.Background), fg = SiteTheme.ToHex(s.Foreground),
+        card = s.Card == null ? null : SiteTheme.ToHex(s.Card),
+        secondary = s.Secondary == null ? null : SiteTheme.ToHex(s.Secondary),
+        muted = SiteTheme.ToHex(s.Muted), mfg = SiteTheme.ToHex(s.MutedForeground), border = SiteTheme.ToHex(s.Border)
+    };
+
+    var currentNavy = SiteTheme.ToHex(SiteTheme.FindPalette(Model.Palette).Navy);
+}
+
+@section Styles {
+    <style>
+        .theme-grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+        .theme-option { position: relative; display: block; cursor: pointer; }
+        .theme-option input { position: absolute; opacity: 0; pointer-events: none; }
+        .theme-option-body {
+            display: flex; flex-direction: column; gap: 0.6rem; height: 100%;
+            padding: 0.75rem; border-radius: 1rem; border: 1.5px solid hsl(var(--border));
+            background: hsl(var(--background) / 0.5);
+            transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        }
+        .theme-option:hover .theme-option-body { transform: translateY(-2px); border-color: hsl(var(--azure) / 0.5); }
+        .theme-option input:checked + .theme-option-body {
+            border-color: hsl(var(--azure));
+            box-shadow: 0 0 0 3px hsl(var(--azure) / 0.18);
+        }
+        .theme-option input:focus-visible + .theme-option-body { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+        .theme-option-check {
+            position: absolute; top: 0.55rem; inset-inline-end: 0.55rem; width: 1.3rem; height: 1.3rem;
+            display: none; align-items: center; justify-content: center; border-radius: 999px;
+            background: hsl(var(--azure)); color: #fff;
+        }
+        .theme-option input:checked + .theme-option-body .theme-option-check { display: flex; }
+        .theme-option-name { font-size: 0.8rem; font-weight: 600; color: hsl(var(--foreground)); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .theme-option-tag { font-size: 0.62rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 999px; background: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
+
+        .theme-palette-bar { height: 2.75rem; border-radius: 0.7rem; }
+        .theme-swatches { display: flex; gap: 0.3rem; }
+        .theme-swatch { width: 1.1rem; height: 1.1rem; border-radius: 999px; border: 1px solid rgb(127 127 127 / 0.25); }
+
+        .theme-shade-demo { height: 4.25rem; border-radius: 0.7rem; padding: 0.55rem; display: flex; gap: 0.45rem; border: 1px solid rgb(127 127 127 / 0.2); }
+        .theme-shade-card { flex: 1; border-radius: 0.45rem; padding: 0.4rem; display: flex; flex-direction: column; gap: 0.3rem; border: 1px solid; }
+        .theme-shade-line { height: 0.3rem; border-radius: 999px; }
+        .theme-shade-dot { width: 1rem; height: 1rem; border-radius: 999px; flex: none; align-self: flex-end; background: hsl(var(--azure)); }
+
+        /* Live preview: every colour comes from the variables the script sets on .tp-root */
+        .tp-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .tp-root { border-radius: 1.1rem; overflow: hidden; border: 1px solid var(--tp-border); background: var(--tp-bg); color: var(--tp-fg); transition: background 250ms ease, color 250ms ease; }
+        .tp-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.5rem 0.9rem; color: var(--tp-mfg); border-bottom: 1px solid var(--tp-border); display: flex; align-items: center; gap: 0.4rem; }
+        .tp-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0.75rem; padding: 0.45rem 0.6rem; border-radius: 0.8rem; background: var(--tp-card); border: 1px solid var(--tp-border); }
+        .tp-brand { display: flex; align-items: center; gap: 0.4rem; font-weight: 800; font-size: 0.8rem; }
+        .tp-brand-dot { width: 0.9rem; height: 0.9rem; border-radius: 999px; background: linear-gradient(135deg, var(--tp-cyan), var(--tp-deep)); }
+        .tp-links { display: flex; gap: 0.2rem; padding: 0.15rem; border-radius: 999px; background: var(--tp-secondary); font-size: 0.66rem; font-weight: 600; color: var(--tp-mfg); }
+        .tp-links span { padding: 0.2rem 0.45rem; border-radius: 999px; }
+        .tp-links span:first-child { background: var(--tp-card); color: var(--tp-fg); }
+        .tp-cta { font-size: 0.66rem; font-weight: 700; color: #fff; padding: 0.35rem 0.6rem; border-radius: 0.55rem; background: linear-gradient(110deg, var(--tp-cyan), var(--tp-azure)); white-space: nowrap; }
+        .tp-hero { padding: 0.9rem 1rem 0.4rem; background: radial-gradient(ellipse 80% 70% at 50% 30%, color-mix(in srgb, var(--tp-azure) 14%, transparent), transparent 75%); }
+        .tp-title { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 700; font-size: 1.15rem; line-height: 1.2; margin: 0; }
+        .tp-gradient { background: linear-gradient(90deg, var(--tp-azure), var(--tp-cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .tp-text { font-size: 0.72rem; color: var(--tp-mfg); margin: 0.4rem 0 0; }
+        .tp-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; padding: 0.75rem 1rem 1rem; }
+        .tp-card { border-radius: 0.8rem; padding: 0.65rem; background: var(--tp-card); border: 1px solid var(--tp-border); }
+        .tp-card-icon { width: 1.5rem; height: 1.5rem; border-radius: 0.45rem; margin-bottom: 0.4rem; background: color-mix(in srgb, var(--tp-cyan) 16%, transparent); display: flex; align-items: center; justify-content: center; }
+        .tp-card-icon::after { content: ''; width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--tp-cyan); }
+        .tp-card-title { font-size: 0.72rem; font-weight: 700; }
+        .tp-card-text { font-size: 0.64rem; color: var(--tp-mfg); margin-top: 0.15rem; }
+        .tp-card:last-child { border-color: color-mix(in srgb, var(--tp-cyan) 60%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--tp-azure) 22%, transparent); }
+    </style>
+}
+
+<form asp-action="Index" method="post" id="theme-form" class="space-y-6">
+    @Html.AntiForgeryToken()
+
+    @* Header *@
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-display font-bold tracking-tight">@L["Site Theme & Colors"]</h1>
+            <p class="text-sm text-muted-foreground">@L["Choose the brand colors and the light and dark mode shades for the whole website."]</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <button type="button" id="theme-reset"
+                    class="inline-flex items-center gap-2 rounded-xl bg-card border border-border hover:bg-muted px-4 py-2 text-xs font-semibold text-foreground transition-all">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                @L["Restore Defaults"]
+            </button>
+            <button type="submit"
+                    class="inline-flex items-center gap-2 rounded-xl bg-button-gradient px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg shadow-azure/20 hover:scale-[1.02] hover:shadow-azure/30 transition-all duration-300">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                @L["Save Theme"]
+            </button>
+        </div>
+    </div>
+
+    @* Live preview *@
+    <div class="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+        <div class="flex items-center gap-2.5 pb-3 border-b border-border">
+            <i data-lucide="eye" class="w-5 h-5 text-cyan"></i>
+            <h2 class="text-lg font-semibold tracking-tight">@L["Live Preview"]</h2>
+        </div>
+        <div class="tp-grid">
+            @foreach (var mode in new[] { "light", "dark" })
+            {
+                <div class="tp-root" data-preview="@mode">
+                    <div class="tp-label">
+                        <i data-lucide="@(mode == "light" ? "sun" : "moon")" class="w-3.5 h-3.5"></i>
+                        @(mode == "light" ? L["Light mode"] : L["Dark mode"])
+                    </div>
+                    <div class="tp-nav">
+                        <span class="tp-brand"><span class="tp-brand-dot"></span>Neurix</span>
+                        <span class="tp-links"><span>@L["Home"]</span><span>@L["Services"]</span><span>@L["Contact"]</span></span>
+                        <span class="tp-cta">@L["Get Started"]</span>
+                    </div>
+                    <div class="tp-hero">
+                        <p class="tp-title">@L["Technology in service of"] <span class="tp-gradient">@L["humanity"]</span></p>
+                        <p class="tp-text">@L["Sample paragraph text as it will appear across the site."]</p>
+                    </div>
+                    <div class="tp-cards">
+                        <div class="tp-card">
+                            <div class="tp-card-icon"></div>
+                            <div class="tp-card-title">@L["Card title"]</div>
+                            <div class="tp-card-text">@L["Muted description text"]</div>
+                        </div>
+                        <div class="tp-card">
+                            <div class="tp-card-icon"></div>
+                            <div class="tp-card-title">@L["Card title"]</div>
+                            <div class="tp-card-text">@L["Hovered card glow"]</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <p class="text-xs text-muted-foreground">@L["Changes apply to the public website, the CMS and the CRM right after saving."]</p>
+    </div>
+
+    @* Brand palette *@
+    <div class="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+        <div class="pb-3 border-b border-border">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="palette" class="w-5 h-5 text-cyan"></i>
+                <h2 class="text-lg font-semibold tracking-tight">@L["Brand Color Palette"]</h2>
+            </div>
+            <p class="text-xs text-muted-foreground mt-1">@L["Used for buttons, links, gradients, highlights and the hero sphere."]</p>
+        </div>
+        <div class="theme-grid">
+            @foreach (var p in SiteTheme.Palettes)
+            {
+                var deep = SiteTheme.ToHex(p.DeepBlue);
+                var azure = SiteTheme.ToHex(p.Azure);
+                var cyan = SiteTheme.ToHex(p.Cyan);
+                var navy = SiteTheme.ToHex(p.Navy);
+                <label class="theme-option">
+                    <input type="radio" name="Palette" value="@p.Key" checked="@(Model.Palette == p.Key)" />
+                    <span class="theme-option-body">
+                        <span class="theme-option-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                        <span class="theme-palette-bar" style="background: linear-gradient(110deg, @deep, @azure 55%, @cyan);"></span>
+                        <span class="theme-swatches">
+                            <span class="theme-swatch" style="background: @navy"></span>
+                            <span class="theme-swatch" style="background: @deep"></span>
+                            <span class="theme-swatch" style="background: @azure"></span>
+                            <span class="theme-swatch" style="background: @cyan"></span>
+                        </span>
+                        <span class="theme-option-name">
+                            @Name(p.NameEn, p.NameAr)
+                            @if (p.Key == SiteTheme.DefaultPaletteKey)
+                            {
+                                <span class="theme-option-tag">@L["Default"]</span>
+                            }
+                        </span>
+                    </span>
+                </label>
+            }
+        </div>
+    </div>
+
+    @* Light and dark shades *@
+    @foreach (var group in new[]
+    {
+        new { Field = "Light", Icon = "sun", Title = "Light Mode Shade", Hint = "Background, cards and text colors when visitors use light mode.", Shades = SiteTheme.LightShades, Selected = Model.Light, Default = SiteTheme.DefaultLightKey },
+        new { Field = "Dark", Icon = "moon", Title = "Dark Mode Shade", Hint = "Background, cards and text colors when visitors use dark mode.", Shades = SiteTheme.DarkShades, Selected = Model.Dark, Default = SiteTheme.DefaultDarkKey },
+    })
+    {
+        <div class="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-5">
+            <div class="pb-3 border-b border-border">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="@group.Icon" class="w-5 h-5 text-cyan"></i>
+                    <h2 class="text-lg font-semibold tracking-tight">@L[group.Title]</h2>
+                </div>
+                <p class="text-xs text-muted-foreground mt-1">@L[group.Hint]</p>
+            </div>
+            <div class="theme-grid">
+                @foreach (var s in group.Shades)
+                {
+                    var card = SiteTheme.ToHex(s.Card) is var c && c != "transparent" ? c : currentNavy;
+                    <label class="theme-option">
+                        <input type="radio" name="@group.Field" value="@s.Key" checked="@(group.Selected == s.Key)" />
+                        <span class="theme-option-body">
+                            <span class="theme-option-check"><i data-lucide="check" class="w-3 h-3"></i></span>
+                            <span class="theme-shade-demo" style="background: @SiteTheme.ToHex(s.Background)" @(s.Card == null ? "data-navy-card" : null)>
+                                <span class="theme-shade-card" style="background: @card; border-color: @SiteTheme.ToHex(s.Border)">
+                                    <span class="theme-shade-line" style="background: @SiteTheme.ToHex(s.Foreground); width: 70%"></span>
+                                    <span class="theme-shade-line" style="background: @SiteTheme.ToHex(s.MutedForeground); width: 90%; opacity: .7"></span>
+                                    <span class="theme-shade-line" style="background: @SiteTheme.ToHex(s.MutedForeground); width: 55%; opacity: .7"></span>
+                                </span>
+                                <span class="theme-shade-dot"></span>
+                            </span>
+                            <span class="theme-option-name">
+                                @Name(s.NameEn, s.NameAr)
+                            </span>
+                        </span>
+                    </label>
+                }
+            </div>
+        </div>
+    }
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            const presets = @Html.Raw(presetJson);
+            const form = document.getElementById('theme-form');
+            const selected = name => (form.querySelector('input[name="' + name + '"]:checked') || {}).value;
+
+            function paint(root, shade, palette) {
+                const card = shade.card || palette.navy;
+                const vars = {
+                    '--tp-bg': shade.bg, '--tp-fg': shade.fg, '--tp-card': card,
+                    '--tp-secondary': shade.secondary || card, '--tp-mfg': shade.mfg, '--tp-border': shade.border,
+                    '--tp-deep': palette.deep, '--tp-azure': palette.azure, '--tp-cyan': palette.cyan
+                };
+                Object.keys(vars).forEach(k => root.style.setProperty(k, vars[k]));
+            }
+
+            function update() {
+                const palette = presets.palettes[selected('Palette')] || presets.palettes[presets.defaults.palette];
+                const light = Object.assign({}, presets.light[selected('Light')] || presets.light[presets.defaults.light]);
+                // In light mode neurix.css draws text in the palette's navy, unless a shade overrides it.
+                if (selected('Light') === presets.defaults.light) light.fg = palette.navy;
+                paint(document.querySelector('[data-preview="light"]'), light, palette);
+                paint(document.querySelector('[data-preview="dark"]'), presets.dark[selected('Dark')] || presets.dark[presets.defaults.dark], palette);
+                // The default dark shade's cards follow the palette navy.
+                document.querySelectorAll('[data-navy-card] .theme-shade-card').forEach(el => el.style.background = palette.navy);
+            }
+
+            form.addEventListener('change', update);
+            document.getElementById('theme-reset').addEventListener('click', function () {
+                ['Palette', 'Light', 'Dark'].forEach(function (name) {
+                    const key = presets.defaults[name.toLowerCase()];
+                    const input = form.querySelector('input[name="' + name + '"][value="' + key + '"]');
+                    if (input) input.checked = true;
+                });
+                update();
+            });
+            update();
+        })();
+    </script>
+}

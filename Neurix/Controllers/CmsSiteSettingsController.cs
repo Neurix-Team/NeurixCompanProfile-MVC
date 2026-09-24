@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Neurix.BLL.Common;
 using Neurix.BLL.Dtos.Cms;
 using Neurix.BLL.Services.Cms;
+using Neurix.Common;
 using Neurix.Models;
 
 namespace Neurix.Controllers
@@ -37,7 +38,11 @@ namespace Neurix.Controllers
             var companies = await _profileService.GetAllProfilesAsync(includeUnpublished: true);
             var selectedId = companyId ?? companies.FirstOrDefault()?.Id;
 
-            var settings = await _settingService.GetSettingsByCompanyAsync(selectedId);
+            // Theme keys are managed on their own page (CmsThemeController); showing them here as
+            // free-text fields would let SaveBatch overwrite them with arbitrary values.
+            var settings = (await _settingService.GetSettingsByCompanyAsync(selectedId))
+                .Where(s => !s.Key.StartsWith(SiteTheme.KeyPrefix, StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
             var model = new CmsSiteSettingListViewModel
             {
@@ -66,7 +71,9 @@ namespace Neurix.Controllers
             }
 
             var userId = GetCurrentUserId();
-            var dtos = model.Settings.Select(s => new CmsSiteSettingUpsertDto
+            var dtos = model.Settings
+                .Where(s => !(s.Key ?? string.Empty).Trim().StartsWith(SiteTheme.KeyPrefix, StringComparison.OrdinalIgnoreCase))
+                .Select(s => new CmsSiteSettingUpsertDto
             {
                 CompanyProfileId = model.CompanyProfileId,
                 Key = s.Key,

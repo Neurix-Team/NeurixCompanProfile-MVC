@@ -1,0 +1,31 @@
+@using Neurix.BLL.Dtos.Cms
+@using Neurix.BLL.Services.Cms
+@using Neurix.Common
+@inject ICmsSiteSettingService ThemeSettingService
+@*
+    Site theme chosen on /cms/settings/theme. Must be rendered AFTER neurix.css so these
+    rules win over its :root / .dark blocks by source order. Only preset values from
+    SiteTheme are emitted — the stored setting is a preset key, never raw CSS.
+*@
+@{
+    SiteThemeSelection theme;
+    try
+    {
+        theme = SiteTheme.FromSettings(await ThemeSettingService.GetSettingsByCompanySlugAsync("neurix"));
+    }
+    catch
+    {
+        theme = SiteTheme.FromSettings(null);
+    }
+
+    var themeCss = SiteTheme.BuildCss(theme);
+    var sphereJson = SiteTheme.BuildSphereJson(theme);
+}
+@if (!string.IsNullOrEmpty(themeCss))
+{
+    <style id="cms-site-theme">@Html.Raw(themeCss)</style>
+}
+@if (sphereJson != null)
+{
+    <script>window.neurixSphereColors = @Html.Raw(sphereJson);</script>
+}

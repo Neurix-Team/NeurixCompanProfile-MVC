@@ -31,7 +31,11 @@
     // The design system stores its palette as bare HSL triplets so Tailwind can add
     // an alpha channel — hsl(var(--azure) / 0.25). Convert the CMS hex values into the
     // same shape, otherwise they cannot drive the existing variables at all.
-    var accentHsl = BrandColorHelper.ToHslTriplet(accentColor);
+    // A palette picked on the CMS Theme page takes over the accent; the profile colour
+    // only applies while the default palette is active.
+    var accentHsl = SiteTheme.FromSettings(siteSettings).IsDefaultPalette
+        ? BrandColorHelper.ToHslTriplet(accentColor)
+        : null;
     var hasBrandOverride = accentHsl != null;
     var localizedTitle = (isRtl ? ViewData["TitleAr"] : ViewData["Title"]) as string ?? ViewData["Title"] as string;
     var pageTitle = string.IsNullOrEmpty(localizedTitle) ? brandName : $"{localizedTitle} — {brandName}";
@@ -88,6 +92,8 @@
             }
         </style>
     }
+
+    <partial name="_ThemeStyles" />
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
