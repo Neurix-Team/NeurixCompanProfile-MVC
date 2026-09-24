@@ -108,7 +108,7 @@
     --input: 218 40% 18%;
     --ring: 211 100% 58%;
 
-    --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 40%, hsl(var(--navy) / 0.7), hsl(0 0% 0%) 70%);
+    --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 40%, hsl(var(--navy) / 0.24), transparent 76%);
 }
 
 
@@ -1095,7 +1095,7 @@ a:hover>.nav-underline {
 }
 
 .dark #neurix-gl {
-    opacity: 0.58;
+    opacity: 0.9;
 }
 
 #neurix-sphere-preview {
